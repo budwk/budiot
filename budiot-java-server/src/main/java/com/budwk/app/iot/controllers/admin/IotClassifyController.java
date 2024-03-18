@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @IocBean
-@At("/iot/admin/classify")
+@At("/iot/admin/config/classify")
 @SLog(tag = "设备分类管理")
 @ApiDefinition(tag = "设备分类管理")
 @Slf4j
@@ -118,19 +118,19 @@ public class IotClassifyController {
         return Result.success();
     }
 
-    @At("/delete/{id}")
+    @At("/delete")
     @Ok("json")
-    @DELETE
+    @POST
     @SaCheckPermission("iot.config.classify.delete")
     @SLog(value = "删除设备分类:")
     @ApiOperation(name = "删除设备分类")
-    @ApiImplicitParams(
+    @ApiFormParams(
             value = {
-                    @ApiImplicitParam(name = "id", description = "主键ID", in = ParamIn.PATH)
+                    @ApiFormParam(name = "id", description = "主键ID")
             }
     )
     @ApiResponses
-    public Result<?> delete(String id, HttpServletRequest req) {
+    public Result<?> delete(@Param("id") String id, @Param("name") String name, HttpServletRequest req) {
         Iot_classify classify = iotClassifyService.fetch(id);
         if (classify == null) {
             return Result.error(ResultCode.NULL_DATA_ERROR);

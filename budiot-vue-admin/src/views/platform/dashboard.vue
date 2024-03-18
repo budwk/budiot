@@ -1,482 +1,400 @@
-
 <template>
-    <div class="app-container home">
-
-        <el-row :gutter="20">
-            <el-col :sm="12" :lg="12" style="padding-left: 15px">
-              <span style="padding-right: 18px;color: darkgray;">{{ thisWeekStart }} ~ {{ thisWeekEnd }}</span>
-            </el-col>
-            <el-col :sm="12" :lg="12" style="padding-right: 65px;text-align: right;">
-                <el-button-group>
-                    <el-button plain @click="lastWeek"><el-icon class="el-icon--left"><ArrowLeft /></el-icon></el-button>
-                    <el-button plain @click="thisWeek">本周</el-button>
-                    <el-button plain @click="nextWeek" :disabled="nextWeekNum==0">
-                    <el-icon class="el-icon--right"><ArrowRight /></el-icon>
-                    </el-button>
-                </el-button-group>
-            </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-row :gutter="20" class="total_css">
-              <el-col :span="8">
-                  <el-card>
-                <div class="statistic-card">
-                  <el-statistic :value="thisWeek_oreStockTotal">
-                    <template #title>
-                      <div style="display: inline-flex; align-items: center">
-                        <el-link @click="gotoPath(-1)">原矿入库（吨）</el-link>
-                        <el-tooltip
-                          effect="dark"
-                          content="周原矿入库吨位"
-                          placement="top"
-                        >
-                          <el-icon style="margin-left: 4px" :size="12">
-                            <Warning />
-                          </el-icon>
-                        </el-tooltip>
-                      </div>
-                    </template>
+  <div class="app-container">
+      <el-row :gutter="16">
+          <el-col :span="6">
+              <el-card>
+                  <el-statistic :value="98500">
+                      <template #title>
+                          <div style="display: inline-flex; align-items: center">
+                              设备数量
+                              <el-tooltip effect="dark" content="设备总数量" placement="top">
+                                  <el-icon style="margin-left: 4px" :size="12">
+                                      <Warning />
+                                  </el-icon>
+                              </el-tooltip>
+                          </div>
+                      </template>
                   </el-statistic>
                   <div class="statistic-footer">
-                    <div class="footer-item">
-                      <span>同比上周</span>
-                      <span :class="rate(thisWeek_oreStockTotal,lastWeek_oreStockTotal)>=0?'red':'green'">
-                      <span>{{rate(thisWeek_oreStockTotal,lastWeek_oreStockTotal)}}%</span>
-                        <el-icon>
-                          <CaretTop v-if="rate(thisWeek_oreStockTotal,lastWeek_oreStockTotal)>=0"/>
-                          <CaretBottom v-else/>
-                        </el-icon>
-                      </span>
-                    </div>
-                  </div>
-                </div></el-card>
-              </el-col>
-              <el-col :span="8">
-                  <el-card>
-                <div class="statistic-card">
-                  <el-statistic :value="thisWeek_stockTotal">
-                    <template #title>
-                      <div style="display: inline-flex; align-items: center">
-                        <el-link @click="gotoPath(1)">成品出库（吨）</el-link>
-                        <el-tooltip
-                          effect="dark"
-                          content="周成品出库吨位"
-                          placement="top"
-                        >
-                          <el-icon style="margin-left: 4px" :size="12">
-                            <Warning />
-                          </el-icon>
-                        </el-tooltip>
+                      <div class="footer-item">
+                          <span>在线</span>
+                          <span class="small-title">
+                              2340
+                          </span>
                       </div>
-                    </template>
-                  </el-statistic>
-                  <div class="statistic-footer">
-                    <div class="footer-item">
-                      <span>同比上周</span>
-                      <span :class="rate(thisWeek_stockTotal,lastWeek_stockTotal)>=0?'red':'green'">
-                      <span>{{rate(thisWeek_stockTotal,lastWeek_stockTotal)}}%</span>
-                        <el-icon>
-                          <CaretTop v-if="rate(thisWeek_stockTotal,lastWeek_stockTotal)>=0"/>
-                          <CaretBottom v-else/>
-                        </el-icon>
-                      </span>
-                    </div>
                   </div>
-                </div></el-card>
-              </el-col>
-              <el-col :span="8">
-                  <el-card>
-                <div class="statistic-card">
-                  <el-statistic :value="thisWeek_totalProfit" title="周利润">
-                    <template #title>
-                      <div style="display: inline-flex; align-items: center">
-                        <el-link @click="gotoPath(0)">周利润（元）</el-link>
-                        <el-tooltip
-                          effect="dark"
-                          content="周利润配矿"
-                          placement="top"
-                        >
-                          <el-icon style="margin-left: 4px" :size="12">
-                            <Warning />
-                          </el-icon>
-                        </el-tooltip>
-                      </div>
-                    </template>
-                  </el-statistic>
-                  <div class="statistic-footer">
-                    <div class="footer-item">
-                      <span>同比上周</span>
-                      <span :class="rate(thisWeek_totalProfit,lastWeek_totalProfit)>=0?'red':'green'">
-                      <span>{{rate(thisWeek_totalProfit,lastWeek_totalProfit)}}%</span>
-                        <el-icon>
-                          <CaretTop v-if="rate(thisWeek_totalProfit,lastWeek_totalProfit)>=0"/>
-                          <CaretBottom v-else/>
-                        </el-icon>
-                      </span>
-                    </div>
-                  </div>
-                </div></el-card>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" style="padding-top: 20px;">
-              <el-col :sm="12" :lg="12" style="padding-left: 15px">
-                <span style="padding-right: 18px;color: darkgray;">补库提醒（未来30天）</span>
-              </el-col>
-            </el-row>
-            <el-row>
-            <el-row style="padding-top: 20px;">
-                <el-row>
-                    <span>配矿库存</span>
-                </el-row>
-                <el-table :data="viewStockList" v-loading="supplyLoading" style="width: 100%;padding-top: 10px;">
-                    <el-table-column prop="supplyDate" label="日期"></el-table-column>
-                    <el-table-column prop="qualityName" label="品质"></el-table-column>
-                    <el-table-column prop="planName" label="成品库"></el-table-column>
-                    <el-table-column prop="gapAmount" label="缺口数量">
-                        <template #default="{ row }">
-                            <el-tag type="danger">{{ Math.ceil(row.gapAmount) }} 吨</el-tag>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-row>
-            <el-row style="padding-top: 20px;">
-                <el-row>
-                    <span>原矿库存</span>
-                </el-row>
-                <el-table :data="viewOreList"  v-loading="supplyLoading" style="padding-top: 10px;">
-                    <el-table-column prop="supplyDate" label="日期"></el-table-column>
-                    <el-table-column prop="oreName" label="矿种"></el-table-column>
-                    <el-table-column prop="name" label="批次"></el-table-column>
-                    <el-table-column prop="gapAmount" label="缺口数量">
-                        <template #default="{ row }">
-                            <el-tag type="danger">{{ Math.ceil(row.gapAmount) }} 吨</el-tag>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-row>
-            </el-row>
+              </el-card>
           </el-col>
-   </el-row>
-     
-        
-    </div>
+          <el-col :span="6">
+              <el-card>
+                  <el-statistic :value="566">
+                      <template #title>
+                          <div style="display: inline-flex; align-items: center">
+                              当前在线
+                              <el-tooltip effect="dark" content="30分钟内在线设备数" placement="top">
+                                  <el-icon style="margin-left: 4px" :size="12">
+                                      <Warning />
+                                  </el-icon>
+                              </el-tooltip>
+                          </div>
+                      </template>
+                  </el-statistic>
+                  <div class="statistic-footer">
+                      <div class="footer-item">
+                          <span>昨日在线</span>
+                          <span class="small-title">322</span>
+                          <span class="red">
+                              12%
+                              <el-icon>
+                                  <CaretBottom />
+                              </el-icon>
+                          </span>
+                      </div>
+                      <div class="footer-item">
+                          <el-icon :size="14">
+                              <ArrowRight />
+                          </el-icon>
+                      </div>
+                  </div>
+              </el-card>
+          </el-col>
+          <el-col :span="6">
+              <el-card>
+                  <el-statistic :value="72000" title="">
+                      <template #title>
+                          <div style="display: inline-flex; align-items: center">
+                              今日设备通信量
+                              <el-tooltip effect="dark" content="设备上报数据总条数" placement="top">
+                                  <el-icon style="margin-left: 4px" :size="12">
+                                      <Warning />
+                                  </el-icon>
+                              </el-tooltip>
+                          </div>
+                      </template>
+                  </el-statistic>
+                  <div class="statistic-footer">
+                      <div class="footer-item">
+                          <span>昨日上报数</span>
+                          <span class="small-title">123</span>
+                          <span class="green">
+                              16%
+                              <el-icon>
+                                  <CaretTop />
+                              </el-icon>
+                          </span>
+                      </div>
+                  </div>
+              </el-card>
+          </el-col>
+          <el-col :span="6">
+              <el-card>
+                  <el-statistic :value="3500" title="">
+                      <template #title>
+                          <div style="display: inline-flex; align-items: center">
+                              今日告警数量
+                              <el-tooltip effect="dark" content="设备事件数据不算在内" placement="top">
+                                  <el-icon style="margin-left: 4px" :size="12">
+                                      <Warning />
+                                  </el-icon>
+                              </el-tooltip>
+                          </div>
+                      </template>
+                  </el-statistic>
+                  <div class="statistic-footer">
+                      <div class="footer-item">
+                          <span>原生告警</span>
+                          <span class="small-title">123</span>
+                          <span>规则告警</span>
+                          <span class="small-title">321</span>
+                      </div>
+                      <div class="footer-item">
+                          <el-icon :size="14">
+                              <ArrowRight />
+                          </el-icon>
+                      </div>
+                  </div>
+              </el-card>
+          </el-col>
+      </el-row>
+
+      <el-row :gutter="16" class="content">
+          <el-col :span="12">
+              <el-card>
+                  <template #header>
+                      <div class="card-header">
+                          厂家设备统计
+                      </div>
+                  </template>
+                  <el-table :data="supplierData" row-key="id" style="height: 200px">
+                      <el-table-column prop="name" label="厂家名称">
+                      </el-table-column>
+                      <el-table-column prop="deviceCount" label="设备数量">
+                      </el-table-column>
+                      <el-table-column prop="deviceRate" label="设备占比">
+                          <template #default="{ row }">
+                              <el-progress :percentage="row.deviceRate" />
+                          </template>
+                      </el-table-column>
+                  </el-table>
+              </el-card>
+          </el-col>
+          <el-col :span="12">
+              <el-card>
+                  <template #header>
+                      <div class="card-header">
+                          设备类型统计
+                      </div>
+                  </template>
+                  <div id="pieChart" style="height: 200px" />
+              </el-card>
+          </el-col>
+      </el-row>
+
+      <el-row :gutter="16" class="content">
+          <el-col :span="24">
+              <el-card>
+                  <template #header>
+                      <div class="card-header">
+                          <el-row justify="end">
+                              <el-col :span="9">设备通信情况</el-col>
+                              <el-col :span="15">
+                                  <el-row>
+                                      <el-radio-group v-model="dataTag" @change="tagChange">
+                                          <el-radio-button label="today">
+                                              今日
+                                          </el-radio-button>
+                                          <el-radio-button label="week">
+                                              近一周
+                                          </el-radio-button>
+                                          <el-radio-button label="month">
+                                              近一月
+                                          </el-radio-button>
+                                          <el-radio-button label="year">
+                                              近一年
+                                          </el-radio-button>
+                                      </el-radio-group>
+                                      <div class="block">
+                                          <el-date-picker
+                                              v-model="dataDate" type="datetimerange" range-separator="到"
+                                              start-placeholder="开始日期" end-placeholder="截至日期" />
+                                      </div>
+                                  </el-row>
+                              </el-col>
+                          </el-row>
+                      </div>
+                  </template>
+                  <div id="lineChart" style="height: 300px" />
+
+              </el-card>
+          </el-col>
+      </el-row>
+  </div>
 </template>
-<script setup lang="ts" name="platform-dashboard">
+<script setup lang="ts" name="platform-device-dashboard">
 import { onMounted, ref } from "vue"
 import * as echarts from 'echarts'
-import { useRouter } from 'vue-router'
-import { getTotalData } from '/@/api/platform/blend/common'
-import { getSupply } from '/@/api/platform/blend/supply'
 
+const dataTag = ref('today')
 
-const router = useRouter()
+const endToday = new Date()
+endToday.setHours(23, 59, 59, 59)
+const startToday = new Date()
+startToday.setHours(0, 0, 0, 0)
+startToday.setTime(startToday.getTime() - 3600 * 1000 * 24)
 
-const chartRef = ref(null)
-const chartRef2 = ref(null)
-const chartRef3 = ref(null)
-const chartRef4 = ref(null)
-const today = ref(0)
-const thisWeek_oreStockTotal = ref(0)
-const lastWeek_oreStockTotal = ref(0)
+const dataDate = ref<[Date, Date]>([startToday, endToday])
 
-const thisWeek_stockTotal = ref(0)
-const lastWeek_stockTotal = ref(0)
-
-const thisWeek_totalProfit = ref(0)
-const lastWeek_totalProfit = ref(0)
-
-const viewStockList = ref([])
-const viewOreList = ref([])
-const days = ref(30)
-const supplyLoading = ref(false)
-
-const week_ph = ref([])
-const month_data = ref([])
-const holder_data = ref([])
-const all_ph = ref([])
-const strategic1_data = ref([])
-
-const nextWeekNum = ref(0)
-const thisWeekStart = ref('')
-const thisWeekEnd = ref('')
-const optinalList = ref([])
-const formData = ref({})
-const drawerShow = ref(false)
-
-const gotoPath = (status: any) => {
-
+const tagChange = (tag: string) => {
+  switch(tag){
+      case 'today':
+          dataDate.value= [startToday, endToday]
+          break
+      case 'week':
+          const endWeek = new Date()
+          endWeek.setHours(23, 59, 59, 59)
+          const startWeek = new Date()
+          startWeek.setHours(0, 0, 0, 0)
+          startWeek.setTime(startWeek.getTime() - 3600 * 1000 * 24 * 7)
+          dataDate.value= [startWeek, endWeek]
+          break
+      case 'month':
+          const endMonth = new Date()
+          endMonth.setHours(23, 59, 59, 59)
+          const startMonth = new Date(endMonth.getFullYear(), endMonth.getMonth() - 1, endMonth.getDate())
+          startMonth.setHours(0, 0, 0, 0)
+          dataDate.value= [startMonth, endMonth]
+          break    
+      case 'year':
+          const endYear = new Date()
+          endYear.setHours(23, 59, 59, 59)
+          const startYear = new Date(endYear.getFullYear() - 1, endYear.getMonth(), endYear.getDate())
+          startYear.setHours(0, 0, 0, 0)
+          dataDate.value= [startYear, endYear]
+          break    
+  }
 }
 
-const gotoPathStrate = (name: string) => {
-
-}
-const thisWeek = () => {
-    today.value = new Date().getTime()
-    nextWeekNum.value = 0
-    total()
-}
-
-const lastWeek = () => {
-    today.value = today.value - 7 * 24 * 60 * 60 * 1000
-    nextWeekNum.value = nextWeekNum.value + 1
-    total()
-}
-
-const nextWeek = () => {
-    today.value = today.value + 7 * 24 * 60 * 60 * 1000
-    nextWeekNum.value = nextWeekNum.value - 1
-    total()
-}
-
-const rate = (a: number,b: number) => {
-    if (b==0) {
-        return 0;
-    }
-    return ((a-b)/b*100).toFixed(2)
-}
-
-const rate2 = (a: number,b: number) => {
-    if (b==0) {
-        return 0
-    }
-    return ((a)/b*100).toFixed(2)
-}
-
-
-const viewPatent = (data: Object) => {
-    formData.value = data
-    drawerShow.value = true
-
-}
+const supplierData = ref([{
+  id: 1,
+  name: '厂家1',
+  deviceCount: 5000,
+  deviceRate: 50
+}, {
+  id: 2,
+  name: '厂家2',
+  deviceCount: 2500,
+  deviceRate: 25
+}, {
+  id: 3,
+  name: '厂家3',
+  deviceCount: 1500,
+  deviceRate: 15
+}, {
+  id: 4,
+  name: '厂家4',
+  deviceCount: 500,
+  deviceRate: 5
+}, {
+  id: 5,
+  name: '厂家5',
+  deviceCount: 500,
+  deviceRate: 5
+}])
 
 const initChart = () => {
-    const chart = echarts.init(chartRef.value)
-    let data: { name: any; value: any }[] = []
-    optinalList.value.forEach((item)=>{
-        data.push({name:item.strategic1,value:item.total})
-    })
-
-    const option = {
-        series: [
-            {
-                type: 'pie',
-                radius: ['20%', '60%'],
-                data: data,
-                label: {
-                    show: true,
-                    position: 'inside', //位置，内部（inside）和外部（outside）
-                    formatter: '{d}%\n{b}' // 显示百分比和名称
-                }
-            }
-        ]}
-
-    chart.setOption(option)
-    // 月度新增科技成果
-    const months: any[] = []
-    const totals: any[] = []
-    month_data.value.map(item => {
-        months.push(item.month+'月')
-        totals.push(item.total)
-    })
-    const chart2 = echarts.init(chartRef2.value)
-    const option2 = {
-        xAxis: {
-            type: 'category',
-            data: months
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-                data: totals,
-                type: 'line'
-            }
-        ]
-    }
-    chart2.setOption(option2)
-    // 项目来源排行榜
-    const holders: any[] = []
-    const holderTotals: any[] = []
-    holder_data.value.map(item => {
-        let h = item.holder
-        if(h.length>8){
-            h = h.substring(0,8)+'...'
-        }
-        holders.push(h)
-        holderTotals.push(item.total)
-    })
-    const chart3 = echarts.init(chartRef3.value)
-    const option3 = {
-        xAxis: {
-            data: holders
-        },
-        yAxis: {},
-        series: [
-            {
-                type: 'bar',
-                data: holderTotals
-            }
-        ]
-    }
-    chart3.setOption(option3)
-    // 历史完成评估排行
-    const heads: any[] = []
-    const headTotals: any[] = []
-    all_ph.value.map(item => {
-        heads.push(item.head)
-        headTotals.push(item.total)
-    })
-    const chart4 = echarts.init(chartRef4.value)
-    const option4 = {
-        xAxis: {
-            data: heads
-        },
-        yAxis: {},
-        series: [
-            {
-                type: 'bar',
-                data: headTotals
-            }
-        ]
-    }
-    chart4.setOption(option4)
+  var chartDom = document.getElementById('pieChart')!
+  var myChart = echarts.init(chartDom)
+  const option = {
+      title: {
+          text: '',
+          left: 'center'
+      },
+      tooltip: {
+          trigger: 'item'
+      },
+      legend: {
+          orient: 'vertical',
+          left: 'left'
+      },
+      series: [
+          {
+              name: '设备数量',
+              type: 'pie',
+              radius: '50%',
+              data: [
+                  { value: 1048, name: '物联网表' },
+                  { value: 735, name: '采集器' },
+                  { value: 580, name: '报警器' },
+                  { value: 484, name: '摄像头' }
+              ],
+              emphasis: {
+                  itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+              }
+          }
+      ]
+  }
+  myChart.setOption(option)
 }
 
-const total = () => {
-    getTotalData({today: today.value}).then((res)=>{
-        if(res.code === 0){
-            thisWeekEnd.value = res.data.thisWeekEnd
-            thisWeekStart.value = res.data.thisWeekStart
-            thisWeek_oreStockTotal.value = res.data.thisWeek_oreStockTotal
-            lastWeek_oreStockTotal.value = res.data.lastWeek_oreStockTotal
-            thisWeek_stockTotal.value = res.data.thisWeek_stockTotal
-            lastWeek_stockTotal.value = res.data.lastWeek_stockTotal
-            thisWeek_totalProfit.value = res.data.thisWeek_totalProfit
-            lastWeek_totalProfit.value = res.data.lastWeek_totalProfit
-            //initChart()
-        }
-    })
-}
-
-const viewSupply = () => {
-    supplyLoading.value = true
-    getSupply({days: days.value}).then((res) => {
-        viewOreList.value = res.data.oreList
-        viewStockList.value = res.data.stockList
-        // viewOreList 先按supplyDate排序，再按name排序
-        viewOreList.value.sort((a: any, b: any) => {
-            if(a.supplyDate > b.supplyDate) {
-                return 1
-            } else if(a.supplyDate < b.supplyDate) {
-                return -1
-            } else {
-                if(a.name > b.name) {
-                    return 1
-                } else if(a.name < b.name) {
-                    return -1
-                } else {
-                    return 0
-                }
-            }
-        })
-
-        supplyLoading.value = false
-    })
-}
-
-const init = () => {
-    total()
-    viewSupply()
+const initLine = () => {
+  var chartDom = document.getElementById('lineChart')!
+  var lineChart = echarts.init(chartDom)
+  const option = {
+      color: ['#80FFA5'],
+      title: {
+          text: ''
+      },
+      tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+              type: 'cross',
+              label: {
+                  backgroundColor: '#6a7985'
+              }
+          }
+      },
+      //legend: {
+      //   data: ['Line 1']
+      //},
+      toolbox: {
+          feature: {
+              saveAsImage: {}
+          }
+      },
+      grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+      },
+      xAxis: [
+          {
+              type: 'category',
+              boundaryGap: false,
+              data: ['4月20', '4月21', '4月22', '4月23', '4月24', '4月25']
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value'
+          }
+      ],
+      series: [
+          {
+              name: '通信量',
+              type: 'line',
+              stack: 'Total',
+              smooth: true,
+              lineStyle: {
+                  width: 0
+              },
+              showSymbol: false,
+              areaStyle: {
+                  opacity: 0.8,
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                      {
+                          offset: 0,
+                          color: 'rgb(128, 255, 165)'
+                      },
+                      {
+                          offset: 1,
+                          color: 'rgb(1, 191, 236)'
+                      }
+                  ])
+              },
+              emphasis: {
+                  focus: 'series'
+              },
+              data: [140, 232, 101, 264, 210, 230]
+          }
+      ]
+  }
+  lineChart.setOption(option)
 }
 
 onMounted(() => {
-    today.value = new Date().getTime()
-    init()
+  setTimeout(() => {
+      initChart()
+      initLine()
+  }, 500)
 })
+
 </script>
-<!--定义布局-->
 <route lang="yaml">
-    meta:
-      layout: platform/index
+  meta:
+    layout: platform/index
 </route>
-
-<style scoped lang="scss">
-.label_font {
-    font-weight: 700;
-    text-align: right;
-    padding-right: 20px;
-    padding-bottom: 20px;
-}
-.home {
-    blockquote {
-        padding: 10px 20px;
-        margin: 0 0 20px;
-        font-size: 17.5px;
-        border-left: 5px solid #eee;
-    }
-
-    hr {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        border: 0;
-        border-top: 1px solid #eee;
-    }
-
-    .col-item {
-        margin-bottom: 20px;
-    }
-
-    ul {
-        padding: 0;
-        margin: 0;
-    }
-
-    font-family: "open sans",
-    "Helvetica Neue",
-    Helvetica,
-    Arial,
-    sans-serif;
-    font-size: 13px;
-    color: #676a6c;
-    overflow-x: hidden;
-
-    ul {
-        list-style-type: none;
-    }
-
-    h4 {
-        margin-top: 0px;
-    }
-
-    h2 {
-        margin-top: 10px;
-        font-size: 26px;
-        font-weight: 100;
-    }
-
-    p {
-        margin-top: 10px;
-
-        b {
-            font-weight: 700;
-        }
-    }
-    .total_css {
-        padding-right: 5px;
-        margin-top: 10px;
-    }
+<style scoped>
+:global(h2#card-usage ~ .example .example-showcase) {
+  background-color: var(--el-fill-color) !important;
 }
 
 .el-statistic {
   --el-statistic-content-font-size: 28px;
-}
-
-.statistic-card {
-  height: 110px;
-  border-radius: 4px;
-  background-color: var(--el-bg-color-overlay);
 }
 
 .statistic-footer {
@@ -501,37 +419,29 @@ onMounted(() => {
   margin-left: 4px;
 }
 
+.small-title {
+  padding-left: 2px;
+  padding-right: 10px;
+}
+
 .green {
   color: var(--el-color-success);
 }
+
 .red {
   color: var(--el-color-error);
 }
-.scrollbar-flex-content {
-  display: flex;
-}
-.scrollbar-item {
-  width: 260px;
-  height: 300px;
-  border-radius: 4px;
-  margin-right: 20px;
-}
-.li_text {
-  width: 100%;
-  padding-bottom: 10px;
-}
-.circle-button-container {
-  text-align: center;
-  background-color: #409eff;
+
+.content {
+  margin-top: 20px;
 }
 
-.circle-button {
-  height: 180px; /* 根据需要调整高度 */
-  width: 180px;  /* 根据需要调整宽度 */
-  border-radius: 50%;
-  margin: 20px;
-
+.block {
+  padding-left: 10px;
 }
-
 </style>
-
+<style>
+.el-card__header {
+  border-bottom: none;
+}
+</style>
