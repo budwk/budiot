@@ -1,8 +1,8 @@
 nutz:
   application:
-    name: blend
+    name: budiot
 server:
-  port: 7857
+  port: 7858
   host: 0.0.0.0
 jetty:
   # extports: 9990 配置多端口监听,逗号分隔
@@ -73,7 +73,7 @@ redis:
   port: 6379
   timeout: 2000
   max_redir: 10
-  database: 3
+  database: 4
   maxTotal: 100
   #password: 123
   pool:
@@ -102,7 +102,7 @@ database:
     package:          #相关实体所在包
       - com.budwk.app
 jdbc:
-  url: jdbc:mysql://127.0.0.1:3306/blend?useUnicode=true&characterEncoding=utf8&useSSL=false
+  url: jdbc:mysql://127.0.0.1:3306/budiot?useUnicode=true&characterEncoding=utf8&useSSL=false
   username: root
   password: "@#pass123"
   validationQuery: select 1
