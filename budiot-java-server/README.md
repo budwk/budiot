@@ -1,4 +1,4 @@
-# BudWk 单应用版本
+# BudIot 单应用版本
 
 ## 编译打包
 
@@ -8,12 +8,12 @@
 
 * 默认配置 
 
-`nohup java -jar blend.jar >/dev/null 2>&1 &`
+`nohup java -jar budiot.jar >/dev/null 2>&1 &`
 
 * 指定jar中配置 
 
-`nohup java -jar -Dnutz.profiles.active=pro -Xmx450m blend.jar >/dev/null 2>&1 &`
+`nohup java -jar -Dnutz.profiles.active=pro -Xmx450m budiot.jar >/dev/null 2>&1 &`
 
 * 加载文件夹中配置 
 
-`nohup java -jar -Dnutz.boot.configure.yaml.dir=/data/blend/ -Xmx450m blend.jar >/dev/null 2>&1 &`
+`nohup java -jar -Dnutz.boot.configure.yaml.dir=/data/blend/ -Xmx450m budiot.jar >/dev/null 2>&1 &`

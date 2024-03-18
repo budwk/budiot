@@ -106,7 +106,7 @@ public class WkMiniLauncher {
                 conf.setAppId(GlobalConstant.DEFAULT_COMMON_APPID);
                 conf.setType(SysConfigType.TEXT);
                 conf.setConfigKey("AppName");
-                conf.setConfigValue("配矿成本核算及仓库管理系统");
+                conf.setConfigValue("物联网设备平台");
                 conf.setNote("系统名称");
                 conf.setOpened(true);
                 dao.insert(conf);
@@ -114,15 +114,15 @@ public class WkMiniLauncher {
                 conf.setAppId(GlobalConstant.DEFAULT_COMMON_APPID);
                 conf.setType(SysConfigType.TEXT);
                 conf.setConfigKey("AppShrotName");
-                conf.setConfigValue("配矿管理系统");
-                conf.setNote("配矿系统");
+                conf.setConfigValue("设备平台");
+                conf.setNote("设备平台");
                 conf.setOpened(true);
                 dao.insert(conf);
                 conf = new Sys_config();
                 conf.setAppId(GlobalConstant.DEFAULT_COMMON_APPID);
                 conf.setType(SysConfigType.TEXT);
                 conf.setConfigKey("AppVersion");
-                conf.setConfigValue("V8.0.0");
+                conf.setConfigValue("V1.0.0");
                 conf.setNote("系统版本号");
                 conf.setOpened(true);
                 dao.insert(conf);
@@ -138,7 +138,7 @@ public class WkMiniLauncher {
                 conf.setAppId(GlobalConstant.DEFAULT_COMMON_APPID);
                 conf.setType(SysConfigType.TEXT);
                 conf.setConfigKey("AppDomain");
-                conf.setConfigValue("http://127.0.0.1:8800");
+                conf.setConfigValue("http://127.0.0.1:1820");
                 conf.setNote("系统域名");
                 conf.setOpened(true);
                 dao.insert(conf);
@@ -146,7 +146,7 @@ public class WkMiniLauncher {
                 conf.setAppId(GlobalConstant.DEFAULT_COMMON_APPID);
                 conf.setType(SysConfigType.TEXT);
                 conf.setConfigKey("AppFileDomain");
-                conf.setConfigValue("http://127.0.0.1:7857");
+                conf.setConfigValue("http://127.0.0.1:7858");
                 conf.setNote("文件访问域名");
                 conf.setOpened(true);
                 dao.insert(conf);
@@ -154,7 +154,7 @@ public class WkMiniLauncher {
                 conf.setAppId(GlobalConstant.DEFAULT_COMMON_APPID);
                 conf.setType(SysConfigType.TEXT);
                 conf.setConfigKey("AppFileDomainIn");
-                conf.setConfigValue("http://127.0.0.1:7857");
+                conf.setConfigValue("http://127.0.0.1:7858");
                 conf.setNote("文件访问内网域名");
                 conf.setOpened(true);
                 dao.insert(conf);
@@ -202,8 +202,8 @@ public class WkMiniLauncher {
                 //初始化单位
                 Sys_unit headUnit = new Sys_unit();
                 headUnit.setPath("0001");
-                headUnit.setName("贵州慧矿智造科技有限公司");
-                headUnit.setAliasName("慧矿智造");
+                headUnit.setName("鲨鱼科技");
+                headUnit.setAliasName("");
                 headUnit.setLocation(0);
                 headUnit.setAddress("银河-太阳系-地球");
                 headUnit.setEmail("");
