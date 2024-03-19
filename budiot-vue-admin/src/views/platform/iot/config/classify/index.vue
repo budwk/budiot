@@ -21,6 +21,10 @@
             <template v-for="(item, idx) in columns" :key="idx">
                 <el-table-column :prop="item.prop" :label="item.label" :fixed="item.fixed" :width="item.width" v-if="item.show"
                     :show-overflow-tooltip="true">
+                    <template v-if="item.prop == 'color'" #default="scope">
+                        <div :style="'width: 50px;height: 20px;background-color:'+scope.row.color">
+                        </div>
+                    </template>
                     <template v-if="item.prop == 'createdAt'" #default="scope">
                         <span>{{ formatTime(scope.row.createdAt) }}</span>
                     </template>
@@ -60,6 +64,11 @@
                             <el-input v-model="formData.name" placeholder="请输入分类名称" maxlength="100" />
                         </el-form-item>
                     </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="背景色" prop="color" v-if="formData.parentId.length==0">
+                                <el-color-picker v-model="formData.color" />
+                        </el-form-item>
+                    </el-col>
                 </el-row>
             </el-form>
             <template #footer>
@@ -76,6 +85,11 @@
                     <el-col :span="24">
                         <el-form-item label="分类名称" prop="name">
                             <el-input v-model="formData.name" placeholder="请输入分类名称" maxlength="100" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="背景色" prop="color" v-if="formData.parentId.length==0">
+                                <el-color-picker v-model="formData.color" />
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -144,6 +158,7 @@ const { queryParams, formData, formRules } = toRefs(data)
 
 const columns = ref([
     { prop: 'name', label: `分类名称`, show: true, fixed: false },
+    { prop: 'color', label: `背景色`, show: true, fixed: false },
     { prop: 'createdAt', label: `创建时间`, show: true, fixed: false, width: 160 }
 ])
 

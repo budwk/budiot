@@ -12,6 +12,7 @@ import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.interceptor.annotation.PrevInsert;
 
 import java.io.Serializable;
+import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -64,8 +65,25 @@ public class Iot_product extends BaseModel implements Serializable {
     private IotPlatform iotPlatform;
 
     @Column
+    @ColDefine(type = ColType.INT)
+    @Comment("计费方式")
+    @ApiModelProperty(description = "计费方式(1-表端计费，2-平台计费）")
+    private Integer payMode;
+
+    @Column
+    @Comment("扩展配置")
+    @ColDefine(type = ColType.MYSQL_JSON)
+    private Map<String, Object> properties;
+
+    @Column
     @Comment("备注")
     @ColDefine(type = ColType.VARCHAR, width = 300)
     @ApiModelProperty(name = "description", description = "备注")
     private String description;
+
+    @One(field = "protocolId")
+    private Iot_protocol protocol;
+
+    @One(field = "classifyId")
+    private Iot_classify classify;
 }
