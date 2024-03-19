@@ -184,7 +184,7 @@ const handleUpdate = (row: any) => {
 // 删除按钮
 const handleDelete = (row: any) => {
     modal.confirm('确定删除 ' + row.name + ' ?').then(() => {
-        return doDelete(row.id)
+        return doDelete(row)
     }).then(() => {
         list()
         modal.msgSuccess('删除成功')

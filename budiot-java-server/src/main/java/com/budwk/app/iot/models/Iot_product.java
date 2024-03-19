@@ -73,7 +73,7 @@ public class Iot_product extends BaseModel implements Serializable {
     @Column
     @Comment("扩展配置")
     @ColDefine(type = ColType.MYSQL_JSON)
-    private Map<String, Object> properties;
+    private Map<String, String> properties;
 
     @Column
     @Comment("备注")

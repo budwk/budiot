@@ -93,11 +93,11 @@ public class IotProtocolController {
     }
 
 
-    @At("/delete/{id}")
+    @At("/delete")
     @POST
     @Ok("json")
     @SaCheckPermission("iot.config.protocol.delete")
-    @SLog(value = "删除设备协议:")
+    @SLog(value = "删除设备协议:${name}")
     @ApiOperation(name = "删除设备协议")
     @ApiFormParams(
             {
@@ -105,10 +105,8 @@ public class IotProtocolController {
             }
     )
     @ApiResponses
-    public Result<?> delete(@Param("id") String id, HttpServletRequest req) {
-        Iot_protocol protocol = iotProtocolService.fetch(id);
+    public Result<?> delete(@Param("id") String id,@Param("name") String name, HttpServletRequest req) {
         iotProtocolService.delete(id);
-        req.setAttribute("_slog_msg", protocol.getName());
         return Result.success();
     }
 

@@ -2,16 +2,20 @@ package com.budwk.app.iot.controllers.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.iot.enums.DeviceType;
 import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
+import com.budwk.app.iot.models.Iot_product;
 import com.budwk.app.iot.services.IotClassifyService;
 import com.budwk.app.iot.services.IotProductService;
 import com.budwk.app.iot.services.IotProtocolService;
 import com.budwk.starter.common.openapi.annotation.*;
+import com.budwk.starter.common.openapi.enums.ParamIn;
 import com.budwk.starter.common.page.PageUtil;
 import com.budwk.starter.common.page.Pagination;
 import com.budwk.starter.common.result.Result;
 import com.budwk.starter.log.annotation.SLog;
+import com.budwk.starter.security.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -57,6 +61,7 @@ public class IotProductController {
         map.addv("protocolList", iotProtocolService.query(Cnd.NEW()));
         map.addv("iotPlatform", IotPlatform.values());
         map.addv("protocolType", ProtocolType.values());
+        map.addv("deviceType", DeviceType.values());
         return Result.success(map);
     }
 
@@ -91,4 +96,38 @@ public class IotProductController {
         }
         return Result.data(iotProductService.listPage(pageNo, pageSize, cnd));
     }
+
+    @At
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.create")
+    @SLog(value = "新增产品:${product.name}")
+    @ApiOperation(name = "新增产品")
+    @ApiFormParams(
+            implementation = Iot_product.class
+    )
+    @ApiResponses
+    public Result<?> create(@Param("..") Iot_product product, HttpServletRequest req) {
+        product.setCreatedBy(SecurityUtil.getUserId());
+        product.setUpdatedBy(SecurityUtil.getUserId());
+        iotProductService.insert(product);
+        return Result.success();
+    }
+
+
+    @At("/get/{id}")
+    @GET
+    @Ok("json")
+    @SaCheckLogin
+    @ApiOperation(name = "获取产品信息")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "id", description = "主键ID", in = ParamIn.PATH, required = true, check = true)
+            }
+    )
+    @ApiResponses
+    public Result<?> get(String id, HttpServletRequest req) {
+        return Result.success(iotProductService.fetch(id));
+    }
+
 }

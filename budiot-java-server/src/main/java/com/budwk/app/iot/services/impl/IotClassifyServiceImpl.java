@@ -27,7 +27,7 @@ public class IotClassifyServiceImpl extends BaseServiceImpl<Iot_classify> implem
             Iot_classify pp = this.fetch(pid);
             path = pp.getPath();
         }
-        classify.setPath(getSubPath("sys_dict", "path", path));
+        classify.setPath(getSubPath("iot_classify", "path", path));
         classify.setParentId(pid);
         dao().insert(classify);
         if (!Strings.isEmpty(pid)) {

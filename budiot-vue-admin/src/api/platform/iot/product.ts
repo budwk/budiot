@@ -2,7 +2,7 @@ export const API_IOT_DEVICE_PRODUCT_INIT = '/iot/admin/device/product/init'
 export const API_IOT_DEVICE_PRODUCT_LIST = '/iot/admin/device/product/list'
 export const API_IOT_DEVICE_PRODUCT_GET = '/iot/admin/device/product/get/'
 export const API_IOT_DEVICE_PRODUCT_CREATE = '/iot/admin/device/product/create'
-export const API_IOT_DEVICE_PRODUCT_DELETE = '/iot/admin/device/product/delete/'
+export const API_IOT_DEVICE_PRODUCT_DELETE = '/iot/admin/device/product/delete'
 export const API_IOT_DEVICE_PRODUCT_UPDATE = '/iot/admin/device/product/update'
 
 import request from '/@/utils/request'

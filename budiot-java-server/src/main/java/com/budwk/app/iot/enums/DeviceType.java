@@ -9,6 +9,7 @@ public enum DeviceType {
     GATEWAY("GATWAY", "网关"),
     COLLECTOR("COLLECTOR", "采集器"),
     VALVE("VALVE", "阀控"),
+    ONOFF("ONOFF", "开关"),
     CAMARA("CAMARA", "摄像头"),
     HOME("HOME", "家居"),
     OTHER("OTHER", "其他");

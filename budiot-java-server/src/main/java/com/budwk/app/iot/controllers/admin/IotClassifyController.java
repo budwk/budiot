@@ -100,7 +100,7 @@ public class IotClassifyController {
     @Ok("json")
     @POST
     @SaCheckPermission("iot.config.classify.create")
-    @SLog(value = "新增设备分类:${dict.name}")
+    @SLog(value = "新增设备分类:${classify.name}")
     @ApiOperation(name = "新增设备分类")
     @ApiFormParams(
             value = {
@@ -163,7 +163,7 @@ public class IotClassifyController {
     @Ok("json")
     @POST
     @SaCheckPermission("iot.config.classify.update")
-    @SLog(value = "修改设备分类:${dict.name}")
+    @SLog(value = "修改设备分类:${classify.name}")
     @ApiOperation(name = "修改设备分类")
     @ApiFormParams(
             implementation = Iot_classify.class

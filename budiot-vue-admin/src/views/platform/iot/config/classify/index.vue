@@ -240,7 +240,7 @@ const handleUpdate = (row: any) => {
 // 删除按钮
 const handleDelete = (row: any) => {
     modal.confirm('此操作将删除 '+row.name+' 及其下级，请谨慎操作！').then(() => {
-        return doDelete(row.id)
+        return doDelete(row)
     }).then(() => {
         list()
         modal.msgSuccess('删除成功')

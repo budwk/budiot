@@ -1,7 +1,7 @@
 export const API_IOT_CONFIG_PROTOCOL_LIST = '/iot/admin/config/protocol/list'
 export const API_IOT_CONFIG_PROTOCOL_GET = '/iot/admin/config/protocol/get/'
 export const API_IOT_CONFIG_PROTOCOL_CREATE = '/iot/admin/config/protocol/create'
-export const API_IOT_CONFIG_PROTOCOL_DELETE = '/iot/admin/config/protocol/delete/'
+export const API_IOT_CONFIG_PROTOCOL_DELETE = '/iot/admin/config/protocol/delete'
 export const API_IOT_CONFIG_PROTOCOL_UPDATE = '/iot/admin/config/protocol/update'
 
 import request from '/@/utils/request'
