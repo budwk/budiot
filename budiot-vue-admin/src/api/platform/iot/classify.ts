@@ -11,7 +11,7 @@ import request from '/@/utils/request'
 export function getList(data: object = {}) {
     return request({
         url: API_IOT_CONFIG_CLASSIFY_LIST,
-        method: 'GET',
+        method: 'POST',
         data: data
     })
 }

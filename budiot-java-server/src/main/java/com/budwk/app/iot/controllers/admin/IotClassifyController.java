@@ -36,11 +36,11 @@ public class IotClassifyController {
 
     @At
     @Ok("json")
-    @GET
+    @POST
     @ApiOperation(name = "Vue3树形列表查询")
-    @ApiImplicitParams(
+    @ApiFormParams(
             {
-                    @ApiImplicitParam(name = "name", example = "", description = "单位名称")
+                    @ApiFormParam(name = "name", example = "", description = "名称")
             }
     )
     @ApiResponses(
@@ -114,6 +114,7 @@ public class IotClassifyController {
             parentId = "";
         }
         classify.setCreatedBy(SecurityUtil.getUserId());
+        classify.setUpdatedBy(SecurityUtil.getUserId());
         iotClassifyService.save(classify, parentId);
         return Result.success();
     }
