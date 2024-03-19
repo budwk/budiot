@@ -160,16 +160,16 @@
                               <el-col :span="15">
                                   <el-row>
                                       <el-radio-group v-model="dataTag" @change="tagChange">
-                                          <el-radio-button label="today">
+                                          <el-radio-button value="today">
                                               今日
                                           </el-radio-button>
-                                          <el-radio-button label="week">
+                                          <el-radio-button value="week">
                                               近一周
                                           </el-radio-button>
-                                          <el-radio-button label="month">
+                                          <el-radio-button value="month">
                                               近一月
                                           </el-radio-button>
-                                          <el-radio-button label="year">
+                                          <el-radio-button value="year">
                                               近一年
                                           </el-radio-button>
                                       </el-radio-group>

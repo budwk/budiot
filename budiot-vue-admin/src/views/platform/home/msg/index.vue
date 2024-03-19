@@ -39,8 +39,8 @@
                 <el-row :gutter="10" class="mb8">
                     <el-col :span="1.5">
                         <el-radio-group v-model="queryParams.type" placeholder="消息类型" @change="typeChange">
-                            <el-radio-button :label="''">全部类型</el-radio-button>
-                            <el-radio-button :label="item.value" v-for="(item) in types" :key="item.value">{{ item.text
+                            <el-radio-button :value="''">全部类型</el-radio-button>
+                            <el-radio-button :value="item.value" v-for="(item) in types" :key="item.value">{{ item.text
                             }}
                             </el-radio-button>
                         </el-radio-group>

@@ -47,7 +47,7 @@
                         <span>集群: </span>
                         <el-radio-group v-model="queryDetailParams.clusterName" placeholder="集群"
                             @change="clusterChange">
-                            <el-radio-button :label="item.name" v-for="(item) in clusters" :key="item.name">{{ item.name
+                            <el-radio-button :value="item.name" v-for="(item) in clusters" :key="item.name">{{ item.name
                             }}
                             </el-radio-button>
                         </el-radio-group>

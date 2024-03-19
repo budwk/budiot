@@ -122,7 +122,7 @@
                     <el-form-item v-if="pwdStep>=2" prop="type" label="验证方式"
                         :rules="{ required: true, message: '请选择验证方式', trigger: ['blur','change']}">
                         <el-radio-group v-model="pwdFormData.type" tabindex="2">
-                            <el-radio v-for="obj in pwdType" :key="obj.key" :label="obj.key">{{ obj.val }}</el-radio>
+                            <el-radio v-for="obj in pwdType" :key="obj.key" :value="obj.key">{{ obj.val }}</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item v-if="pwdStep==3" prop="password" label="新密码"

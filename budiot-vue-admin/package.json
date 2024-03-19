@@ -22,7 +22,7 @@
         "dayjs": "^1.11.10",
         "default-passive-events": "^2.0.0",
         "echarts": "~5.2.2",
-        "element-plus": "2.6.0",
+        "element-plus": "2.6.1",
         "esno": "^0.14.1",
         "fast-glob": "^3.2.12",
         "file-saver": "^2.0.5",

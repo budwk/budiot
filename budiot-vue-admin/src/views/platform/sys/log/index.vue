@@ -24,9 +24,9 @@ v-model="queryParams.msg" placeholder="请输入日志内容" clearable style="w
                     </el-form-item>
                     <el-form-item label="操作状态" prop="status">
                         <el-radio-group v-model="queryParams.status" placeholder="操作状态" @change="statusChange">
-                            <el-radio :label="''">全部</el-radio>
-                            <el-radio :label="'success'">成功</el-radio>
-                            <el-radio :label="'exception'">失败</el-radio>
+                            <el-radio :value="''">全部</el-radio>
+                            <el-radio :value="'success'">成功</el-radio>
+                            <el-radio :value="'exception'">失败</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="操作时间" prop="dateRange" style="font-weight:700;width: 325px;">
@@ -43,8 +43,8 @@ v-model="dateRange" type="daterange" range-separator="-"
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
                 <el-radio-group v-model="queryParams.type" placeholder="日志类型" @change="typeChange">
-                            <el-radio-button :label="''">全部日志</el-radio-button>
-                            <el-radio-button :label="item.value" v-for="(item) in types" :key="item.value">{{ item.text }}</el-radio-button>
+                            <el-radio-button :value="''">全部日志</el-radio-button>
+                            <el-radio-button :value="item.value" v-for="(item) in types" :key="item.value">{{ item.text }}</el-radio-button>
                 </el-radio-group>
             </el-col>
             <el-col :span="1.5">
