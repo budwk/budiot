@@ -30,6 +30,7 @@
         <el-row :gutter="20">
             <el-col :lg="6" :xs="24" class="product-box" v-for="(product, idx) in tableData" :key="idx">
                 <el-card class="box-card" shadow="hover" @mouseover="showButton(idx)" @mouseleave="showButton(-1)"
+                @click="handleDetail(product.id)"
                     :class="{ active: showButtonIdx === idx }">
                     <template #header>
                         <div class="card-header">
@@ -219,6 +220,10 @@ import { getInit, doCreate, doUpdate, getInfo, getList, doDelete } from '/@/api/
 import { toRefs } from '@vueuse/core'
 import { handleTree, findOneValue } from '/@/utils/common'
 import { ElForm, ElUpload } from 'element-plus'
+import { useRouter } from "vue-router"
+import { useRoute } from "vue-router"
+const route = useRoute()
+const router = useRouter()
 
 const auth_MQTT = [{name:'username',value:'',note:'用户名',type:'string'  },{name:'password',value:'',note:'密码',type:'string'  }]
 const auth_AEP_HTTP = [{name:'masterKey',value:'',note:'AEP产品masterKey',type:'string' },{name:'productId',value:'',note:'AEP产品productId',type:'string'  },{name:'hasProfile',value:'true',note:'是否有Profile文件',type:'boolean'  }]
@@ -309,6 +314,12 @@ const handleSearch = () => {
 const resetSearch = () => {
     queryRef.value?.resetFields()
     list()
+}
+
+// 查看详情
+const handleDetail = (id: string) => {
+    console.log(id)
+    router.push('/platform/iot/device/product/' + id+'/detail')
 }
 
 // 查找protocol协议

@@ -5,7 +5,6 @@ import { staticRoutes } from '/@/router/static'
 import { loading } from '/@/utils/loading'
 import { useUserViews } from '../stores/userViews'
 import { useUserInfo } from '../stores/userInfo'
-import { isExternal } from '../utils/common'
 import { setupLayouts } from 'virtual:generated-layouts'
 import generatedRoutes from 'virtual:generated-pages'
 import { usePlatformInfo } from '/@/stores/platformInfo'
@@ -46,6 +45,11 @@ router.beforeEach((to, from, next) => {
         if(!useUserInfo().isLogin()){ //未登录
             useUserInfo().init().then(()=>{
                 useUserViews().generateRoutes().then(()=>{
+                    const jump = to.meta.jump
+                    if(jump) {
+                        next()
+                        return
+                    }
                     const rou = useUserInfo().getRoute(to.path) //获取路由对应的后台菜单信息
                     if(rou){
                         to.meta.title = rou.title
@@ -64,6 +68,11 @@ router.beforeEach((to, from, next) => {
                 })
             })
         }else {
+            const jump = to.meta.jump
+            if(jump) {
+                next()
+                return
+            }
             const rou = useUserInfo().getRoute(to.path) //获取路由对应的后台菜单信息
             if(rou){
                 to.meta.title = rou.title

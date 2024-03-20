@@ -61,6 +61,16 @@ const staticRoutes: Array<RouteRecordRaw> = [
             return { path: '/platform/loading', query: { url: to.path, query: JSON.stringify(to.query) } }
         },
     },
+    {
+        // 产品详情
+        path: '/platform/iot/device/product/:id/detail',
+        component: () => import('/@/views/platform/iot/device/product/detail.vue'),
+        meta: {
+            title: '产品详情',
+            jump: true,
+            layout: "platform/index"
+        },
+    },
 ]
 
 /*
