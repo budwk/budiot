@@ -6,6 +6,7 @@ import com.budwk.app.iot.enums.DeviceType;
 import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
 import com.budwk.app.iot.models.Iot_product;
+import com.budwk.app.iot.models.Iot_protocol;
 import com.budwk.app.iot.services.IotClassifyService;
 import com.budwk.app.iot.services.IotProductService;
 import com.budwk.app.iot.services.IotProtocolService;
@@ -127,7 +128,9 @@ public class IotProductController {
     )
     @ApiResponses
     public Result<?> get(String id, HttpServletRequest req) {
-        return Result.success(iotProductService.fetch(id));
+        Iot_product product= iotProductService.fetch(id);
+        iotProductService.fetchLinks(product,"^(protocol|classify)$");
+        return Result.success(product);
     }
 
 }

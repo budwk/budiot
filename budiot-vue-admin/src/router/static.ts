@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
 import PlatformLayout from '/@/layouts/platform/index.vue'
+import { c } from '../api/platform/iot/product'
 
 const pageTitle = (name: string): string => {
     return `pagesTitle.${name}`
@@ -62,14 +63,69 @@ const staticRoutes: Array<RouteRecordRaw> = [
         },
     },
     {
-        // 产品详情
-        path: '/platform/iot/device/product/:id/detail',
-        component: () => import('/@/views/platform/iot/device/product/detail.vue'),
+        path: '/platform/iot/device/product/:id',
+        component: () => import('/@/views/platform/iot/device/product/id.vue'),
         meta: {
             title: '产品详情',
             jump: true,
             layout: "platform/index"
         },
+        children: [
+            {
+                path: 'detail',
+                component: () => import('/@/views/platform/iot/device/product/detail/index.vue'),
+                meta: {
+                    title: '产品详情',
+                    jump: true,
+                    layout: "platform/index"
+                },
+            },
+            {
+                path: 'device',
+                component: () => import('/@/views/platform/iot/device/product/device/index.vue'),
+                meta: {
+                    title: '设备列表',
+                    jump: true,
+                    layout: "platform/index"
+                },
+            },
+            {
+                path: 'event',
+                component: () => import('/@/views/platform/iot/device/product/event/index.vue'),
+                meta: {
+                    title: '事件列表',
+                    jump: true,
+                    layout: "platform/index"
+                },
+            },
+            {
+                path: 'command',
+                component: () => import('/@/views/platform/iot/device/product/command/index.vue'),
+                meta: {
+                    title: '指令列表',
+                    jump: true,
+                    layout: "platform/index"
+                },
+            },
+            {
+                path: 'subscribe',
+                component: () => import('/@/views/platform/iot/device/product/subscribe/index.vue'),
+                meta: {
+                    title: '订阅管理',
+                    jump: true,
+                    layout: "platform/index"
+                },
+            },
+            {
+                path: 'config',
+                component: () => import('/@/views/platform/iot/device/product/config/index.vue'),
+                meta: {
+                    title: '产品配置',
+                    jump: true,
+                    layout: "platform/index"
+                },
+            },
+        ]
     },
 ]
 
