@@ -77,7 +77,8 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '产品详情',
                     jump: true,
-                    layout: "platform/index"
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
                 },
             },
             {
@@ -86,7 +87,8 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '设备列表',
                     jump: true,
-                    layout: "platform/index"
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
                 },
             },
             {
@@ -95,7 +97,8 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '事件列表',
                     jump: true,
-                    layout: "platform/index"
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
                 },
             },
             {
@@ -104,7 +107,8 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '指令列表',
                     jump: true,
-                    layout: "platform/index"
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
                 },
             },
             {
@@ -113,7 +117,8 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '订阅管理',
                     jump: true,
-                    layout: "platform/index"
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
                 },
             },
             {
@@ -122,7 +127,8 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '产品配置',
                     jump: true,
-                    layout: "platform/index"
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
                 },
             },
         ]

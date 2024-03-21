@@ -29,7 +29,6 @@ import variables from '/@/assets/styles/variables.module.scss'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue';
 import { useClient } from '/@/stores/client'
-import { useUserInfo } from '/@/stores/userInfo'
 import { useUserViews } from '/@/stores/userViews'
 import { useUserSettings } from '/@/stores/userSettings'
 
@@ -43,14 +42,5 @@ const isCollapse = computed(() => !useClient().sidebar.opened)
 const activeMenu = computed(() => {
     const { meta, path } = useRoute()
     return meta.activeMenu || path
-    if (meta.activeMenu) {
-        return meta.activeMenu
-    }
-    if (meta.tree) {
-        return meta.tree
-    }
-    return '0'
 })
-
-console.log(activeMenu.value)
 </script>

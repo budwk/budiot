@@ -318,7 +318,6 @@ const resetSearch = () => {
 
 // 查看详情
 const handleDetail = (id: string) => {
-    console.log(id)
     router.push('/platform/iot/device/product/' + id+'/detail')
 }
 
