@@ -23,6 +23,6 @@ const props = defineProps({
 .el-page-title {
     background-color: #fff;
     font-size: 16px;
-    padding-left: 10px;
+    padding-left: 5px;
 }
 </style>

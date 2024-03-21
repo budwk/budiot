@@ -60,7 +60,7 @@ onMounted(() => {
 <style scoped lang="scss">
 
 .sub-menu-wrap {
-    padding: 5px 15px 0 15px;
+    padding: 5px 5px 0 5px;
     margin-bottom: 15px;
 }
 .sub-menu {

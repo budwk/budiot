@@ -25,7 +25,7 @@ export function getList(data: object = {}) {
 
 export function getInfo(id: string) {
     return request({
-        url: API_IOT_DEVICE_PRODUCT_GET + id,
+        url: API_IOT_DEVICE_PRODUCT_GET + id + '?t=' + new Date().getTime(),
         method: 'GET'
     })
 }
