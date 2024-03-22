@@ -392,18 +392,22 @@ const list = () => {
         tableLoading.value = false
         tableData.value = res.data.list as never
         queryParams.value.totalCount = res.data.totalCount as never
-        deviceCount()
+        nextTick(() => {
+            deviceCount()
+        })
     })
 }
 
 // 通过每个产品的ID查询统计产品下设备数量
 const deviceCount = () => {
     let ids = tableData.value.map((item: any) => item.id)
-    getDeviceCount({ids: ids}).then((res) => {
-        tableData.value.forEach((item: any) => {
-            item.deviceCount = res.data[item.id] || 0
+    if(ids && ids.length > 0) {
+        getDeviceCount({ids: ids}).then((res) => {
+            tableData.value.forEach((item: any) => {
+                item.deviceCount = res.data[item.id] || 0
+            })
         })
-    })
+    }
 }
 
 const init = () => {

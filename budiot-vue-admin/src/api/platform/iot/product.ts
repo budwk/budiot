@@ -5,6 +5,7 @@ export const API_IOT_DEVICE_PRODUCT_CREATE = '/iot/admin/device/product/create'
 export const API_IOT_DEVICE_PRODUCT_DELETE = '/iot/admin/device/product/delete'
 export const API_IOT_DEVICE_PRODUCT_UPDATE = '/iot/admin/device/product/update'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_COUNT = '/iot/admin/device/product/device/count'
+export const API_IOT_DEVICE_PRODUCT_DEVICE_COUNT_MORE = '/iot/admin/device/product/device/countMore'
 
 import request from '/@/utils/request'
 
@@ -60,5 +61,13 @@ export function getDeviceCount(data: object = {}) {
         url: API_IOT_DEVICE_PRODUCT_DEVICE_COUNT,
         method: 'POST',
         data: data
+    })
+}
+
+export function getDeviceCountMore(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_DEVICE_COUNT_MORE,
+        method: 'POST',
+        data: { id: id}
     })
 }

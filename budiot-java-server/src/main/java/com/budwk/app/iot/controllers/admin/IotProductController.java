@@ -184,8 +184,33 @@ public class IotProductController {
     )
     @ApiResponses
     public Result<?> deviceCount(@Param("ids") String[] ids, HttpServletRequest req) {
+        if (ids == null) {
+            return Result.success(NutMap.NEW());
+        }
         Sql sql = Sqls.create("select productId,count(id) as total from iot_device where productId in (@ids) group by productId");
         sql.setParam("ids", ids);
         return Result.success(iotProductService.getMap(sql));
+    }
+
+    @At("/device/countMore")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product")
+    @ApiOperation(name = "获取产品下设备数量")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "id", description = "产品ID")
+            }
+    )
+    @ApiResponses
+    public Result<?> countMore(@Param("id") String id, HttpServletRequest req) {
+        int total = iotDeviceService.count(Cnd.where("productId", "=", id));
+        int online = iotDeviceService.count(Cnd.where("productId", "=", id).and("online", "=", true));
+        int abnormal = iotDeviceService.count(Cnd.where("productId", "=", id).and("abnormal", "=", true));
+        return Result.success(
+                NutMap.NEW().addv("online", online)
+                        .addv("total", total)
+                        .addv("abnormal", abnormal)
+        );
     }
 }
