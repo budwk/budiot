@@ -4,6 +4,7 @@ export const API_IOT_DEVICE_PRODUCT_GET = '/iot/admin/device/product/get/'
 export const API_IOT_DEVICE_PRODUCT_CREATE = '/iot/admin/device/product/create'
 export const API_IOT_DEVICE_PRODUCT_DELETE = '/iot/admin/device/product/delete'
 export const API_IOT_DEVICE_PRODUCT_UPDATE = '/iot/admin/device/product/update'
+export const API_IOT_DEVICE_PRODUCT_DEVICE_COUNT = '/iot/admin/device/product/device/count'
 
 import request from '/@/utils/request'
 
@@ -49,6 +50,14 @@ export function doUpdate(data: object = {}) {
 export function doDelete(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_DELETE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getDeviceCount(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_DEVICE_COUNT,
         method: 'POST',
         data: data
     })

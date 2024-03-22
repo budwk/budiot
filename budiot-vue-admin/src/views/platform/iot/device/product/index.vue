@@ -30,7 +30,6 @@
         <el-row :gutter="20">
             <el-col :lg="6" :xs="24" class="product-box" v-for="(product, idx) in tableData" :key="idx">
                 <el-card class="box-card" shadow="hover" @mouseover="showButton(idx)" @mouseleave="showButton(-1)"
-                @click="handleDetail(product.id)"
                     :class="{ active: showButtonIdx === idx }">
                     <template #header>
                         <div class="card-header">
@@ -49,15 +48,15 @@
                                     </el-tooltip>
                                 </el-col>
                             </el-row>
-                            <el-row>
+                            <el-row @click="handleDetail(product.id)">
                                 <span class="product-title">{{ product.name }}</span>
                             </el-row>
                         </div>
                     </template>
-                    <el-row>
+                    <el-row @click="handleDetail(product.id)">
                         <el-col>
                             <el-form-item label="设备数量：" class="product-field-item">
-                                200
+                                {{ product?.deviceCount }}
                             </el-form-item>
                         </el-col>
                         <el-col>
@@ -71,6 +70,12 @@
                             </el-form-item>
                         </el-col>
                         <el-col>
+                            <el-form-item label="数据格式：" class="product-field-item">
+                                <span v-if="product?.dataFormat == 'json'">JSON</span>
+                                <span v-else>自定义/透传</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col>
                             <el-form-item label="设备协议" class="product-field-item">
                                 {{ findProtocol(product?.protocolId) }}
                             </el-form-item>
@@ -80,6 +85,7 @@
                                 {{ product?.deviceType?.text }}
                             </el-form-item>
                         </el-col>
+
                     </el-row>
                 </el-card>
             </el-col>
@@ -133,6 +139,12 @@
                         <el-radio :value="1">表端计费</el-radio>
                         <el-radio :value="2">平台计费</el-radio>
                     </el-radio-group>
+                </el-form-item>
+                <el-form-item label="数据格式" prop="dataFormat">
+                    <el-select v-model="formData.dataFormat" placeholder="请选择数据格式" clearable style="width: 100%;">
+                        <el-option label="JSON" value="json" />
+                        <el-option label="自定义/透传" value="custom" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="设备协议" prop="protocolId">
                     <el-select v-model="formData.protocolId" placeholder="请选择设备协议" clearable style="width: 100%;">
@@ -195,6 +207,12 @@
                         <el-radio :value="2">平台计费</el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="数据格式" prop="dataFormat">
+                    <el-select v-model="formData.dataFormat" placeholder="请选择数据格式" clearable style="width: 100%;">
+                        <el-option label="JSON" value="json" />
+                        <el-option label="自定义/透传" value="custom" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="设备协议" prop="protocolId">
                     <el-select v-model="formData.protocolId" placeholder="请选择设备协议" clearable style="width: 100%;">
                         <el-option v-for="item in protocolList" :key="item.id" :label="item.name" :value="item.id" />
@@ -216,7 +234,7 @@
 <script setup lang="ts" name="platform-device-device-product">
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import modal from '/@/utils/modal'
-import { getInit, doCreate, doUpdate, getInfo, getList, doDelete } from '/@/api/platform/iot/product'
+import { getInit, doCreate, doUpdate, getInfo, getList, doDelete, getDeviceCount } from '/@/api/platform/iot/product'
 import { toRefs } from '@vueuse/core'
 import { handleTree, findOneValue } from '/@/utils/common'
 import { ElForm, ElUpload } from 'element-plus'
@@ -253,6 +271,7 @@ const data = reactive({
         name: '',
         classifyId: '',
         deviceType: '',
+        dataFormat: 'json',
         iotPlatform: '',
         protocolType: '',
         protocolId: '',
@@ -277,6 +296,7 @@ const data = reactive({
         iotPlatform: [{ required: true, message: "接入平台不能为空", trigger: ["blur", "change"] }],
         protocolType: [{ required: true, message: "接入协议不能为空", trigger: ["blur", "change"] }],
         protocolId: [{ required: true, message: "设备协议不能为空", trigger: ["blur", "change"] }],
+        dataFormat: [{ required: true, message: "数据格式不能为空", trigger: ["blur", "change"] }],
     },
 })
 
@@ -289,6 +309,7 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         name: '',
         classifyId: '',
         deviceType: '',
+        dataFormat: 'json',
         iotPlatform: 'DIRECT',
         protocolType: '',
         protocolId: '',
@@ -371,6 +392,17 @@ const list = () => {
         tableLoading.value = false
         tableData.value = res.data.list as never
         queryParams.value.totalCount = res.data.totalCount as never
+        deviceCount()
+    })
+}
+
+// 通过每个产品的ID查询统计产品下设备数量
+const deviceCount = () => {
+    let ids = tableData.value.map((item: any) => item.id)
+    getDeviceCount({ids: ids}).then((res) => {
+        tableData.value.forEach((item: any) => {
+            item.deviceCount = res.data[item.id] || 0
+        })
     })
 }
 
@@ -422,7 +454,7 @@ const handleUpdate = (row: any) => {
 
 // 删除按钮
 const handleDelete = (row: any) => {
-    modal.confirm('确定删除产品 ' + row.name + '？').then(() => {
+    modal.confirm('确定删除产品 ' + row.name + '？产品下设备也将被删除！').then(() => {
         return doDelete(row.id)
     }).then(() => {
         queryParams.value.pageNo = 1
