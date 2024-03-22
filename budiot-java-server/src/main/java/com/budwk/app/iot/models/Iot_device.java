@@ -4,6 +4,7 @@ import com.budwk.app.iot.enums.DeviceType;
 import com.budwk.starter.common.openapi.annotation.ApiModel;
 import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
 import com.budwk.starter.database.model.BaseModel;
+import com.budwk.starter.excel.annotation.Excel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.nutz.dao.entity.annotation.*;
@@ -60,12 +61,14 @@ public class Iot_device extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("设备编号（铭牌号）")
     @ApiModelProperty(description = "设备编号（铭牌号）")
+    @Excel(name = "设备编号", cellType = Excel.ColumnType.STRING, prompt = "设备编号")
     private String meterNo;
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("设备通讯号")
     @ApiModelProperty(description = "设备通讯号", required = true)
+    @Excel(name = "设备通讯号", cellType = Excel.ColumnType.STRING, prompt = "设备通讯号")
     private String deviceNo;
 
     @Column
@@ -83,11 +86,13 @@ public class Iot_device extends BaseModel implements Serializable {
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("IMEI")
+    @Excel(name = "IMEI", cellType = Excel.ColumnType.STRING, prompt = "IMEI")
     private String imei;
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("ICCID")
+    @Excel(name = "ICCID", cellType = Excel.ColumnType.STRING, prompt = "ICCID")
     private String iccid;
 
     @Column

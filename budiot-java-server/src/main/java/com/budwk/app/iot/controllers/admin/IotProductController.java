@@ -5,16 +5,19 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.budwk.app.iot.enums.DeviceType;
 import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
+import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_product;
 import com.budwk.app.iot.services.IotClassifyService;
 import com.budwk.app.iot.services.IotDeviceService;
 import com.budwk.app.iot.services.IotProductService;
 import com.budwk.app.iot.services.IotProtocolService;
+import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.common.openapi.annotation.*;
 import com.budwk.starter.common.openapi.enums.ParamIn;
 import com.budwk.starter.common.page.PageUtil;
 import com.budwk.starter.common.page.Pagination;
 import com.budwk.starter.common.result.Result;
+import com.budwk.starter.excel.utils.ExcelUtil;
 import com.budwk.starter.log.annotation.SLog;
 import com.budwk.starter.security.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +29,12 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.impl.AdaptorErrorContext;
+import org.nutz.mvc.upload.TempFile;
+import org.nutz.mvc.upload.UploadAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @IocBean
 @At("/iot/admin/device/product")
@@ -212,5 +219,42 @@ public class IotProductController {
                         .addv("total", total)
                         .addv("abnormal", abnormal)
         );
+    }
+
+    @At("/device/import")
+    @POST
+    @Ok("json:full")
+    @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
+    @SaCheckLogin
+    @ApiOperation(name = "导入设备数据")
+    @SLog(value = "导入设备数据")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "Filedata", example = "", description = "文件表单对象名"),
+                    @ApiFormParam(name = "cover", example = "", description = "是否覆盖"),
+            },
+            mediaType = "multipart/form-data"
+    )
+    @ApiResponses
+    public Result<?> deviceImport(@Param("Filedata") TempFile tf, @Param(value = "cover", df = "false") boolean cover, HttpServletRequest req, AdaptorErrorContext err) {
+        if (err != null && err.getAdaptorErr() != null) {
+            return Result.error("上传文件错误");
+        } else if (tf == null) {
+            return Result.error("未上传文件");
+        } else {
+            String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+            if (!".xls".equalsIgnoreCase(suffixName) && !".xlsx".equalsIgnoreCase(suffixName)) {
+                return Result.error("请上传.xls/.xlsx格式文件");
+            }
+            try {
+                ExcelUtil<Iot_device> deviceExcelUtil = new ExcelUtil<>(Iot_device.class);
+                List<Iot_device> list = deviceExcelUtil.importExcel(tf.getInputStream());
+                iotDeviceService.importData(tf.getSubmittedFileName(), list, cover, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+                return Result.success("文件上传成功，处理结果将通过站内信通知");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new BaseException("文件处理失败");
+            }
+        }
     }
 }
