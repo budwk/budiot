@@ -33,7 +33,7 @@
                             <el-link type="primary" :href="tempUrl" target="_blank">下载模板</el-link>
                         </template>
                     </el-upload>
-                    <el-checkbox v-model="cover" label="是否覆盖（慎点，耗时较长）"/>
+                    <el-checkbox v-model="cover" label="是否覆盖"/>
                 </div>
                 <div v-if="status === 2" class="upload-progress">
                     <div class="upload-progress__inner">

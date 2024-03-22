@@ -6,6 +6,7 @@ export const API_IOT_DEVICE_PRODUCT_DELETE = '/iot/admin/device/product/delete'
 export const API_IOT_DEVICE_PRODUCT_UPDATE = '/iot/admin/device/product/update'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_COUNT = '/iot/admin/device/product/device/count'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_COUNT_MORE = '/iot/admin/device/product/device/countMore'
+export const API_IOT_DEVICE_PRODUCT_DEVICE_IMPOT = '/iot/admin/device/product/device/import'
 
 import request from '/@/utils/request'
 

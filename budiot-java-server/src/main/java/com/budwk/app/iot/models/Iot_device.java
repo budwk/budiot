@@ -27,12 +27,6 @@ public class Iot_device extends BaseModel implements Serializable {
     private String id;
 
     @Column
-    @Comment("产品名称")
-    @ColDefine(type = ColType.VARCHAR, width = 50)
-    @ApiModelProperty(name = "name", description = "产品名称", required = true)
-    private String name;
-
-    @Column
     @Comment("设备类型")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @ApiModelProperty(name = "deviceType", description = "设备类型")
@@ -64,14 +58,14 @@ public class Iot_device extends BaseModel implements Serializable {
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Comment("表号（表具通讯号）")
-    @ApiModelProperty(description = "表号（表具通讯号）")
+    @Comment("设备编号（铭牌号）")
+    @ApiModelProperty(description = "设备编号（铭牌号）")
     private String meterNo;
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Comment("设备编号（铭牌号）")
-    @ApiModelProperty(description = "设备编号")
+    @Comment("设备通讯号")
+    @ApiModelProperty(description = "设备通讯号", required = true)
     private String deviceNo;
 
     @Column
