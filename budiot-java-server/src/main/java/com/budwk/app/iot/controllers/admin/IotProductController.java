@@ -232,11 +232,12 @@ public class IotProductController {
             value = {
                     @ApiFormParam(name = "Filedata", example = "", description = "文件表单对象名"),
                     @ApiFormParam(name = "cover", example = "", description = "是否覆盖"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
             },
             mediaType = "multipart/form-data"
     )
     @ApiResponses
-    public Result<?> deviceImport(@Param("Filedata") TempFile tf, @Param(value = "cover", df = "false") boolean cover, HttpServletRequest req, AdaptorErrorContext err) {
+    public Result<?> deviceImport(@Param("Filedata") TempFile tf, @Param(value = "cover", df = "false") boolean cover, @Param("productId")String productId, HttpServletRequest req, AdaptorErrorContext err) {
         if (err != null && err.getAdaptorErr() != null) {
             return Result.error("上传文件错误");
         } else if (tf == null) {
@@ -249,7 +250,7 @@ public class IotProductController {
             try {
                 ExcelUtil<Iot_device> deviceExcelUtil = new ExcelUtil<>(Iot_device.class);
                 List<Iot_device> list = deviceExcelUtil.importExcel(tf.getInputStream());
-                iotDeviceService.importData(tf.getSubmittedFileName(), list, cover, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+                iotDeviceService.importData(productId, tf.getSubmittedFileName(), list, cover, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
                 return Result.success("文件上传成功，处理结果将通过站内信通知");
             } catch (Exception e) {
                 e.printStackTrace();

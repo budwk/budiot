@@ -16,6 +16,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Table("iot_device")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
+@TableIndexes({@Index(name = "IDX_DEVICE_METERNO", fields = {"meterNo"}, unique = false),
+        @Index(name = "IDX_DEVICE_DEVICE_NO", fields = {"productId", "deviceNo"}, unique = true)})
 @Comment("设备信息表")
 @ApiModel(description = "设备信息")
 public class Iot_device extends BaseModel implements Serializable {
@@ -68,7 +70,7 @@ public class Iot_device extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("设备通讯号")
     @ApiModelProperty(description = "设备通讯号", required = true)
-    @Excel(name = "设备通讯号", cellType = Excel.ColumnType.STRING, prompt = "设备通讯号")
+    @Excel(name = "设备通信号", cellType = Excel.ColumnType.STRING, prompt = "设备通信号")
     private String deviceNo;
 
     @Column
@@ -99,11 +101,6 @@ public class Iot_device extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 255)
     @Comment("第三方IOT平台设备id")
     private String iotPlatformId;
-
-    @Column
-    @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Comment("所属单位")
-    private String unitId;
 
     @Column
     @ColDefine(type = ColType.INT, width = 2)

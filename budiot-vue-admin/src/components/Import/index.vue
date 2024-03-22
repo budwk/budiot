@@ -33,7 +33,7 @@
                             <el-link type="primary" :href="tempUrl" target="_blank">下载模板</el-link>
                         </template>
                     </el-upload>
-                    <el-checkbox v-model="cover" label="是否覆盖"/>
+                    <el-checkbox v-if="props.cover" v-model="cover" label="是否覆盖"/>
                 </div>
                 <div v-if="status === 2" class="upload-progress">
                     <div class="upload-progress__inner">
@@ -123,6 +123,10 @@ const props = defineProps({
         type: Object,
         default: () => ({})
     },
+    cover: {
+        type: Boolean,
+        default: false
+    },
     prefixValid: {
         type: Function,
         default: () => null
@@ -148,6 +152,10 @@ const handleUpload = ( uploadFile: any ) => {
     let f = new FormData()
     f.append('Filedata', uploadFile.file)
     f.append('cover', cover.value)
+    // 遍历附加数据
+    for (let key in props.data) {
+        f.append(key, props.data[key])
+    }
     fileUploadExt(f, {}, uploadFile.action, props.uploadLimit).then((res) => {
         if (res.code == 0) {
             importSuccess(res.msg)

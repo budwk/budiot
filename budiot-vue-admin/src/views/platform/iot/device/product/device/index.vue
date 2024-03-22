@@ -31,6 +31,7 @@
                                 v-permission="['iot.device.product.device.import']"
                                 btn-text="导入设备"
                                 :action="API_IOT_DEVICE_PRODUCT_DEVICE_IMPOT"
+                                :data="queryParams"
                                 temp-url="/tpl/template_device.xlsx"
                                 @refresh="handleSearch"
                                 style="margin-right: 12px"
@@ -85,6 +86,7 @@ const data = reactive({
         payMode: 0,
     },
     queryParams: {
+        productId: id,
         filedName: 'deviceNo',
         filedValue: '',
         pageNo: 1,

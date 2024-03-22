@@ -6,5 +6,5 @@ import com.budwk.starter.database.service.BaseService;
 import java.util.List;
 
 public interface IotDeviceService extends BaseService<Iot_device> {
-    void importData(String fileName, List<Iot_device> list, boolean over, String userId, String loginname);
+    void importData(String productId,String fileName, List<Iot_device> list, boolean over, String userId, String loginname);
 }

@@ -60,7 +60,7 @@ public class Sys_msg extends BaseModel implements Serializable {
     @Column
     @Comment("消息内容(500字节以内)")
     @ApiModelProperty(description = "消息内容(500字节以内)")
-    @ColDefine(type = ColType.VARCHAR,width = 500)
+    @ColDefine(type = ColType.TEXT)
     private String note;
 
     @Column
