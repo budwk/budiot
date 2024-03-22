@@ -47,13 +47,40 @@
                </div>
             </el-col>
         </el-row>
+        <el-row class="mb8">
+            <el-table v-loading="tableLoading" :data="tableData" row-key="id">
+            <template v-for="(item, idx) in columns" :key="idx">
+                <el-table-column :prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
+                    :show-overflow-tooltip="true" :align="item.align" :width="item.width">
+                    <template v-if="item.prop == 'createdAt'" #default="scope">
+                        <span>{{ formatTime(scope.row.createdAt) }}</span>
+                    </template>
+                </el-table-column>
+            </template>
+            <el-table-column fixed="right" header-align="center" align="center" label="操作"
+                class-name="small-padding fixed-width" width="150">
+                <template #default="scope">
+                    <div>
+                        <el-tooltip content="修改" placement="top">
+                            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                                v-permission="['iot.device.product.device.update']"></el-button>
+                        </el-tooltip>
+                        <el-tooltip content="删除" placement="top">
+                            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                                v-permission="['iot.device.product.device.delete']"></el-button>
+                        </el-tooltip>
+                    </div>
+                </template>
+            </el-table-column>
+        </el-table>
+        </el-row>
     </div>
 </template>
 <script setup lang="ts" >
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { useRoute } from "vue-router"
-import { API_IOT_DEVICE_PRODUCT_DEVICE_IMPOT } from '/@/api/platform/iot/product'
+import { getDeviceList, API_IOT_DEVICE_PRODUCT_DEVICE_IMPOT } from '/@/api/platform/iot/product'
 import { ElForm } from 'element-plus'
 
 const route = useRoute()
@@ -69,7 +96,16 @@ const filedList = ref([
     { code: 'imei', name: 'IMEI' },
     { code: 'iccid', name: 'ICCID' },
 ])
-
+const tableData = ref([])
+const tableLoading = ref(false)
+const columns = ref([
+    { prop: 'deviceNo', label: '设备通信号', show: true, fixed: 'left' },
+    { prop: 'meterNo', label: '设备编号', show: true },
+    { prop: 'imei', label: 'IMEI', show: true },
+    { prop: 'iccid', label: 'ICCID', show: true },
+    { prop: 'lastConnectionTime', label: '最后通信时间', show: true },
+    { prop: 'createdAt', label: '创建时间', show: true },
+])
 const data = reactive({
     formData: {
         id: '',
@@ -118,12 +154,31 @@ const resetSearch = () => {
     list()
 }
 
-const list = () => {
-    console.log('list')
-}
 
 
 const handleCreate = () => {
 
 }
+
+const handleUpdate = (row: any) => {
+
+}
+
+const handleDelete = (row: any) => {
+
+}
+
+const list = () => {
+    tableLoading.value = true
+    getDeviceList(queryParams.value).then((res) => {
+        tableLoading.value = false
+        tableData.value = res.data.list
+        console.log(res)
+        queryParams.value.totalCount = res.total
+    })
+}
+
+onMounted(() => {
+    list()
+})
 </script>

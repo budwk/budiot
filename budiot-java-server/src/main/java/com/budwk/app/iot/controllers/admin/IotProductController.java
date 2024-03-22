@@ -237,7 +237,7 @@ public class IotProductController {
             mediaType = "multipart/form-data"
     )
     @ApiResponses
-    public Result<?> deviceImport(@Param("Filedata") TempFile tf, @Param(value = "cover", df = "false") boolean cover, @Param("productId")String productId, HttpServletRequest req, AdaptorErrorContext err) {
+    public Result<?> deviceImport(@Param("Filedata") TempFile tf, @Param(value = "cover", df = "false") boolean cover, @Param("productId") String productId, HttpServletRequest req, AdaptorErrorContext err) {
         if (err != null && err.getAdaptorErr() != null) {
             return Result.error("上传文件错误");
         } else if (tf == null) {
@@ -257,5 +257,38 @@ public class IotProductController {
                 throw new BaseException("文件处理失败");
             }
         }
+    }
+
+    @At("/device/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "设备列表")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
+                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
+                    @ApiFormParam(name = "filedName", example = "", description = "查询字段"),
+                    @ApiFormParam(name = "filedValue", example = "", description = "字段值")
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckPermission("iot.device.product")
+    public Result<?> deviceList(@Param("productId") String productId, @Param("filedName") String filedName, @Param("filedValue") String filedValue, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isNotBlank(productId)) {
+            cnd.and("productId", "=", productId);
+        }
+        if (Strings.isNotBlank(filedValue)) {
+            cnd.and(Cnd.likeEX(filedName, filedValue));
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.data(iotDeviceService.listPage(pageNo, pageSize, cnd));
     }
 }
