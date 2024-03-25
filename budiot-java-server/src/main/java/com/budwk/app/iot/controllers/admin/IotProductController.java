@@ -7,6 +7,7 @@ import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_product;
+import com.budwk.app.iot.models.Iot_product_attr;
 import com.budwk.app.iot.services.*;
 import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.common.openapi.annotation.*;
@@ -40,21 +41,22 @@ import java.util.List;
 @ApiDefinition(tag = "产品管理")
 @Slf4j
 public class IotProductController {
-
     @Inject
     private IotClassifyService iotClassifyService;
-
     @Inject
     private IotProtocolService iotProtocolService;
-
     @Inject
     private IotProductService iotProductService;
-
     @Inject
     private IotDeviceService iotDeviceService;
-
     @Inject
     private IotDeviceLogService iotDeviceLogService;
+    @Inject
+    private IotProductAttrService iotProductAttrService;
+    @Inject
+    private IotProductCmdService iotProductCmdService;
+    @Inject
+    private IotProductPropService iotProductPropService;
 
     @At
     @Ok("json")
@@ -411,4 +413,103 @@ public class IotProductController {
             log.error(e.getMessage());
         }
     }
+
+    @At("/attr/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "参数列表")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
+                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
+                    @ApiFormParam(name = "name", example = "", description = "查询字段")
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckPermission("iot.device.product")
+    public Result<?> attrList(@Param("productId") String productId, @Param("name") String name, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isNotBlank(productId)) {
+            cnd.and("productId", "=", productId);
+        }
+        if (Strings.isNotBlank(name)) {
+            cnd.and(Cnd.exps("code", "like", "%" + name + "%").or("name", "like", "%" + name + "%"));
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.data(iotProductAttrService.listPage(pageNo, pageSize, cnd));
+    }
+
+    @At("/attr/create")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.config")
+    @SLog(value = "新增参数:${attr.name}")
+    @ApiOperation(name = "新增参数")
+    @ApiFormParams(
+            implementation = Iot_product_attr.class
+    )
+    @ApiResponses
+    public Result<?> attrDevice(@Param("..") Iot_product_attr attr, HttpServletRequest req) {
+        attr.setCreatedBy(SecurityUtil.getUserId());
+        attr.setUpdatedBy(SecurityUtil.getUserId());
+        iotProductAttrService.insert(attr);
+        return Result.success();
+    }
+
+    @At("/attr/update")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.config")
+    @SLog(value = "修改参数:${attr.name}")
+    @ApiOperation(name = "修改参数")
+    @ApiFormParams(
+            implementation = Iot_product_attr.class
+    )
+    @ApiResponses
+    public Result<?> update(@Param("..") Iot_product_attr attr, HttpServletRequest req) {
+        attr.setUpdatedBy(SecurityUtil.getUserId());
+        iotProductAttrService.updateIgnoreNull(attr);
+        return Result.success();
+    }
+
+    @At("/attr/delete")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.config")
+    @SLog(value = "删除参数:${name}")
+    @ApiOperation(name = "删除参数")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "id", description = "ID"),
+                    @ApiFormParam(name = "name", description = "参数名")
+            }
+    )
+    @ApiResponses
+    public Result<?> attrDevice(@Param("id") String id, @Param("name") String name, HttpServletRequest req) {
+        iotProductAttrService.delete(id);
+        return Result.success();
+    }
+
+    @At("/attr/get/{id}")
+    @GET
+    @Ok("json")
+    @SaCheckLogin
+    @ApiOperation(name = "获取参数")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "id", description = "主键ID", in = ParamIn.PATH, required = true, check = true)
+            }
+    )
+    @ApiResponses
+    public Result<?> getAttr(String id, HttpServletRequest req) {
+        return Result.success(iotProductAttrService.fetch(id));
+    }
+
 }

@@ -36,7 +36,7 @@ const menuList = ref([
     { id: 'event', name: '事件列表', path: '/platform/iot/device/product/'+id+'/event' },
     { id: 'command', name: '指令列表', path: '/platform/iot/device/product/'+id+'/command' },
     { id: 'subscribe', name: '订阅管理', path: '/platform/iot/device/product/'+id+'/subscribe' },
-    { id: 'config', name: '参数配置', path: '/platform/iot/device/product/'+id+'/config' }
+    { id: 'config', name: '产品配置', path: '/platform/iot/device/product/'+id+'/config' }
 ])
 
 const handleMenu = (key: string, keyPath: string[]) => {

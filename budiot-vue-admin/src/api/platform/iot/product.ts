@@ -4,6 +4,7 @@ export const API_IOT_DEVICE_PRODUCT_GET = '/iot/admin/device/product/get/'
 export const API_IOT_DEVICE_PRODUCT_CREATE = '/iot/admin/device/product/create'
 export const API_IOT_DEVICE_PRODUCT_DELETE = '/iot/admin/device/product/delete'
 export const API_IOT_DEVICE_PRODUCT_UPDATE = '/iot/admin/device/product/update'
+// 设备管理
 export const API_IOT_DEVICE_PRODUCT_DEVICE_COUNT = '/iot/admin/device/product/device/count'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_COUNT_MORE = '/iot/admin/device/product/device/countMore'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT = '/iot/admin/device/product/device/import'
@@ -14,6 +15,13 @@ export const API_IOT_DEVICE_PRODUCT_DEVICE_CREATE = '/iot/admin/device/product/d
 export const API_IOT_DEVICE_PRODUCT_DEVICE_DELETE = '/iot/admin/device/product/device/delete'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_DELETES = '/iot/admin/device/product/device/deletes'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_UPDATE = '/iot/admin/device/product/device/update'
+// 上报参数
+export const API_IOT_DEVICE_PRODUCT_ATTR_LIST = '/iot/admin/device/product/attr/list'
+export const API_IOT_DEVICE_PRODUCT_ATTR_GET = '/iot/admin/device/product/attr/get/'
+export const API_IOT_DEVICE_PRODUCT_ATTR_CREATE = '/iot/admin/device/product/attr/create'
+export const API_IOT_DEVICE_PRODUCT_ATTR_DELETE = '/iot/admin/device/product/attr/delete'
+export const API_IOT_DEVICE_PRODUCT_ATTR_DELETES = '/iot/admin/device/product/attr/deletes'
+export const API_IOT_DEVICE_PRODUCT_ATTR_UPDATE = '/iot/admin/device/product/attr/update'
 
 import request from '/@/utils/request'
 
@@ -123,6 +131,46 @@ export function doDeviceDelete(data: object = {}) {
 export function doDeviceDeletes(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_DEVICE_DELETES,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getAttrList(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_ATTR_LIST,
+        method: 'POST',
+        data: data
+    })
+}
+
+
+export function getAttrInfo(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_ATTR_GET + id + '?t=' + new Date().getTime(),
+        method: 'GET'
+    })
+}
+
+export function doAttrCreate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_ATTR_CREATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doAttrUpdate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_ATTR_UPDATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doAttrDelete(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_ATTR_DELETE,
         method: 'POST',
         data: data
     })

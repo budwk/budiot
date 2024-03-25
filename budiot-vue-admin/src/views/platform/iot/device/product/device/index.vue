@@ -70,6 +70,10 @@
                     <template v-if="item.prop == 'createdAt'" #default="scope">
                         <span>{{ formatTime(scope.row.createdAt) }}</span>
                     </template>
+                    <template v-if="item.prop == 'online'" #default="scope">
+                        <el-tag v-if="scope.row.online" type="success">在线</el-tag>
+                        <el-tag v-else type="danger">离线</el-tag>
+                    </template>
                 </el-table-column>
             </template>
             <el-table-column fixed="right" header-align="center" align="center" label="操作"
@@ -196,8 +200,7 @@ const columns = ref([
     { prop: 'imei', label: 'IMEI', show: true },
     { prop: 'iccid', label: 'ICCID', show: true },
     { prop: 'lastConnectionTime', label: '最后通信时间', show: true },
-    { prop: 'online', label: '在线状态', show: true },
-    { prop: 'createdAt', label: '创建时间', show: true },
+    { prop: 'online', label: '在线状态', show: true }
 ])
 const data = reactive({
     formData: {
