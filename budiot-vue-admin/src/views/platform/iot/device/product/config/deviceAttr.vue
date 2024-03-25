@@ -2,7 +2,7 @@
     <div style="padding-left: 5px">
         <el-row :gutter="10" class="mb8">
             
-                <el-form :model="queryParams" shallowRef="queryRef" :inline="true" label-width="68px">
+                <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
                     <el-form-item label="输入参数名称">
                         <el-input
     v-model="queryParams.name" placeholder="请输入参数名称/参数标识" clearable style="width: 380px"
@@ -18,7 +18,7 @@
     </div>
 </template>
 <script setup lang="ts" name="deviceAttr">
-import { nextTick, onMounted, reactive, ref, shallowRef, toRefs } from 'vue'
+import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm } from 'element-plus'
 import { useRoute } from "vue-router"
@@ -27,16 +27,16 @@ import { getAttrList, getAttrInfo, doAttrCreate, doAttrUpdate, doAttrDelete } fr
 const route = useRoute()
 const id = route.params.id as string
 
-const createRef = shallowRef<InstanceType<typeof ElForm>>()
-const updateRef = shallowRef<InstanceType<typeof ElForm>>()
-const queryRef = shallowRef<InstanceType<typeof ElForm>>()
+const createRef = ref<InstanceType<typeof ElForm>>()
+const updateRef = ref<InstanceType<typeof ElForm>>()
+const queryRef = ref<InstanceType<typeof ElForm>>()
 
-const showCreate = shallowRef(false)
-const showUpdate = shallowRef(false)
+const showCreate = ref(false)
+const showUpdate = ref(false)
 
-const tableData = shallowRef([])
-const tableLoading = shallowRef(false)
-const columns = shallowRef([
+const tableData = ref([])
+const tableLoading = ref(false)
+const columns = ref([
     { prop: 'deviceNo', label: '设备通信号', show: true, fixed: 'left' },
     { prop: 'meterNo', label: '设备编号', show: true },
     { prop: 'iotPlatformId', label: '第三方平台设备号', show: false },
@@ -68,9 +68,7 @@ const data = reactive({
     },
 })
 
-const queryParams = shallowRef(data.queryParams)
-const formData = shallowRef(data.formData)
-const formRules = shallowRef(data.formRules)
+const { queryParams, formData, formRules } = toRefs(data)
 
 const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
     formData.value = {

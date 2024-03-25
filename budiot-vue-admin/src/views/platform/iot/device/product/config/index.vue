@@ -12,7 +12,7 @@
     </el-row>
 </template>
 <script setup lang="ts" >
-import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
+import { nextTick, onMounted, reactive, ref, toRefs, shallowRef } from 'vue'
 import modal from '/@/utils/modal'
 import { useRoute } from "vue-router"
 import deviceAttr from "./deviceAttr.vue"
@@ -21,7 +21,7 @@ import deviceEvent from "./deviceEvent.vue"
 import deviceCmd from "./deviceCmd.vue"
 
 const activeTab = ref('deviceAttr')
-const activeBlock = ref(deviceAttr)
+const activeBlock = shallowRef(deviceAttr)
 
 const tabList = ref([
     { name: 'deviceAttr', text: '参数配置' },
