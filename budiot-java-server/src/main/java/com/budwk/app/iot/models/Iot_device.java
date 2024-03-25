@@ -61,17 +61,17 @@ public class Iot_device extends BaseModel implements Serializable {
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Comment("设备编号（铭牌号）")
-    @ApiModelProperty(description = "设备编号（铭牌号）")
-    @Excel(name = "设备编号", cellType = Excel.ColumnType.STRING, prompt = "设备编号")
-    private String meterNo;
-
-    @Column
-    @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("设备通讯号")
     @ApiModelProperty(description = "设备通讯号", required = true)
     @Excel(name = "设备通信号", cellType = Excel.ColumnType.STRING, prompt = "设备通信号")
     private String deviceNo;
+
+    @Column
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    @Comment("设备编号（铭牌号）")
+    @ApiModelProperty(description = "设备编号（铭牌号）")
+    @Excel(name = "设备编号", cellType = Excel.ColumnType.STRING, prompt = "设备编号")
+    private String meterNo;
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)

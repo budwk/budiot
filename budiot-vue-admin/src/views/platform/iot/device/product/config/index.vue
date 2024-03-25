@@ -1,9 +1,14 @@
 <template>
     <el-row type="flex" class="column-box">
         <div class="column-box__side" style="height: calc(100vh - 220px)">
-            <el-tabs v-model="activeTab" tab-position="left" style="width: 220px;" @tab-change="tabChange">
-                <el-tab-pane v-for="(item,ind) in tabList" :key="'comp_'+ind" :label="item.text" :name="item.name"  :style="{ width: '500px' }"/>
-            </el-tabs>
+            <el-menu
+                :default-active="activeTab"
+                class="menu-div"
+            >
+                <el-menu-item v-for="(item,ind) in tabList" :key="'menu_'+ind" :index="item.name" @click="tabChange(item.name)"
+                class="menu-item"
+                >{{ item.text }}</el-menu-item>
+            </el-menu>
         </div>
 
         <div class="column-box__main">
@@ -30,8 +35,7 @@ const tabList = ref([
     { name: 'deviceCmd', text: '指令配置' }
 ])
 
-const tabChange = (val: string) => {
-    console.log(val)
+const tabChange = (val: any) => {
     switch (val) {
         case 'deviceAttr':
             activeTab.value = 'deviceAttr'
@@ -53,13 +57,21 @@ const tabChange = (val: string) => {
 }
 </script>
 <style scoped lang="scss">
-
+.menu-div {
+    text-align: right;
+    width: 180px;
+}
+.menu-item {
+    display: inherit;
+    padding-right: 50px;
+}
 .column-box {
     display: flex;
     justify-content: space-between;
+    min-width: 180px;
     &__side {
         flex-shrink: 0;
-        min-width: 220px;
+        min-width: 180px;
         margin-right: 15px;
         padding: 15px 0;
         background-color: #fff;
@@ -71,16 +83,12 @@ const tabChange = (val: string) => {
     }
     &__main {
         flex-grow: 1;
-        max-width: calc(100% - 225px);
+        max-width: calc(100% - 205px);
         background-color: #fff;
         .el-card + .el-card {
             margin-top: 0;
             border-top: 15px solid #eff0f4;
         }
-    }
-
-    .el-tabs__nav {
-        width: 220px;
     }
 
     .el-tabs__content {
