@@ -18,6 +18,7 @@ import RightToolbar from '/@/components/RightToolbar/index.vue'
 // 分页组件
 import Pagination from '/@/components/Pagination/index.vue'
 import Import from '/@/components/Import/index.vue'
+import Export from '/@/components/Export/index.vue'
 import Cookies from 'js-cookie'
 // 纠结 import 'default-passive-events' 
 // 加了有的组件报错 Unable to preventDefault inside passive event listener invocation.
@@ -36,8 +37,9 @@ async function start() {
     app.component('RightToolbar', RightToolbar)
     // 注册分页组件
     app.component('Pagination', Pagination)
-    // 导入文件组件
+    // 导入导出组件
     app.component('Import', Import)
+    app.component('Export', Export)
     
     app.use(router)
     app.use(pinia)

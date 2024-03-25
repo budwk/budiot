@@ -32,12 +32,6 @@ public class Iot_device_log extends BaseModel implements Serializable {
     private String deviceId;
 
     @Column
-    @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Comment("产品ID")
-    @ApiModelProperty(description = "产品ID")
-    private String productId;
-
-    @Column
     @Comment("操作时间")
     @ApiModelProperty(description = "操作时间")
     private Long operateTime;

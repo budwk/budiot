@@ -3,6 +3,7 @@ package com.budwk.app.iot.services.impl;
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_product;
 import com.budwk.app.iot.models.Iot_protocol;
+import com.budwk.app.iot.services.IotDeviceLogService;
 import com.budwk.app.iot.services.IotDeviceService;
 import com.budwk.app.iot.services.IotProductService;
 import com.budwk.app.iot.services.IotProtocolService;
@@ -10,6 +11,7 @@ import com.budwk.app.sys.enums.SysMsgType;
 import com.budwk.app.sys.services.SysMsgService;
 import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.database.service.BaseServiceImpl;
+import com.budwk.starter.security.utils.SecurityUtil;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -30,6 +32,8 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
     private IotProductService iotProductService;
     @Inject
     private IotProtocolService iotProtocolService;
+    @Inject
+    private IotDeviceLogService iotDeviceLogService;
 
     public void importData(String productId, String fileName, List<Iot_device> list, boolean over, String userId, String loginname) {
         if (list == null || list.size() == 0) {
@@ -59,6 +63,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
             device.setUpdatedBy(userId);
             try {
                 this.fastInsert(device);
+                iotDeviceLogService.log("新增设备", device.getId(), userId, loginname);
                 successNum++;
             } catch (Exception e) {
                 String duplicate = "";

@@ -96,7 +96,7 @@
         <pagination :total="queryParams.totalCount" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize"
             @pagination="list" />
 
-        <el-dialog title="新增产品" v-model="showCreate" width="45%">
+        <el-dialog title="新增产品" v-model="showCreate" width="45%" :close-on-click-modal="false">
             <el-form ref="createRef" :model="formData" :rules="formRules" label-width="100px">
                 <el-form-item label="产品名称" prop="name">
                     <el-input v-model="formData.name" placeholder="请输入产品名称" />
@@ -163,7 +163,7 @@
             </template>
         </el-dialog>
 
-        <el-dialog title="修改产品" v-model="showUpdate" width="45%">
+        <el-dialog title="修改产品" v-model="showUpdate" width="45%" :close-on-click-modal="false">
             <el-form ref="updateRef" :model="formData" :rules="formRules" label-width="100px">
                 <el-form-item label="产品名称" prop="name">
                     <el-input v-model="formData.name" placeholder="请输入产品名称" />
@@ -459,7 +459,7 @@ const handleUpdate = (row: any) => {
 // 删除按钮
 const handleDelete = (row: any) => {
     modal.confirm('确定删除产品 ' + row.name + '？产品下设备也将被删除！').then(() => {
-        return doDelete(row.id)
+        return doDelete(row)
     }).then(() => {
         queryParams.value.pageNo = 1
         list()

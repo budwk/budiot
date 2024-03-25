@@ -100,6 +100,7 @@ public class Iot_device extends BaseModel implements Serializable {
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 255)
     @Comment("第三方IOT平台设备id")
+    @Excel(name = "第三方设备编号", cellType = Excel.ColumnType.STRING, prompt = "第三方设备编号", type = Excel.Type.EXPORT)
     private String iotPlatformId;
 
     @Column
@@ -114,10 +115,12 @@ public class Iot_device extends BaseModel implements Serializable {
     @Comment("在线状态")
     @ApiModelProperty(description = "在线状态：true-在线，false-不在线")
     @Default("0")
+    @Excel(name = "是否在线", cellType = Excel.ColumnType.STRING, prompt = "是否在线",dict = "false=离线,true=在线",type = Excel.Type.EXPORT)
     private Boolean online;
 
     @Column
     @Comment("最新通讯连接时间")
     @ApiModelProperty(description = "最新通讯连接时间")
+    @Excel(name = "通讯时间", cellType = Excel.ColumnType.NUMERIC, prompt = "通讯时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
     private Long lastConnectionTime;
 }

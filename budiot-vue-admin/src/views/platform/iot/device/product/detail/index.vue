@@ -80,7 +80,7 @@
         </el-row>
     </div>
 </template>
-<script setup lang="ts" name="platform-device-device-product-detail">
+<script setup lang="ts">
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import modal from '/@/utils/modal'
 import { useRoute } from "vue-router"

@@ -7,10 +7,7 @@ import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_product;
-import com.budwk.app.iot.services.IotClassifyService;
-import com.budwk.app.iot.services.IotDeviceService;
-import com.budwk.app.iot.services.IotProductService;
-import com.budwk.app.iot.services.IotProtocolService;
+import com.budwk.app.iot.services.*;
 import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.common.openapi.annotation.*;
 import com.budwk.starter.common.openapi.enums.ParamIn;
@@ -34,6 +31,7 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @IocBean
@@ -54,6 +52,9 @@ public class IotProductController {
 
     @Inject
     private IotDeviceService iotDeviceService;
+
+    @Inject
+    private IotDeviceLogService iotDeviceLogService;
 
     @At
     @Ok("json")
@@ -290,5 +291,124 @@ public class IotProductController {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
         return Result.data(iotDeviceService.listPage(pageNo, pageSize, cnd));
+    }
+
+    @At("/device/create")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.create")
+    @SLog(value = "新增设备:${device.deviceNo}")
+    @ApiOperation(name = "新增设备")
+    @ApiFormParams(
+            implementation = Iot_device.class
+    )
+    @ApiResponses
+    public Result<?> createDevice(@Param("..") Iot_device device, HttpServletRequest req) {
+        device.setCreatedBy(SecurityUtil.getUserId());
+        device.setUpdatedBy(SecurityUtil.getUserId());
+        iotDeviceService.insert(device);
+        iotDeviceLogService.log("新增设备", device.getId(), SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+        return Result.success();
+    }
+
+    @At("/device/update")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.update")
+    @SLog(value = "修改设备:${device.name}")
+    @ApiOperation(name = "修改设备")
+    @ApiFormParams(
+            implementation = Iot_device.class
+    )
+    @ApiResponses
+    public Result<?> update(@Param("..") Iot_device device, HttpServletRequest req) {
+        device.setUpdatedBy(SecurityUtil.getUserId());
+        iotDeviceService.updateIgnoreNull(device);
+        iotDeviceLogService.log("修改设备", device.getId(), SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+        return Result.success();
+    }
+
+    @At("/device/delete")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.delete")
+    @SLog(value = "删除设备:${deviceNo}")
+    @ApiOperation(name = "删除设备")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "id", description = "ID"),
+                    @ApiFormParam(name = "deviceNo", description = "设备通信号")
+            }
+    )
+    @ApiResponses
+    public Result<?> deleteDevice(@Param("id") String id, @Param("deviceNo") String deviceNo, HttpServletRequest req) {
+        iotDeviceService.delete(id);
+        iotDeviceLogService.log("删除设备", id, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+        return Result.success();
+    }
+
+    @At("/device/deletes")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.delete")
+    @SLog(value = "批量删除设备:${ids}")
+    @ApiOperation(name = "批量删除设备")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "ids", description = "ID数组")
+            }
+    )
+    @ApiResponses
+    public Result<?> deleteDevices(@Param("ids") String[] ids, HttpServletRequest req) {
+        iotDeviceService.delete(ids);
+        for (String id : ids) {
+            iotDeviceLogService.log("删除设备", id, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+        }
+        return Result.success();
+    }
+
+    @At("/device/get/{id}")
+    @GET
+    @Ok("json")
+    @SaCheckLogin
+    @ApiOperation(name = "获取设备信息")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "id", description = "主键ID", in = ParamIn.PATH, required = true, check = true)
+            }
+    )
+    @ApiResponses
+    public Result<?> getDevice(String id, HttpServletRequest req) {
+        return Result.success(iotDeviceService.fetch(id));
+    }
+
+    @At("/device/export")
+    @Ok("void")
+    @POST
+    @ApiOperation(name = "导出设备数据")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "productId", description = "产品ID"),
+                    @ApiFormParam(name = "fieldNames", description = "字段名"),
+                    @ApiFormParam(name = "ids", description = "数据ID数组")
+            }
+    )
+    @ApiResponses
+    @SaCheckPermission("iot.device.product.device.export")
+    public void export(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
+        Cnd cnd = Cnd.NEW();
+        if (ids != null) {
+            cnd.and("id", "in", ids);
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        try {
+            List<Iot_device> list = iotDeviceService.query(cnd);
+            ExcelUtil<Iot_device> util = new ExcelUtil<>(Iot_device.class);
+            util.exportExcel(response, list, "设备数据", fieldNames);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 }
