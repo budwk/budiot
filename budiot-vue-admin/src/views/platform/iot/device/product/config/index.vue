@@ -1,7 +1,7 @@
 <template>
     <el-row type="flex" class="column-box">
         <div class="column-box__side" style="height: calc(100vh - 220px)">
-            <el-tabs v-model="activeBlock" tab-position="left" style="width: 220px;">
+            <el-tabs v-model="activeTab" tab-position="left" style="width: 220px;" @tab-change="tabChange">
                 <el-tab-pane v-for="(item,ind) in tabList" :key="'comp_'+ind" :label="item.text" :name="item.name"  :style="{ width: '500px' }"/>
             </el-tabs>
         </div>
@@ -20,7 +20,8 @@ import deviceProp from "./deviceProp.vue"
 import deviceEvent from "./deviceEvent.vue"
 import deviceCmd from "./deviceCmd.vue"
 
-const activeBlock = ref('deviceAttr')
+const activeTab = ref('deviceAttr')
+const activeBlock = ref(deviceAttr)
 
 const tabList = ref([
     { name: 'deviceAttr', text: '参数配置' },
@@ -28,6 +29,28 @@ const tabList = ref([
     { name: 'deviceEvent', text: '事件配置' },
     { name: 'deviceCmd', text: '指令配置' }
 ])
+
+const tabChange = (val: string) => {
+    console.log(val)
+    switch (val) {
+        case 'deviceAttr':
+            activeTab.value = 'deviceAttr'
+            activeBlock.value = deviceAttr
+            break
+        case 'deviceProp':
+            activeTab.value = 'deviceProp'
+            activeBlock.value = deviceProp
+            break
+        case 'deviceEvent':
+            activeTab.value = 'deviceEvent'
+            activeBlock.value = deviceEvent
+            break
+        case 'deviceCmd':
+            activeTab.value = 'deviceCmd'
+            activeBlock.value = deviceCmd
+            break
+    }
+}
 </script>
 <style scoped lang="scss">
 
