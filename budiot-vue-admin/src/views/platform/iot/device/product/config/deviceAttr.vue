@@ -128,9 +128,7 @@
             </el-col>
         </el-row>
         <el-row>
-            <el-col :span="24">
-                <el-button plain icon="Plus" @click="handleAppendRow()"/>
-            </el-col>
+            <el-button plain icon="Plus" @click="handleAppendRow()"/>
         </el-row>
     </el-form-item>
 </el-form>
@@ -222,13 +220,20 @@ const units = ref([
     { value: 'Pa', text: '压力' },
     { value: 'N', text: '压强' },
 ])
+const validateExt = (rule: any, value: any, callback: any) => {
+  if (value.length === 0 && formData.value.dataType === 5) {
+    callback(new Error('请配置枚举值'))
+  } else {
+    callback()
+  }
+}
 const data = reactive({
     formData: {
         id: '',
         name: '',
         code: '',
         attrType: 0,
-        dataType: '',
+        dataType: 0,
         scale: 0,
         unit: '',
         productId: '',
@@ -244,7 +249,11 @@ const data = reactive({
         pageOrderBy: '',
     },
     formRules: {
-        deviceNo: [{ required: true, message: "设备通信号不能为空", trigger: ["blur", "change"] }],
+        name: [{ required: true, message: "参数名称不能为空", trigger: ["blur", "change"] }],
+        code: [{ required: true, message: "参数标识不能为空", trigger: ["blur", "change"] }],
+        attrType: [{ required: true, message: "参数类型不能为空", trigger: ["blur", "change"] }],
+        dataType: [{ required: true, message: "数据类型不能为空", trigger: ["blur", "change"] }],
+        ext: [{ validator: validateExt, trigger: ["blur", "change"] }],
     },
 })
 
@@ -256,7 +265,7 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         name: '',
         code: '',
         attrType: 0,
-        dataType: '',
+        dataType: 1,
         scale: 0,
         unit: '',
         productId: '',

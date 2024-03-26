@@ -13,7 +13,7 @@
                 </el-menu>
             </div>
         </div>
-        <router-view />
+        <router-view style="width: 100%;"/>
     </div>
 </template>
 <script setup lang="ts" name="platform-device-device-product-id">
