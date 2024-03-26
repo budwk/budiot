@@ -22,6 +22,7 @@ import java.util.List;
 @TableMeta("{'mysql-charset':'utf8mb4'}")
 @Comment("设备上报参数配置表")
 @ApiModel(description = "设备上报参数配置")
+@TableIndexes({@Index(name = "IDX_PRO_ATTR", fields = {"productId", "code"}, unique = true)})
 public class Iot_product_attr extends BaseModel implements Serializable {
     @Column
     @Name

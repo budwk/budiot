@@ -1,5 +1,5 @@
 <template>
-    <div style="padding-left: 5px">
+    <div>
         <el-row :gutter="10" class="mb8">
             <el-col :span="14">
             <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
@@ -29,6 +29,7 @@
                             <export
                 v-permission="['iot.device.product.device.config']"
                 btn-text="导出"
+                title="导出参数"
                 :check-list="multipleSelection"
                 :action="API_IOT_DEVICE_PRODUCT_ATTR_EXPORT"
                 :columns="columns"
@@ -55,9 +56,11 @@
         <template v-if="item.prop == 'createdAt'" #default="scope">
             <span>{{ formatTime(scope.row.createdAt) }}</span>
         </template>
-        <template v-if="item.prop == 'online'" #default="scope">
-            <el-tag v-if="scope.row.online" type="success">在线</el-tag>
-            <el-tag v-else type="danger">离线</el-tag>
+        <template v-if="item.prop == 'attrType'" #default="scope">
+            {{ scope.row.attrType?.text }}
+        </template>
+        <template v-if="item.prop == 'dataType'" #default="scope">
+            {{ scope.row.dataType?.text }}
         </template>
     </el-table-column>
 </template>
@@ -81,19 +84,54 @@
 @pagination="list" />
 </el-row>
 
-<el-dialog title="添加设备" v-model="showCreate" width="45%">
-<el-form ref="createRef" :model="formData" :rules="formRules" label-width="200px">
-    <el-form-item label="设备通信号" prop="deviceNo">
-        <el-input v-model="formData.deviceNo" placeholder="请输入设备唯一设备通信号" />
+<el-dialog title="新增参数" v-model="showCreate" width="45%">
+<el-form ref="createRef" :model="formData" :rules="formRules" label-width="100px">
+    <el-form-item label="参数名称" prop="name">
+        <el-input v-model="formData.name" placeholder="请输入参数名称" />
     </el-form-item>
-    <el-form-item label="设备编号(表号/铭牌号)" prop="meterNo">
-        <el-input v-model="formData.meterNo" placeholder="请输入设备编号" />
+    <el-form-item label="参数标识" prop="code">
+        <el-input v-model="formData.code" placeholder="请输入参数唯一标识" />
     </el-form-item>
-    <el-form-item label="IMEI" prop="imei">
-        <el-input v-model="formData.imei" placeholder="请输入IMEI" />
+    <el-form-item label="参数类型" prop="attrType">
+        <el-radio-group v-model="formData.attrType">
+            <el-radio v-for="item in attrTypes" :key="item.value" :value="item.value">{{ item.text }}</el-radio>
+        </el-radio-group>
     </el-form-item>
-    <el-form-item label="ICCID" prop="iccid">
-        <el-input v-model="formData.iccid" placeholder="请输入ICCID" />
+    <el-form-item label="数据类型" prop="dataType">
+        <el-select v-model="formData.dataType" placeholder="请选择数据类型">
+            <el-option v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
+        </el-select>
+    </el-form-item>
+    <el-form-item v-if="formData.dataType==2" label="小数位数" prop="scale">
+        <el-input-number v-model="formData.scale" :min="0" :precision="0" placeholder="小数位数"/>
+    </el-form-item>
+    <el-form-item v-if="[1, 2, 3].includes(formData.dataType)" label="数据单位" prop="unit">
+        <el-select v-model="formData.unit" placeholder="请选择数据单位" clearable>
+            <el-option label="无" value=""/>
+            <el-option v-for="item in units" :key="item.value" :label="item.text+'('+item.value+')'" :value="item.value" />
+        </el-select>
+    </el-form-item>
+    <el-form-item v-if="formData.dataType === 5" label="枚举类型" prop="ext" required class="label-font-weight">
+        <el-row v-for="(el, index) in formData.ext" :key="index">
+            <el-col :span="7">
+                <el-form-item prop="ext" :rules="getDynamicRule('value', index)">
+                    <el-input v-model="el.value" placeholder="参数值" />
+                </el-form-item>
+            </el-col>
+            <el-col :span="10" :offset="1">
+                <el-form-item prop="ext" :rules="getDynamicRule('text', index)">
+                    <el-input v-model="el.text" placeholder="参数描述" />
+                </el-form-item>
+            </el-col>
+            <el-col :span="5" :offset="1">
+                <el-button plain @click="handleDeleteRow(index)">删除</el-button>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="24">
+                <el-button plain icon="Plus" @click="handleAppendRow()"/>
+            </el-col>
+        </el-row>
     </el-form-item>
 </el-form>
 <template #footer>
@@ -156,16 +194,45 @@ const columns = ref([
     { prop: 'code', label: '参数标识', show: true },
     { prop: 'attrType', label: '参数类型', show: true },
     { prop: 'dataType', label: '数据类型', show: true },
-    { prop: 'note', label: '参数说明', show: true }
+    { prop: 'scale', label: '小数位数', show: false },
+    { prop: 'unit', label: '单位', show: false },
+    { prop: 'note', label: '参数说明', show: true },
+])
+const attrTypes = ref([
+    { value: 0, text: '指标' },
+    { value: 1, text: '状态' },
+    { value: 2, text: '信息' },
+    { value: 3, text: '其他' },
+])
+const dataTypes = ref([
+    { value: 1, text: '整型' },
+    { value: 2, text: '浮点型' },
+    { value: 3, text: '字符串' },
+    { value: 4, text: '布尔型' },
+    { value: 5, text: '枚举型' },
+    { value: 6, text: '时间戳' },
+    { value: 7, text: '日期时间' },
+    { value: 8, text: 'IP地址' },
+])
+const units = ref([
+    { value: 'm³', text: '立方米' },
+    { value: 'mm', text: '毫升' },
+    { value: 'ss', text: '秒' },
+    { value: '°', text: '温度' },
+    { value: 'Pa', text: '压力' },
+    { value: 'N', text: '压强' },
 ])
 const data = reactive({
     formData: {
         id: '',
-        deviceNo: '',
-        meterNo: '',
-        imei: '',
-        iccid: '',
+        name: '',
+        code: '',
+        attrType: 0,
+        dataType: '',
+        scale: 0,
+        unit: '',
         productId: '',
+        ext: []
     },
     queryParams: {
         productId: id,
@@ -186,11 +253,14 @@ const { queryParams, formData, formRules } = toRefs(data)
 const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
     formData.value = {
         id: '',
-        deviceNo: '',
-        meterNo: '',
-        imei: '',
-        iccid: '',
-        productId: id,
+        name: '',
+        code: '',
+        attrType: 0,
+        dataType: '',
+        scale: 0,
+        unit: '',
+        productId: '',
+        ext: []
     }
     formEl?.resetFields()
 }
@@ -207,6 +277,27 @@ const resetSearch = () => {
 
 const handleSelectionChange = (val: any) => {
     multipleSelection.value = val
+}
+
+const getDynamicRule = (key: string, index: number) =>{
+    return {
+        required: true,
+        message: "请输入",
+        validator: (rule, value, callback) => {
+            if (formData.value.ext[index][key] === "") {
+                callback("请输入")
+            } else {
+                callback()
+            }
+        }
+    }
+}
+const handleAppendRow = () => {
+   formData.value.ext.push({ value: "", text: "" })
+}
+
+const handleDeleteRow = (index: number) => {
+    formData.value.ext.splice(index, 1)
 }
 
 

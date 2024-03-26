@@ -14,8 +14,9 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Table("iot_product_cmd")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
-@Comment("产品指令表")
-@ApiModel(description = "产品指令(待下发)")
+@Comment("产品指令定义表")
+@ApiModel(description = "产品指令")
+@TableIndexes({@Index(name = "IDX_PRO_PROP", fields = {"productId", "code"}, unique = true)})
 public class Iot_product_cmd extends BaseModel implements Serializable {
     @Column
     @Name

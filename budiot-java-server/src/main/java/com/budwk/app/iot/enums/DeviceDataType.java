@@ -8,10 +8,11 @@ public enum DeviceDataType {
     INT(1, "整型"),
     FLOAT(2, "浮点型"),
     STRING(3, "字符串"),
-    ENUM(4, "枚举型"),
-    TIMESTAMP(5, "时间戳"),
-    DATETIME(6, "日期时间"),
-    IP(7, "IP地址");
+    BOOL(4, "布尔型"),
+    ENUM(5, "枚举型"),
+    TIMESTAMP(6, "时间戳"),
+    DATETIME(7, "日期时间"),
+    IP(8, "IP地址");
 
 
     private int value;
