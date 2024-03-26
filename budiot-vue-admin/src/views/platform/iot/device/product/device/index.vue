@@ -32,7 +32,7 @@
                                 btn-text="导入设备"
                                 :action="API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT"
                                 :data="queryParams"
-                                temp-url="/tpl/template_device.xlsx"
+                                temp-url="/tpl/template_product_device.xlsx"
                                 @refresh="handleSearch"
                                 style="margin-right: 12px"
                             />
@@ -115,29 +115,6 @@
                 <div class="dialog-footer">
                     <el-button type="primary" @click="create">确 定</el-button>
                     <el-button @click="showCreate = false">取 消</el-button>
-                </div>
-            </template>
-        </el-dialog>
-
-        <el-dialog title="修改设备" v-model="showUpdate" width="45%" :close-on-click-modal="false">
-            <el-form ref="createRef" :model="formData" :rules="formRules" label-width="180px">
-                <el-form-item label="设备通信号" prop="deviceNo">
-                    <el-input v-model="formData.deviceNo" placeholder="请输入设备唯一设备通信号" />
-                </el-form-item>
-                <el-form-item label="设备编号(表号/铭牌号)" prop="meterNo">
-                    <el-input v-model="formData.meterNo" placeholder="请输入设备编号" />
-                </el-form-item>
-                <el-form-item label="IMEI" prop="imei">
-                    <el-input v-model="formData.imei" placeholder="请输入IMEI" />
-                </el-form-item>
-                <el-form-item label="ICCID" prop="iccid">
-                    <el-input v-model="formData.iccid" placeholder="请输入ICCID" />
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button type="primary" @click="create">确 定</el-button>
-                    <el-button @click="showUpdate = false">取 消</el-button>
                 </div>
             </template>
         </el-dialog>

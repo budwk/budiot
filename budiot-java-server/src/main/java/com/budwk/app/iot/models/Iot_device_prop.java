@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table("iot_device_property")
+@Table("iot_device_prop")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
 @Comment("设备属性表")
 @ApiModel(description = "设备属性")

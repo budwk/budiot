@@ -22,6 +22,8 @@ export const API_IOT_DEVICE_PRODUCT_ATTR_CREATE = '/iot/admin/device/product/att
 export const API_IOT_DEVICE_PRODUCT_ATTR_DELETE = '/iot/admin/device/product/attr/delete'
 export const API_IOT_DEVICE_PRODUCT_ATTR_DELETES = '/iot/admin/device/product/attr/deletes'
 export const API_IOT_DEVICE_PRODUCT_ATTR_UPDATE = '/iot/admin/device/product/attr/update'
+export const API_IOT_DEVICE_PRODUCT_ATTR_IMPORT = '/iot/admin/device/product/attr/import'
+export const API_IOT_DEVICE_PRODUCT_ATTR_EXPORT = '/iot/admin/device/product/attr/export'
 
 import request from '/@/utils/request'
 

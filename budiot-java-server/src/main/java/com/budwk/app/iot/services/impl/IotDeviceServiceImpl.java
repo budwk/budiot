@@ -69,6 +69,8 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
                 String duplicate = "";
                 if (e.getMessage().contains("Duplicate")) {
                     duplicate = "已存在";
+                } else {
+                    duplicate = e.getMessage();
                 }
                 failureNum++;
                 String msg = "<br/>" + failureNum + "、设备通信号：" + device.getDeviceNo() + " " + duplicate + "<br/>";

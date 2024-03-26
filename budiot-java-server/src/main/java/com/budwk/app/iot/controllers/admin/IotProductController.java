@@ -397,7 +397,7 @@ public class IotProductController {
     )
     @ApiResponses
     @SaCheckPermission("iot.device.product.device.export")
-    public void export(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
+    public void deviceExport(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
         Cnd cnd = Cnd.NEW();
         if (ids != null) {
             cnd.and("id", "in", ids);
@@ -449,7 +449,7 @@ public class IotProductController {
     @At("/attr/create")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.config")
+    @SaCheckPermission("iot.device.product.device.config")
     @SLog(value = "新增参数:${attr.name}")
     @ApiOperation(name = "新增参数")
     @ApiFormParams(
@@ -466,7 +466,7 @@ public class IotProductController {
     @At("/attr/update")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.config")
+    @SaCheckPermission("iot.device.product.device.config")
     @SLog(value = "修改参数:${attr.name}")
     @ApiOperation(name = "修改参数")
     @ApiFormParams(
@@ -482,7 +482,7 @@ public class IotProductController {
     @At("/attr/delete")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.config")
+    @SaCheckPermission("iot.device.product.device.config")
     @SLog(value = "删除参数:${name}")
     @ApiOperation(name = "删除参数")
     @ApiFormParams(
@@ -510,6 +510,75 @@ public class IotProductController {
     @ApiResponses
     public Result<?> getAttr(String id, HttpServletRequest req) {
         return Result.success(iotProductAttrService.fetch(id));
+    }
+
+
+    @At("/attr/export")
+    @Ok("void")
+    @POST
+    @ApiOperation(name = "导出参数")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "productId", description = "产品ID"),
+                    @ApiFormParam(name = "fieldNames", description = "字段名"),
+                    @ApiFormParam(name = "ids", description = "ID数组")
+            }
+    )
+    @ApiResponses
+    @SaCheckPermission("iot.device.product.device.config")
+    public void attrExport(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
+        Cnd cnd = Cnd.NEW();
+        if (ids != null) {
+            cnd.and("id", "in", ids);
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        try {
+            List<Iot_product_attr> list = iotProductAttrService.query(cnd);
+            ExcelUtil<Iot_product_attr> util = new ExcelUtil<>(Iot_product_attr.class);
+            util.exportExcel(response, list, "参数数据", fieldNames);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @At("/attr/import")
+    @POST
+    @Ok("json:full")
+    @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
+    @SaCheckPermission("iot.device.product.device.config")
+    @ApiOperation(name = "导入参数")
+    @SLog(value = "导入参数")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "Filedata", example = "", description = "文件表单对象名"),
+                    @ApiFormParam(name = "cover", example = "", description = "是否覆盖"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
+            },
+            mediaType = "multipart/form-data"
+    )
+    @ApiResponses
+    public Result<?> attrImport(@Param("Filedata") TempFile tf, @Param(value = "cover", df = "false") boolean cover, @Param("productId") String productId, HttpServletRequest req, AdaptorErrorContext err) {
+        if (err != null && err.getAdaptorErr() != null) {
+            return Result.error("上传文件错误");
+        } else if (tf == null) {
+            return Result.error("未上传文件");
+        } else {
+            String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+            if (!".xls".equalsIgnoreCase(suffixName) && !".xlsx".equalsIgnoreCase(suffixName)) {
+                return Result.error("请上传.xls/.xlsx格式文件");
+            }
+            try {
+                ExcelUtil<Iot_product_attr> deviceExcelUtil = new ExcelUtil<>(Iot_product_attr.class);
+                List<Iot_product_attr> list = deviceExcelUtil.importExcel(tf.getInputStream());
+                String result = iotProductAttrService.importData(productId, tf.getSubmittedFileName(), list, cover, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+                return Result.success(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new BaseException("文件处理失败");
+            }
+        }
     }
 
 }

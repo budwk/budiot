@@ -197,6 +197,7 @@ const importError = (msg: string) => {
 }
 
 const handleClose =() => {
+    loading.value = false
     if(queryTimer.value){
         clearTimeout(queryTimer.value)
     }    

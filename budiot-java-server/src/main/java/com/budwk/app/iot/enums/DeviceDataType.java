@@ -35,6 +35,16 @@ public enum DeviceDataType {
         return null;
     }
 
+    // excel导入用方法
+    public static DeviceDataType fromText(String text) {
+        for (DeviceDataType c : DeviceDataType.values()) {
+            if (c.text().equals(text)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public static NutMap toMap() {
         NutMap map = NutMap.NEW();
         for (DeviceDataType v : DeviceDataType.values()) {
@@ -47,6 +57,7 @@ public enum DeviceDataType {
         return value;
     }
 
+    // excel导出用方法
     public String text() {
         return text;
     }

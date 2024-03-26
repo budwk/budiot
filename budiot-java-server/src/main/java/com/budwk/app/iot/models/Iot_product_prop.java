@@ -65,12 +65,6 @@ public class Iot_product_prop extends BaseModel implements Serializable {
     private DeviceAttrType attrType;
 
     @Column
-    @Comment("字节长度")
-    @ColDefine(type = ColType.INT)
-    @ApiModelProperty(description = "字节长度")
-    private Integer dataLen;
-
-    @Column
     @Comment("小数位数")
     @ColDefine(type = ColType.INT)
     @ApiModelProperty(description = "小数位数")
@@ -81,18 +75,6 @@ public class Iot_product_prop extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 20)
     @ApiModelProperty(description = "单位")
     private String unit;
-
-    @Column
-    @Comment("最小值")
-    @ColDefine(type = ColType.VARCHAR, width = 30)
-    @ApiModelProperty(description = "最小值")
-    private String minimum;
-
-    @Column
-    @Comment("最大值")
-    @ColDefine(type = ColType.VARCHAR, width = 30)
-    @ApiModelProperty(description = "最大值")
-    private String maximum;
 
     @Column
     @Comment("是否为设备字段")

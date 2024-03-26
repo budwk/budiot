@@ -6,8 +6,10 @@ import com.budwk.app.iot.objects.dto.ValueTextDTO;
 import com.budwk.starter.common.openapi.annotation.ApiModel;
 import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
 import com.budwk.starter.database.model.BaseModel;
+import com.budwk.starter.excel.annotation.Excel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.interceptor.annotation.PrevInsert;
 
@@ -38,55 +40,45 @@ public class Iot_product_attr extends BaseModel implements Serializable {
     @Comment("名称")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @ApiModelProperty(description = "名称")
+    @Excel(name = "参数名称", cellType = Excel.ColumnType.STRING, prompt = "参数名称")
     private String name;
 
     @Column
     @Comment("标识")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @ApiModelProperty(description = "标识")
+    @Excel(name = "参数标识", cellType = Excel.ColumnType.STRING, prompt = "参数标识")
     private String code;
-
-    @Column
-    @Comment("数据类型")
-    @ColDefine(type = ColType.INT)
-    @ApiModelProperty(description = "数据类型")
-    private DeviceDataType dataType;
 
     @Column
     @Comment("参数类型")
     @ColDefine(type = ColType.INT)
     @ApiModelProperty(description = "参数类型")
+    @Default("0")
+    @Excel(name = "参数类型", cellType = Excel.ColumnType.STRING,prompt = "参数类型")
     private DeviceAttrType attrType;
 
     @Column
-    @Comment("字节长度")
+    @Comment("数据类型")
     @ColDefine(type = ColType.INT)
-    @ApiModelProperty(description = "字节长度")
-    private Integer dataLen;
+    @ApiModelProperty(description = "数据类型")
+    @Excel(name = "数据类型", cellType = Excel.ColumnType.STRING,prompt = "数据类型")
+    private DeviceDataType dataType;
 
     @Column
     @Comment("小数位数")
     @ColDefine(type = ColType.INT)
     @ApiModelProperty(description = "小数位数")
+    @Default("0")
+    @Excel(name = "小数位数", cellType = Excel.ColumnType.NUMERIC,prompt = "小数位数")
     private Integer scale;
 
     @Column
     @Comment("单位")
     @ColDefine(type = ColType.VARCHAR, width = 20)
     @ApiModelProperty(description = "单位")
+    @Excel(name = "单位", cellType = Excel.ColumnType.STRING,prompt = "单位")
     private String unit;
-
-    @Column
-    @Comment("最小值")
-    @ColDefine(type = ColType.VARCHAR, width = 30)
-    @ApiModelProperty(description = "最小值")
-    private String minimum;
-
-    @Column
-    @Comment("最大值")
-    @ColDefine(type = ColType.VARCHAR, width = 30)
-    @ApiModelProperty(description = "最大值")
-    private String maximum;
 
     @Column
     @Comment("枚举类型JSON扩展存储")
@@ -98,11 +90,16 @@ public class Iot_product_attr extends BaseModel implements Serializable {
     @Comment("说明")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     @ApiModelProperty(description = "说明")
+    @Excel(name = "参数说明", cellType = Excel.ColumnType.STRING,prompt = "参数说明")
     private String note;
 
     @Column
     @Comment("排序")
     @ColDefine(type = ColType.INT)
+    @Prev({
+            @SQL(db = DB.MYSQL, value = "SELECT IFNULL(MAX(location),0)+1 FROM iot_product_attr"),
+            @SQL(db = DB.ORACLE, value = "SELECT COALESCE(MAX(location),0)+1 FROM iot_product_attr")
+    })
     private Integer location;
 
 }
