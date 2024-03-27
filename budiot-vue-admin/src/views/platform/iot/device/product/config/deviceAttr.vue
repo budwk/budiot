@@ -42,43 +42,45 @@
     plain type="success" @click="handleCreate"
                         v-permission="['iot.device.product.device.config']">新增
                     </el-button>
-
                </div>
             </el-col>
         </el-row>
         <el-row class="mb8">
 
-<el-table v-loading="tableLoading" :data="tableData" row-key="id" @selection-change="handleSelectionChange">
+<el-table ref="tableRef" class="drag_table" v-loading="tableLoading" :data="tableData" row-key="id" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="50" />
-<template v-for="(item, idx) in columns" :key="idx">
-    <el-table-column :prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
-        :show-overflow-tooltip="true" :align="item.align" :width="item.width">
-        <template v-if="item.prop == 'createdAt'" #default="scope">
-            <span>{{ formatTime(scope.row.createdAt) }}</span>
-        </template>
-        <template v-if="item.prop == 'attrType'" #default="scope">
-            {{ scope.row.attrType?.text }}
-        </template>
-        <template v-if="item.prop == 'dataType'" #default="scope">
-            {{ scope.row.dataType?.text }}
+    <el-table-column width="50" fixed>
+        <icon name="fa fa-arrows" size="14" style="cursor: pointer; color: gray;"/>
+    </el-table-column>
+    <template v-for="(item, idx) in columns" :key="idx">
+        <el-table-column :prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
+            :show-overflow-tooltip="true" :align="item.align" :width="item.width">
+            <template v-if="item.prop == 'createdAt'" #default="scope">
+                <span>{{ formatTime(scope.row.createdAt) }}</span>
+            </template>
+            <template v-if="item.prop == 'attrType'" #default="scope">
+                {{ scope.row.attrType?.text }}
+            </template>
+            <template v-if="item.prop == 'dataType'" #default="scope">
+                {{ scope.row.dataType?.text }}
+            </template>
+        </el-table-column>
+    </template>
+    <el-table-column fixed="right" header-align="center" align="center" label="操作"
+        class-name="small-padding fixed-width" width="150">
+        <template #default="scope">
+            <div>
+                <el-tooltip content="修改" placement="top">
+                    <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                        v-permission="['iot.device.product.device.config']"></el-button>
+                </el-tooltip>
+                <el-tooltip content="删除" placement="top">
+                    <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                        v-permission="['iot.device.product.device.config']"></el-button>
+                </el-tooltip>
+            </div>
         </template>
     </el-table-column>
-</template>
-<el-table-column fixed="right" header-align="center" align="center" label="操作"
-    class-name="small-padding fixed-width" width="150">
-    <template #default="scope">
-        <div>
-            <el-tooltip content="修改" placement="top">
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                    v-permission="['iot.device.product.device.update']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-                <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
-                    v-permission="['iot.device.product.device.delete']"></el-button>
-            </el-tooltip>
-        </div>
-    </template>
-</el-table-column>
 </el-table>
 <pagination :total="queryParams.totalCount" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize"
 @pagination="list" />
@@ -98,9 +100,9 @@
         </el-radio-group>
     </el-form-item>
     <el-form-item label="数据类型" prop="dataType">
-        <el-select v-model="formData.dataType" placeholder="请选择数据类型">
-            <el-option v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
-        </el-select>
+        <el-radio-group v-model="formData.dataType" placeholder="请选择数据类型">
+            <el-radio v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
+        </el-radio-group>
     </el-form-item>
     <el-form-item v-if="formData.dataType==2" label="小数位数" prop="scale">
         <el-input-number v-model="formData.scale" :min="0" :precision="0" placeholder="小数位数"/>
@@ -142,17 +144,50 @@
 
 <el-dialog title="修改设备" v-model="showUpdate" width="45%" :close-on-click-modal="false">
 <el-form ref="updateRef" :model="formData" :rules="formRules" label-width="100px">
-    <el-form-item label="设备通信号" prop="deviceNo">
-        <el-input v-model="formData.deviceNo" placeholder="请输入设备唯一设备通信号" />
+    <el-form-item label="参数名称" prop="name">
+        <el-input v-model="formData.name" placeholder="请输入参数名称" />
     </el-form-item>
-    <el-form-item label="设备编号(表号/铭牌号)" prop="meterNo">
-        <el-input v-model="formData.meterNo" placeholder="请输入设备编号" />
+    <el-form-item label="参数标识" prop="code">
+        <el-input v-model="formData.code" placeholder="请输入参数唯一标识" />
     </el-form-item>
-    <el-form-item label="IMEI" prop="imei">
-        <el-input v-model="formData.imei" placeholder="请输入IMEI" />
+    <el-form-item label="参数类型" prop="attrType">
+        <el-radio-group v-model="formData.attrType">
+            <el-radio v-for="item in attrTypes" :key="item.value" :value="item.value">{{ item.text }}</el-radio>
+        </el-radio-group>
     </el-form-item>
-    <el-form-item label="ICCID" prop="iccid">
-        <el-input v-model="formData.iccid" placeholder="请输入ICCID" />
+    <el-form-item label="数据类型" prop="dataType">
+        <el-radio-group v-model="formData.dataType" placeholder="请选择数据类型">
+            <el-radio v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
+        </el-radio-group>
+    </el-form-item>
+    <el-form-item v-if="formData.dataType==2" label="小数位数" prop="scale">
+        <el-input-number v-model="formData.scale" :min="0" :precision="0" placeholder="小数位数"/>
+    </el-form-item>
+    <el-form-item v-if="[1, 2, 3].includes(formData.dataType)" label="数据单位" prop="unit">
+        <el-select v-model="formData.unit" placeholder="请选择数据单位" clearable>
+            <el-option label="无" value=""/>
+            <el-option v-for="item in units" :key="item.value" :label="item.text+'('+item.value+')'" :value="item.value" />
+        </el-select>
+    </el-form-item>
+    <el-form-item v-if="formData.dataType === 5" label="枚举类型" prop="ext" required class="label-font-weight">
+        <el-row v-for="(el, index) in formData.ext" :key="index">
+            <el-col :span="7">
+                <el-form-item prop="ext" :rules="getDynamicRule('value', index)">
+                    <el-input v-model="el.value" placeholder="参数值" />
+                </el-form-item>
+            </el-col>
+            <el-col :span="10" :offset="1">
+                <el-form-item prop="ext" :rules="getDynamicRule('text', index)">
+                    <el-input v-model="el.text" placeholder="参数描述" />
+                </el-form-item>
+            </el-col>
+            <el-col :span="5" :offset="1">
+                <el-button plain @click="handleDeleteRow(index)">删除</el-button>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-button plain icon="Plus" @click="handleAppendRow()"/>
+        </el-row>
     </el-form-item>
 </el-form>
 <template #footer>
@@ -167,12 +202,14 @@
 <script setup lang="ts" name="deviceAttr">
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
-import { ElForm } from 'element-plus'
+import { ElForm, ElTable } from 'element-plus'
 import { useRoute } from "vue-router"
-import { getAttrList, getAttrInfo, doAttrCreate, doAttrUpdate, doAttrDelete,
+import { getAttrList, getAttrInfo, doAttrCreate, doAttrUpdate, doAttrDelete, doAttrSort,
     API_IOT_DEVICE_PRODUCT_ATTR_IMPORT,
     API_IOT_DEVICE_PRODUCT_ATTR_EXPORT
  } from '/@/api/platform/iot/product'
+ import sortable from 'sortablejs'
+import { t } from '@wangeditor/editor'
 
 const route = useRoute()
 const id = route.params.id as string
@@ -180,9 +217,11 @@ const id = route.params.id as string
 const createRef = ref<InstanceType<typeof ElForm>>()
 const updateRef = ref<InstanceType<typeof ElForm>>()
 const queryRef = ref<InstanceType<typeof ElForm>>()
+const tableRef = ref<InstanceType<typeof ElTable>>()
 
 const showCreate = ref(false)
 const showUpdate = ref(false)
+const showSort = ref(false)
 const multipleSelection = ref([])
 
 const tableData = ref([])
@@ -219,6 +258,8 @@ const units = ref([
     { value: '°', text: '温度' },
     { value: 'Pa', text: '压力' },
     { value: 'N', text: '压强' },
+    { value: 'V', text: '电压' },
+    { value: '元', text: '金额' },
 ])
 const validateExt = (rule: any, value: any, callback: any) => {
   if (value.length === 0 && formData.value.dataType === 5) {
@@ -243,14 +284,14 @@ const data = reactive({
         productId: id,
         name: '',
         pageNo: 1,
-        pageSize: 8,
+        pageSize: 10,
         totalCount: 0,
         pageOrderName: '',
         pageOrderBy: '',
     },
     formRules: {
         name: [{ required: true, message: "参数名称不能为空", trigger: ["blur", "change"] }],
-        code: [{ required: true, message: "参数标识不能为空", trigger: ["blur", "change"] }],
+        code: [{ required: true, message: "参数标识需两个字符以上，并以字母开头、字母数字_-组合，结尾不能为_-", pattern: /^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$/, trigger: ["blur", "change"] }],
         attrType: [{ required: true, message: "参数类型不能为空", trigger: ["blur", "change"] }],
         dataType: [{ required: true, message: "数据类型不能为空", trigger: ["blur", "change"] }],
         ext: [{ validator: validateExt, trigger: ["blur", "change"] }],
@@ -268,7 +309,7 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         dataType: 1,
         scale: 0,
         unit: '',
-        productId: '',
+        productId: id,
         ext: []
     }
     formEl?.resetFields()
@@ -320,6 +361,8 @@ const handleCreate = (row: any) => {
 const handleUpdate = (row: any) => {
     getAttrInfo(row.id).then((res: any) => {
         formData.value = res.data
+        formData.value.attrType = res.data.attrType.value
+        formData.value.dataType = res.data.dataType.value
         showUpdate.value = true
     })
 }
@@ -335,7 +378,6 @@ const handleDelete = (row: any) => {
         modal.msgSuccess('删除成功')
     }).catch(() => { })
 }
-
 
 // 提交新增
 const create = () => {
@@ -366,12 +408,31 @@ const update = () => {
     })
 }
 
+const drag = () => {
+    const el = tableRef.value?.$el.querySelector('.drag_table .el-table__body-wrapper tbody')
+    sortable.create(el, {
+        handle: '.drag_table .el-table__row',
+        animation: 120,
+        onEnd: (event: any) => {
+            const oldIndex = event.oldIndex
+            const newIndex = event.newIndex
+            const movedItem = tableData.value.splice(oldIndex, 1)[0]
+            tableData.value.splice(newIndex, 0, movedItem)
+            const ids = tableData.value.map((item: any) => item.id)
+            doAttrSort({ ids: ids, pageNo: queryParams.value.pageNo, pageSize: queryParams.value.pageSize }).then(() => {
+                modal.msgSuccess('排序成功')
+            })
+        }
+    })
+}
+
 const list = () => {
     tableLoading.value = true
     getAttrList(queryParams.value).then((res) => {
         tableLoading.value = false
         tableData.value = res.data.list
         queryParams.value.totalCount = res.data.totalCount
+        drag()
     })
 }
 

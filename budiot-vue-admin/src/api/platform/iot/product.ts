@@ -24,6 +24,7 @@ export const API_IOT_DEVICE_PRODUCT_ATTR_DELETES = '/iot/admin/device/product/at
 export const API_IOT_DEVICE_PRODUCT_ATTR_UPDATE = '/iot/admin/device/product/attr/update'
 export const API_IOT_DEVICE_PRODUCT_ATTR_IMPORT = '/iot/admin/device/product/attr/import'
 export const API_IOT_DEVICE_PRODUCT_ATTR_EXPORT = '/iot/admin/device/product/attr/export'
+export const API_IOT_DEVICE_PRODUCT_ATTR_SORT = '/iot/admin/device/product/attr/sort'
 
 import request from '/@/utils/request'
 
@@ -173,6 +174,14 @@ export function doAttrUpdate(data: object = {}) {
 export function doAttrDelete(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_ATTR_DELETE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doAttrSort(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_ATTR_SORT,
         method: 'POST',
         data: data
     })

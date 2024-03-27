@@ -117,7 +117,7 @@ const data = reactive({
     },
     formRules: {
         name: [{ required: true, message: "协议名称", trigger: "blur" }],
-        code: [{ required: true, message: "协议标识需以字母开头、字母数字_-组合，结尾不能为_-", trigger: "blur", pattern: /^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$/}],
+        code: [{ required: true, message: "协议标识需两个字符以上，并以字母开头、字母数字_-组合，结尾不能为_-", trigger: "blur", pattern: /^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$/}],
     },
 })
 const { queryParams, formData, formRules } = toRefs(data)

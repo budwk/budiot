@@ -19,6 +19,7 @@ import com.budwk.starter.excel.utils.ExcelUtil;
 import com.budwk.starter.log.annotation.SLog;
 import com.budwk.starter.security.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
@@ -440,9 +441,7 @@ public class IotProductController {
         if (Strings.isNotBlank(name)) {
             cnd.and(Cnd.exps("code", "like", "%" + name + "%").or("name", "like", "%" + name + "%"));
         }
-        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
-            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
-        }
+        cnd.asc("location");
         return Result.data(iotProductAttrService.listPage(pageNo, pageSize, cnd));
     }
 
@@ -494,6 +493,28 @@ public class IotProductController {
     @ApiResponses
     public Result<?> attrDevice(@Param("id") String id, @Param("name") String name, HttpServletRequest req) {
         iotProductAttrService.delete(id);
+        return Result.success();
+    }
+
+    @At("/attr/sort")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.config")
+    @ApiOperation(name = "参数排序")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "ids", description = "ID数组"),
+                    @ApiFormParam(name = "pageNo", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", description = "页大小", type = "integer")
+            }
+    )
+    @ApiResponses
+    public Result<?> attrDevice(@Param("ids") String[] ids, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, HttpServletRequest req) {
+        int location = (pageNo - 1) * pageSize;
+        for (String id : ids) {
+            location++;
+            iotProductAttrService.update(Chain.make("location", location), Cnd.where("id", "=", id));
+        }
         return Result.success();
     }
 

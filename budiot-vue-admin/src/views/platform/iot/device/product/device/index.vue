@@ -193,7 +193,7 @@ const data = reactive({
         filedName: 'deviceNo',
         filedValue: '',
         pageNo: 1,
-        pageSize: 8,
+        pageSize: 10,
         totalCount: 0,
         pageOrderName: '',
         pageOrderBy: '',
