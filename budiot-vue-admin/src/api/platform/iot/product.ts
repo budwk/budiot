@@ -38,6 +38,12 @@ export const API_IOT_DEVICE_PRODUCT_EVENT_GET = '/iot/admin/device/product/event
 export const API_IOT_DEVICE_PRODUCT_EVENT_CREATE = '/iot/admin/device/product/event/create'
 export const API_IOT_DEVICE_PRODUCT_EVENT_DELETE = '/iot/admin/device/product/event/delete'
 export const API_IOT_DEVICE_PRODUCT_EVENT_UPDATE = '/iot/admin/device/product/event/update'
+// 设备指令
+export const API_IOT_DEVICE_PRODUCT_CMD_LIST = '/iot/admin/device/product/cmd/list'
+export const API_IOT_DEVICE_PRODUCT_CMD_GET = '/iot/admin/device/product/cmd/get/'
+export const API_IOT_DEVICE_PRODUCT_CMD_CREATE = '/iot/admin/device/product/cmd/create'
+export const API_IOT_DEVICE_PRODUCT_CMD_DELETE = '/iot/admin/device/product/cmd/delete'
+export const API_IOT_DEVICE_PRODUCT_CMD_UPDATE = '/iot/admin/device/product/cmd/update'
 
 import request from '/@/utils/request'
 
@@ -290,6 +296,46 @@ export function doEventUpdate(data: object = {}) {
 export function doEventDelete(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_EVENT_DELETE,
+        method: 'POST',
+        data: data
+    })
+}
+
+
+export function getCmdList(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_CMD_LIST,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getCmdInfo(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_CMD_GET + id + '?t=' + new Date().getTime(),
+        method: 'GET'
+    })
+}
+
+export function doCmdCreate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_CMD_CREATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doCmdUpdate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_CMD_UPDATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doCmdDelete(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_CMD_DELETE,
         method: 'POST',
         data: data
     })
