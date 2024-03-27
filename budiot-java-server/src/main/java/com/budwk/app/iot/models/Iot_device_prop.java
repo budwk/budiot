@@ -26,5 +26,5 @@ public class Iot_device_prop extends BaseModel implements Serializable {
     @Column
     @Comment("json配置")
     @ColDefine(type = ColType.MYSQL_JSON)
-    private Map<String, Object> properties;
+    private Map<String, String> properties;
 }

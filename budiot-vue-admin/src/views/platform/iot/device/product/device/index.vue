@@ -65,7 +65,8 @@
             <el-table v-loading="tableLoading" :data="tableData" row-key="id" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" />
             <template v-for="(item, idx) in columns" :key="idx">
-                <el-table-column :prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
+                <el-table-column
+:prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
                     :show-overflow-tooltip="true" :align="item.align" :width="item.width">
                     <template v-if="item.prop == 'createdAt'" #default="scope">
                         <span>{{ formatTime(scope.row.createdAt) }}</span>
@@ -76,28 +77,32 @@
                     </template>
                 </el-table-column>
             </template>
-            <el-table-column fixed="right" header-align="center" align="center" label="操作"
+            <el-table-column
+fixed="right" header-align="center" align="center" label="操作"
                 class-name="small-padding fixed-width" width="150">
                 <template #default="scope">
                     <div>
                         <el-tooltip content="修改" placement="top">
-                            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                            <el-button
+link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                                 v-permission="['iot.device.product.device.update']"></el-button>
                         </el-tooltip>
                         <el-tooltip content="删除" placement="top">
-                            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                            <el-button
+link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                                 v-permission="['iot.device.product.device.delete']"></el-button>
                         </el-tooltip>
                     </div>
                 </template>
             </el-table-column>
         </el-table>
-        <pagination :total="queryParams.totalCount" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize"
+        <pagination
+:total="queryParams.totalCount" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize"
             @pagination="list" />
         </el-row>
 
         <el-dialog title="添加设备" v-model="showCreate" width="45%">
-            <el-form ref="createRef" :model="formData" :rules="formRules" label-width="200px">
+            <el-form ref="createRef" :model="formData" :rules="formRules" label-width="160px">
                 <el-form-item label="设备通信号" prop="deviceNo">
                     <el-input v-model="formData.deviceNo" placeholder="请输入设备唯一设备通信号" />
                 </el-form-item>
@@ -109,6 +114,12 @@
                 </el-form-item>
                 <el-form-item label="ICCID" prop="iccid">
                     <el-input v-model="formData.iccid" placeholder="请输入ICCID" />
+                </el-form-item>
+                <el-form-item
+v-for="(item, index) in props" :key="index" :label="item.name" :prop="item.name" class="lable-font-weight"
+                    :rules="getDynamicRule(item.code, item.name, item.required)"
+                >
+                    <el-input v-model="formData.props[item.code]" :placeholder="'请输入' + item.name" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -133,6 +144,12 @@
                 <el-form-item label="ICCID" prop="iccid">
                     <el-input v-model="formData.iccid" placeholder="请输入ICCID" />
                 </el-form-item>
+                <el-form-item
+v-for="(item, index) in props" :key="index" :label="item.name" :prop="item.name" class="lable-font-weight"
+                    :rules="getDynamicRule(item.code, item.name, item.required)"
+                >
+                    <el-input v-model="formData.props[item.code]" :placeholder="'请输入' + item.name" />
+                </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
@@ -147,7 +164,7 @@
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { useRoute } from "vue-router"
-import { getDeviceList, API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT, API_IOT_DEVICE_PRODUCT_DEVICE_EXPORT, 
+import { getDeviceList, API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT, API_IOT_DEVICE_PRODUCT_DEVICE_EXPORT, getDeviceProp,
     getDeviceInfo, doDeviceCreate, doDeviceUpdate, doDeviceDelete, doDeviceDeletes } from '/@/api/platform/iot/product'
 import { ElForm } from 'element-plus'
 
@@ -161,7 +178,7 @@ const queryRef = ref<InstanceType<typeof ElForm>>()
 const showCreate = ref(false)
 const showUpdate = ref(false)
 const multipleSelection = ref([])
-    
+const props = ref({})    
 const filedList = ref([
     { code: 'deviceNo', name: '设备通信号' },
     { code: 'meterNo', name: '设备编号' },
@@ -187,6 +204,7 @@ const data = reactive({
         imei: '',
         iccid: '',
         productId: '',
+        props: {}
     },
     queryParams: {
         productId: id,
@@ -213,8 +231,23 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         imei: '',
         iccid: '',
         productId: id,
+        props: {}
     }
     formEl?.resetFields()
+}
+
+const getDynamicRule = (code: string, name: string,required: boolean) =>{
+    return {
+        required: required,
+        message: "请输入"+name,
+        validator: (rule, value, callback) => {
+            if (formData.value.props[code] === "" && required) {
+                callback("请输入"+ name)
+            } else {
+                callback()
+            }
+        }
+    }
 }
 
 const handleSearch = () => {
@@ -235,6 +268,11 @@ const handleSelectionChange = (val: any) => {
 const handleCreate = (row: any) => {
     resetForm(createRef.value)
     showCreate.value = true
+    if(props.value) {
+        props.value.forEach((item: any) => {
+            formData.value.props[item.code] = ''
+        })
+    }
 }
 
 // 修改按钮
@@ -311,7 +349,14 @@ const list = () => {
     })
 }
 
+const listProp = () => {
+    getDeviceProp(id).then((res) => {
+        props.value = res.data
+    })
+}
+
 onMounted(() => {
     list()
+    listProp()
 })
 </script>

@@ -15,16 +15,23 @@ export const API_IOT_DEVICE_PRODUCT_DEVICE_CREATE = '/iot/admin/device/product/d
 export const API_IOT_DEVICE_PRODUCT_DEVICE_DELETE = '/iot/admin/device/product/device/delete'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_DELETES = '/iot/admin/device/product/device/deletes'
 export const API_IOT_DEVICE_PRODUCT_DEVICE_UPDATE = '/iot/admin/device/product/device/update'
+export const API_IOT_DEVICE_PRODUCT_DEVICE_PROP = '/iot/admin/device/product/device/prop/'
 // 上报参数
 export const API_IOT_DEVICE_PRODUCT_ATTR_LIST = '/iot/admin/device/product/attr/list'
 export const API_IOT_DEVICE_PRODUCT_ATTR_GET = '/iot/admin/device/product/attr/get/'
 export const API_IOT_DEVICE_PRODUCT_ATTR_CREATE = '/iot/admin/device/product/attr/create'
 export const API_IOT_DEVICE_PRODUCT_ATTR_DELETE = '/iot/admin/device/product/attr/delete'
-export const API_IOT_DEVICE_PRODUCT_ATTR_DELETES = '/iot/admin/device/product/attr/deletes'
 export const API_IOT_DEVICE_PRODUCT_ATTR_UPDATE = '/iot/admin/device/product/attr/update'
 export const API_IOT_DEVICE_PRODUCT_ATTR_IMPORT = '/iot/admin/device/product/attr/import'
 export const API_IOT_DEVICE_PRODUCT_ATTR_EXPORT = '/iot/admin/device/product/attr/export'
 export const API_IOT_DEVICE_PRODUCT_ATTR_SORT = '/iot/admin/device/product/attr/sort'
+// 设备属性
+export const API_IOT_DEVICE_PRODUCT_PROP_LIST = '/iot/admin/device/product/prop/list'
+export const API_IOT_DEVICE_PRODUCT_PROP_GET = '/iot/admin/device/product/prop/get/'
+export const API_IOT_DEVICE_PRODUCT_PROP_CREATE = '/iot/admin/device/product/prop/create'
+export const API_IOT_DEVICE_PRODUCT_PROP_DELETE = '/iot/admin/device/product/prop/delete'
+export const API_IOT_DEVICE_PRODUCT_PROP_UPDATE = '/iot/admin/device/product/prop/update'
+export const API_IOT_DEVICE_PRODUCT_PROP_SORT = '/iot/admin/device/product/prop/sort'
 
 import request from '/@/utils/request'
 
@@ -107,6 +114,13 @@ export function getDeviceInfo(id: string) {
     })
 }
 
+export function getDeviceProp(productId: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_DEVICE_PROP + productId + '?t=' + new Date().getTime(),
+        method: 'GET'
+    })
+}
+
 export function doDeviceCreate(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_DEVICE_CREATE,
@@ -182,6 +196,54 @@ export function doAttrDelete(data: object = {}) {
 export function doAttrSort(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_ATTR_SORT,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getPropList(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_PROP_LIST,
+        method: 'POST',
+        data: data
+    })
+}
+
+
+export function getPropInfo(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_PROP_GET + id + '?t=' + new Date().getTime(),
+        method: 'GET'
+    })
+}
+
+export function doPropCreate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_PROP_CREATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doPropUpdate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_PROP_UPDATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doPropDelete(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_PROP_DELETE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doPropSort(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_PROP_SORT,
         method: 'POST',
         data: data
     })

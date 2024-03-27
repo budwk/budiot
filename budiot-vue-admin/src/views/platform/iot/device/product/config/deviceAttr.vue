@@ -133,6 +133,9 @@
             <el-button plain icon="Plus" @click="handleAppendRow()"/>
         </el-row>
     </el-form-item>
+    <el-form-item label="参数说明" prop="note">
+        <el-input v-model="formData.note" placeholder="请输入参数说明" />
+    </el-form-item>
 </el-form>
 <template #footer>
     <div class="dialog-footer">
@@ -188,6 +191,9 @@
         <el-row>
             <el-button plain icon="Plus" @click="handleAppendRow()"/>
         </el-row>
+    </el-form-item>
+    <el-form-item label="参数说明" prop="note">
+        <el-input v-model="formData.note" placeholder="请输入参数说明" />
     </el-form-item>
 </el-form>
 <template #footer>
@@ -278,7 +284,8 @@ const data = reactive({
         scale: 0,
         unit: '',
         productId: '',
-        ext: []
+        ext: [],
+        note: '',
     },
     queryParams: {
         productId: id,
@@ -310,7 +317,8 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         scale: 0,
         unit: '',
         productId: id,
-        ext: []
+        ext: [],
+        note: '',
     }
     formEl?.resetFields()
 }

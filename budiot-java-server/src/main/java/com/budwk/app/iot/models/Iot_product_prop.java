@@ -8,6 +8,7 @@ import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
 import com.budwk.starter.database.model.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.interceptor.annotation.PrevInsert;
 
@@ -44,7 +45,7 @@ public class Iot_product_prop extends BaseModel implements Serializable {
     @Column
     @Comment("标识")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @ApiModelProperty(name = "标识", description = "标识(两个字符以上，并以字母开头，字母、数字、_、-组合，结尾为字母或数字)", required = true, check = true, regex = "^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$")
+    @ApiModelProperty(name = "code", description = "属性标识(两个字符以上，并以字母开头，字母、数字、_、-组合，结尾为字母或数字)", required = true, check = true, regex = "^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$")
     private String code;
 
     @Column
@@ -54,46 +55,10 @@ public class Iot_product_prop extends BaseModel implements Serializable {
     private String defaultValue;
 
     @Column
-    @Comment("数据类型")
-    @ColDefine(type = ColType.INT)
-    @ApiModelProperty(description = "数据类型")
-    private DeviceDataType dataType;
-
-    @Column
-    @Comment("参数类型")
-    @ColDefine(type = ColType.INT)
-    @ApiModelProperty(description = "参数类型")
-    private DeviceAttrType attrType;
-
-    @Column
-    @Comment("小数位数")
-    @ColDefine(type = ColType.INT)
-    @ApiModelProperty(description = "小数位数")
-    private Integer scale;
-
-    @Column
-    @Comment("单位")
-    @ColDefine(type = ColType.VARCHAR, width = 20)
-    @ApiModelProperty(description = "单位")
-    private String unit;
-
-    @Column
-    @Comment("是否为设备字段")
-    @ColDefine(type = ColType.BOOLEAN)
-    @ApiModelProperty(description = "是否为设备字段")
-    private Boolean deviceField;
-
-    @Column
     @Comment("是否必填")
     @ColDefine(type = ColType.BOOLEAN)
     @ApiModelProperty(description = "是否必填")
     private Boolean required;
-
-    @Column
-    @Comment("枚举类型JSON扩展存储")
-    @ColDefine(type = ColType.MYSQL_JSON)
-    @ApiModelProperty(description = "枚举键值对类型扩展")
-    private List<ValueTextDTO<?>> ext;
 
     @Column
     @Comment("说明")
@@ -104,5 +69,9 @@ public class Iot_product_prop extends BaseModel implements Serializable {
     @Column
     @Comment("排序")
     @ColDefine(type = ColType.INT)
+    @Prev({
+            @SQL(db = DB.MYSQL, value = "SELECT IFNULL(MAX(location),0)+1 FROM iot_product_prop"),
+            @SQL(db = DB.ORACLE, value = "SELECT COALESCE(MAX(location),0)+1 FROM iot_product_prop")
+    })
     private Integer location;
 }
