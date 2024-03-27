@@ -270,7 +270,7 @@ const handleCreate = (row: any) => {
     showCreate.value = true
     if(props.value) {
         props.value.forEach((item: any) => {
-            formData.value.props[item.code] = ''
+            formData.value.props[item.code] = item.defaultValue || ''
         })
     }
 }

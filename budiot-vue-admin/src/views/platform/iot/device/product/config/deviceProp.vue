@@ -272,6 +272,7 @@ const update = () => {
 
 const drag = () => {
     const el = tableRef.value?.$el.querySelector('.drag_table .el-table__body-wrapper tbody')
+    if(!el) return
     sortable.create(el, {
         handle: '.drag_table .el-table__row',
         animation: 120,
