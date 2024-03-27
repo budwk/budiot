@@ -1,5 +1,6 @@
 package com.budwk.app.iot.models;
 
+import com.budwk.app.iot.enums.DeviceDataType;
 import com.budwk.starter.common.openapi.annotation.ApiModel;
 import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
 import com.budwk.starter.database.model.BaseModel;
@@ -9,16 +10,14 @@ import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.interceptor.annotation.PrevInsert;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table("iot_product_cmd")
+@Table("iot_product_cmd_attr")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
-@Comment("产品指令表")
-@ApiModel(description = "产品指令")
-@TableIndexes({@Index(name = "IDX_PRO_CMD", fields = {"productId", "code"}, unique = true)})
-public class Iot_product_cmd extends BaseModel implements Serializable {
+@Comment("产品指令定义表")
+@ApiModel(description = "产品指令定义")
+public class Iot_product_cmd_attr extends BaseModel implements Serializable {
     @Column
     @Name
     @ColDefine(type = ColType.VARCHAR, width = 32)
@@ -34,31 +33,26 @@ public class Iot_product_cmd extends BaseModel implements Serializable {
     private String productId;
 
     @Column
-    @Comment("指令名称")
+    @Comment("指令配置ID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    @ApiModelProperty(description = "指令配置ID")
+    private String cmdId;
+
+    @Column
+    @Comment("参数名称")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     @ApiModelProperty(description = "指令名称")
     private String name;
 
     @Column
-    @Comment("指令标识")
+    @Comment("参数标识")
     @ColDefine(type = ColType.VARCHAR, width = 50)
-    @ApiModelProperty(name = "code", description = "指令标识(两个字符以上，并以字母开头，字母、数字、_、-组合，结尾为字母或数字)", required = true, check = true, regex = "^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$")
+    @ApiModelProperty(name = "code", description = "参数标识(两个字符以上，并以字母开头，字母、数字、_、-组合，结尾为字母或数字)", required = true, check = true, regex = "^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$")
     private String code;
 
     @Column
-    @Comment("是否启用")
-    @ColDefine(type = ColType.BOOLEAN)
-    @Default("1")
-    @ApiModelProperty(description = "是否启用")
-    private Boolean enabled;
-
-    @Column
-    @Comment("指令说明")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    @ApiModelProperty(description = "指令说明")
-    private String note;
-
-    @Many(field = "cmdId")
-    private List<Iot_product_cmd_attr> attrList;
-
+    @Comment("数据类型")
+    @ColDefine(type = ColType.INT)
+    @ApiModelProperty(description = "数据类型")
+    private DeviceDataType dataType;
 }
