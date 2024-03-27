@@ -3,15 +3,14 @@ package com.budwk.app.iot.enums;
 import org.nutz.json.JsonShape;
 
 @JsonShape(JsonShape.Type.OBJECT)
-public enum DeviceAttrType {
-    INDEX(0, "指标"),
-    STATE(1, "状态"),
-    INFO(2, "信息"),
-    OTHER(3, "其他");
+public enum DeviceEventType {
+    INFO(0, "信息"),
+    ALARM(1, "报警"),
+    FAULT(2, "故障");
     private int value;
     private String text;
 
-    DeviceAttrType(int value, String text) {
+    DeviceEventType(int value, String text) {
         this.value = value;
         this.text = text;
     }
@@ -41,8 +40,8 @@ public enum DeviceAttrType {
         this.text = text;
     }
 
-    public static DeviceAttrType from(int value) {
-        for (DeviceAttrType v : values()) {
+    public static DeviceEventType from(int value) {
+        for (DeviceEventType v : values()) {
             if (v.value() == value) {
                 return v;
             }
@@ -51,8 +50,8 @@ public enum DeviceAttrType {
     }
 
     // excel导入用方法
-    public static DeviceAttrType fromText(String text) {
-        for (DeviceAttrType v : values()) {
+    public static DeviceEventType fromText(String text) {
+        for (DeviceEventType v : values()) {
             if (v.text().equals(text)) {
                 return v;
             }

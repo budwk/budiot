@@ -145,7 +145,7 @@
 </template>
 </el-dialog>
 
-<el-dialog title="修改设备" v-model="showUpdate" width="45%" :close-on-click-modal="false">
+<el-dialog title="修改参数" v-model="showUpdate" width="45%" :close-on-click-modal="false">
 <el-form ref="updateRef" :model="formData" :rules="formRules" label-width="100px">
     <el-form-item label="参数名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入参数名称" />
@@ -215,7 +215,6 @@ import { getAttrList, getAttrInfo, doAttrCreate, doAttrUpdate, doAttrDelete, doA
     API_IOT_DEVICE_PRODUCT_ATTR_EXPORT
  } from '/@/api/platform/iot/product'
  import sortable from 'sortablejs'
-import { t } from '@wangeditor/editor'
 
 const route = useRoute()
 const id = route.params.id as string

@@ -32,6 +32,12 @@ export const API_IOT_DEVICE_PRODUCT_PROP_CREATE = '/iot/admin/device/product/pro
 export const API_IOT_DEVICE_PRODUCT_PROP_DELETE = '/iot/admin/device/product/prop/delete'
 export const API_IOT_DEVICE_PRODUCT_PROP_UPDATE = '/iot/admin/device/product/prop/update'
 export const API_IOT_DEVICE_PRODUCT_PROP_SORT = '/iot/admin/device/product/prop/sort'
+// 设备事件
+export const API_IOT_DEVICE_PRODUCT_EVENT_LIST = '/iot/admin/device/product/event/list'
+export const API_IOT_DEVICE_PRODUCT_EVENT_GET = '/iot/admin/device/product/event/get/'
+export const API_IOT_DEVICE_PRODUCT_EVENT_CREATE = '/iot/admin/device/product/event/create'
+export const API_IOT_DEVICE_PRODUCT_EVENT_DELETE = '/iot/admin/device/product/event/delete'
+export const API_IOT_DEVICE_PRODUCT_EVENT_UPDATE = '/iot/admin/device/product/event/update'
 
 import request from '/@/utils/request'
 
@@ -244,6 +250,46 @@ export function doPropDelete(data: object = {}) {
 export function doPropSort(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_PROP_SORT,
+        method: 'POST',
+        data: data
+    })
+}
+
+
+export function getEventList(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_EVENT_LIST,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getEventInfo(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_EVENT_GET + id + '?t=' + new Date().getTime(),
+        method: 'GET'
+    })
+}
+
+export function doEventCreate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_EVENT_CREATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doEventUpdate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_EVENT_UPDATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doEventDelete(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_EVENT_DELETE,
         method: 'POST',
         data: data
     })

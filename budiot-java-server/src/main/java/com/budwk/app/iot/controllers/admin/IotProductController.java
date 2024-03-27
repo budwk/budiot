@@ -60,6 +60,8 @@ public class IotProductController {
     private IotProductCmdService iotProductCmdService;
     @Inject
     private IotProductPropService iotProductPropService;
+    @Inject
+    private IotProductEventService iotProductEventService;
 
     @At
     @Ok("json")
@@ -770,4 +772,99 @@ public class IotProductController {
         return Result.success(iotProductPropService.fetch(id));
     }
 
+
+    @At("/event/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "事件列表")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
+                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
+                    @ApiFormParam(name = "name", example = "", description = "查询字段")
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckPermission("iot.device.product")
+    public Result<?> eventList(@Param("productId") String productId, @Param("name") String name, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isNotBlank(productId)) {
+            cnd.and("productId", "=", productId);
+        }
+        if (Strings.isNotBlank(name)) {
+            cnd.and(Cnd.exps("code", "like", "%" + name + "%").or("name", "like", "%" + name + "%"));
+        }
+        return Result.data(iotProductEventService.listPage(pageNo, pageSize, cnd));
+    }
+
+    @At("/event/create")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.config")
+    @SLog(value = "新增事件:${event.name}")
+    @ApiOperation(name = "新增事件")
+    @ApiFormParams(
+            implementation = Iot_product_event.class
+    )
+    @ApiResponses
+    public Result<?> eventCreate(@Param("..") Iot_product_event event, HttpServletRequest req) {
+        event.setCreatedBy(SecurityUtil.getUserId());
+        event.setUpdatedBy(SecurityUtil.getUserId());
+        iotProductEventService.insert(event);
+        return Result.success();
+    }
+
+    @At("/event/update")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.config")
+    @SLog(value = "修改事件:${event.name}")
+    @ApiOperation(name = "修改事件")
+    @ApiFormParams(
+            implementation = Iot_product_event.class
+    )
+    @ApiResponses
+    public Result<?> eventUpdate(@Param("..") Iot_product_event event, HttpServletRequest req) {
+        event.setUpdatedBy(SecurityUtil.getUserId());
+        iotProductEventService.updateIgnoreNull(event);
+        return Result.success();
+    }
+
+    @At("/event/delete")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.config")
+    @SLog(value = "删除事件:${name}")
+    @ApiOperation(name = "删除事件")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "id", description = "ID"),
+                    @ApiFormParam(name = "name", description = "事件名")
+            }
+    )
+    @ApiResponses
+    public Result<?> eventDelete(@Param("id") String id, @Param("name") String name, HttpServletRequest req) {
+        iotProductEventService.delete(id);
+        return Result.success();
+    }
+
+    @At("/event/get/{id}")
+    @GET
+    @Ok("json")
+    @SaCheckLogin
+    @ApiOperation(name = "获取事件")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "id", description = "主键ID", in = ParamIn.PATH, required = true, check = true)
+            }
+    )
+    @ApiResponses
+    public Result<?> getEvent(String id, HttpServletRequest req) {
+        return Result.success(iotProductEventService.fetch(id));
+    }
 }

@@ -44,6 +44,6 @@ public enum DeviceType {
                 return t;
             }
         }
-        throw new IllegalArgumentException("unknown DeviceType: " + value);
+        return null;
     }
 }
