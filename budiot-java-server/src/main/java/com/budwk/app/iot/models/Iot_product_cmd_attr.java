@@ -55,4 +55,10 @@ public class Iot_product_cmd_attr extends BaseModel implements Serializable {
     @ColDefine(type = ColType.INT)
     @ApiModelProperty(description = "数据类型")
     private DeviceDataType dataType;
+
+    @Column
+    @Comment("默认值")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    @ApiModelProperty(description = "默认值")
+    private String defaultValue;
 }

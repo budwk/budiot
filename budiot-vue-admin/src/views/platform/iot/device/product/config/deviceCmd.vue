@@ -60,7 +60,7 @@
 @pagination="list" />
 </el-row>
 
-<el-dialog title="新增指令" v-model="showCreate" width="45%">
+<el-dialog title="新增指令" v-model="showCreate" width="45%" :close-on-click-modal="false">
 <el-form ref="createRef" :model="formData" :rules="formRules" label-width="100px">
     <el-form-item label="指令名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入指令名称" />
@@ -73,6 +73,43 @@
             <el-radio :value="true">启用</el-radio>
             <el-radio :value="false">禁用</el-radio>
         </el-radio-group>
+    </el-form-item>
+    <el-form-item label="指令参数" class="label-font-weight">
+        <el-table :data="formData.attrList" row-key="code">
+            <el-table-column label="参数名称" prop="name">
+                <template #default="scope">
+                    <el-input v-model="scope.row.name" placeholder="请输入参数名称" />
+                </template>    
+            </el-table-column>
+            <el-table-column label="参数标识" prop="code">
+                <template #default="scope">
+                    <el-input v-model="scope.row.code" placeholder="请输入参数标识" />
+                </template>
+            </el-table-column>
+            <el-table-column label="数据类型" prop="dataType">
+                <template #default="scope">
+                    <el-select v-model="scope.row.dataType" placeholder="请选择数据类型">
+                        <el-option v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
+                    </el-select>
+                </template>
+            </el-table-column>
+            <el-table-column label="默认值" prop="defaultValue">
+                <template #default="scope">
+                    <el-input v-model="scope.row.defaultValue" :placeholder="scope.row.dataType==5?'请输入格式如 1=A,2=B':'请输入默认值'" />
+                </template>    
+            </el-table-column>
+            <el-table-column fixed="right" header-align="center" align="center" label="操作"
+                class-name="small-padding fixed-width" width="150">
+                <template #default="scope">
+                    <div>
+                        <el-tooltip content="删除" placement="top">
+                            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                                v-permission="['iot.device.product.device.config']"></el-button>
+                        </el-tooltip>
+                    </div>
+                </template>
+            </el-table-column>`
+        </el-table>
     </el-form-item>
     <el-form-item label="指令说明" prop="note">
         <el-input v-model="formData.note" placeholder="请输入指令说明" />
@@ -115,7 +152,7 @@
 <script setup lang="ts" name="deviceCmd">
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
-import { ElForm, ElTable } from 'element-plus'
+import { ElForm, ElTable, FormRules } from 'element-plus'
 import { useRoute } from "vue-router"
 import { getCmdList, getCmdInfo, doCmdCreate, doCmdUpdate, doCmdDelete, doCmdEnabled
  } from '/@/api/platform/iot/product'
@@ -142,12 +179,16 @@ const columns = ref([
     { prop: 'note', label: '指令说明', show: true },
     { prop: 'enabled', label: '是否启用', show: true },
 ])
-const eventTypes = ref([
-    { value: 0, text: '信息' },
-    { value: 1, text: '报警' },
-    { value: 2, text: '故障' },
+const dataTypes = ref([
+    { value: 1, text: '整型' },
+    { value: 2, text: '浮点型' },
+    { value: 3, text: '字符串' },
+    { value: 4, text: '布尔型' },
+    { value: 5, text: '枚举型' },
+    { value: 6, text: '时间戳' },
+    { value: 7, text: '日期时间' },
+    { value: 8, text: 'IP地址' },
 ])
-
 const data = reactive({
     formData: {
         id: '',
@@ -156,6 +197,7 @@ const data = reactive({
         enabled: false,
         note: '',
         productId: id,
+        attrList: [],
     },
     queryParams: {
         productId: id,
@@ -183,6 +225,7 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         enabled: true,
         note: '',
         productId: id,
+        attrList: [],
     }
     formEl?.resetFields()
 }
@@ -215,6 +258,9 @@ const enabledChange = (row: any) => {
 // 新增按钮
 const handleCreate = (row: any) => {
     resetForm(createRef.value)
+    formData.value.attrList = [
+        { name: '', code: '', dataType: 1, defaultValue: ''}
+    ] as any
     showCreate.value = true
 }
 
@@ -239,11 +285,29 @@ const handleDelete = (row: any) => {
     }).catch(() => { })
 }
 
+const validatorAttrList = (attrList: any) => {
+    let flag = true
+    attrList.forEach((item: any) => {
+        if (!item.name || !item.code || !item.dataType) {
+            modal.msgError('指令参数：参数名称、参数标识、数据类型不能为空')
+            flag = false
+        }
+        if(item.dataType == 5 && !/^\d+=\w+$/.test(item.defaultValue)){
+            modal.msgError('指令参数：枚举型默认值不能为空,且格式为 1=A,2=B ')
+            flag = false
+        }
+    })
+    return flag
+}
+
 // 提交新增
 const create = () => {
     if (!createRef.value) return
     createRef.value.validate((valid) => {
         if (valid) {
+            if(!validatorAttrList(formData.value.attrList)){
+                return
+            }
             doCmdCreate(formData.value).then((res: any) => {
                 modal.msgSuccess(res.msg)
                 showCreate.value = false
@@ -259,6 +323,9 @@ const update = () => {
     if (!updateRef.value) return
     updateRef.value.validate((valid) => {
         if (valid) {
+            if(!validatorAttrList(formData.value.attrList)){
+                return
+            }
             doCmdUpdate(formData.value).then((res: any) => {
                 modal.msgSuccess(res.msg)
                 showUpdate.value = false

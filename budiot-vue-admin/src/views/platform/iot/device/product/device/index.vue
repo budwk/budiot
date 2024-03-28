@@ -101,7 +101,7 @@ link type="danger" icon="Delete" @click="handleDelete(scope.row)"
             @pagination="list" />
         </el-row>
 
-        <el-dialog title="添加设备" v-model="showCreate" width="45%">
+        <el-dialog title="添加设备" v-model="showCreate" width="45%" :close-on-click-modal="false">
             <el-form ref="createRef" :model="formData" :rules="formRules" label-width="160px">
                 <el-form-item label="设备通信号" prop="deviceNo">
                     <el-input v-model="formData.deviceNo" placeholder="请输入设备唯一设备通信号" />

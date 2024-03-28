@@ -86,7 +86,7 @@
 @pagination="list" />
 </el-row>
 
-<el-dialog title="新增参数" v-model="showCreate" width="45%">
+<el-dialog title="新增参数" v-model="showCreate" width="45%" :close-on-click-modal="false">
 <el-form ref="createRef" :model="formData" :rules="formRules" label-width="100px">
     <el-form-item label="参数名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入参数名称" />
