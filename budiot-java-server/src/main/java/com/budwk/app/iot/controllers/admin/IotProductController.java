@@ -683,4 +683,21 @@ public class IotProductController {
     public Result<?> getCmd(String id, HttpServletRequest req) {
         return Result.success(iotProductCmdService.fetch(id));
     }
+
+    @At("/cmd/enabled")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.device.config")
+    @ApiOperation(name = "启用禁用指令")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "id", description = "ID"),
+                    @ApiFormParam(name = "name", description = "指令名")
+            }
+    )
+    @ApiResponses
+    public Result<?> cmdEnabled(@Param("id") String id, @Param("enabled") boolean enabled, HttpServletRequest req) {
+        iotProductCmdService.update(Chain.make("enabled", enabled), Cnd.where("id", "=", id));
+        return Result.success();
+    }
 }

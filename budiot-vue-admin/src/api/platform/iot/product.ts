@@ -44,6 +44,7 @@ export const API_IOT_DEVICE_PRODUCT_CMD_GET = '/iot/admin/device/product/cmd/get
 export const API_IOT_DEVICE_PRODUCT_CMD_CREATE = '/iot/admin/device/product/cmd/create'
 export const API_IOT_DEVICE_PRODUCT_CMD_DELETE = '/iot/admin/device/product/cmd/delete'
 export const API_IOT_DEVICE_PRODUCT_CMD_UPDATE = '/iot/admin/device/product/cmd/update'
+export const API_IOT_DEVICE_PRODUCT_CMD_ENABLED = '/iot/admin/device/product/cmd/enabled'
 
 import request from '/@/utils/request'
 
@@ -336,6 +337,15 @@ export function doCmdUpdate(data: object = {}) {
 export function doCmdDelete(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_CMD_DELETE,
+        method: 'POST',
+        data: data
+    })
+}
+
+
+export function doCmdEnabled(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_CMD_ENABLED,
         method: 'POST',
         data: data
     })

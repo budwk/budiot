@@ -3,7 +3,7 @@
         <div class="login-border">
             <el-row>
                 <el-col :span="12" class="login-left">
-                    <img src="~assets/images/banner.jpg" style="height: 485px;width: 100%;">
+                    <img src="~assets/images/banner.png" style="height: 485px;width: 100%;">
                 </el-col>
 
                 <el-col :span="12">
