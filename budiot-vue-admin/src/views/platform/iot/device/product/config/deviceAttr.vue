@@ -17,7 +17,7 @@
             <el-col :span="10" style="text-align: right; ">
                <div style="display: inline-flex;">
                     <import
-                                v-permission="['iot.device.product.device.config']"
+                                v-permission="['iot.device.product.config']"
                                 btn-text="导入"
                                 :action="API_IOT_DEVICE_PRODUCT_ATTR_IMPORT"
                                 :data="queryParams"
@@ -27,7 +27,7 @@
                                 style="margin-right: 12px"
                             />
                             <export
-                v-permission="['iot.device.product.device.config']"
+                v-permission="['iot.device.product.config']"
                 btn-text="导出"
                 title="导出参数"
                 :check-list="multipleSelection"
@@ -40,7 +40,7 @@
             />
                     <el-button
     plain type="success" @click="handleCreate"
-                        v-permission="['iot.device.product.device.config']">新增
+                        v-permission="['iot.device.product.config']">新增
                     </el-button>
                </div>
             </el-col>
@@ -72,11 +72,11 @@
             <div>
                 <el-tooltip content="修改" placement="top">
                     <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                        v-permission="['iot.device.product.device.config']"></el-button>
+                        v-permission="['iot.device.product.config']"></el-button>
                 </el-tooltip>
                 <el-tooltip content="删除" placement="top">
                     <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
-                        v-permission="['iot.device.product.device.config']"></el-button>
+                        v-permission="['iot.device.product.config']"></el-button>
                 </el-tooltip>
             </div>
         </template>

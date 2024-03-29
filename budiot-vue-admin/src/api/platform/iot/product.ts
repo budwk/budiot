@@ -47,6 +47,13 @@ export const API_IOT_DEVICE_PRODUCT_CMD_UPDATE = '/iot/admin/device/product/cmd/
 export const API_IOT_DEVICE_PRODUCT_CMD_ENABLED = '/iot/admin/device/product/cmd/enabled'
 export const API_IOT_DEVICE_PRODUCT_CMD_IMPORT = '/iot/admin/device/product/cmd/import'
 export const API_IOT_DEVICE_PRODUCT_CMD_EXPORT = '/iot/admin/device/product/cmd/export'
+// 设备订阅
+export const API_IOT_DEVICE_PRODUCT_SUB_LIST = '/iot/admin/device/product/sub/list'
+export const API_IOT_DEVICE_PRODUCT_SUB_GET = '/iot/admin/device/product/sub/get/'
+export const API_IOT_DEVICE_PRODUCT_SUB_CREATE = '/iot/admin/device/product/sub/create'
+export const API_IOT_DEVICE_PRODUCT_SUB_DELETE = '/iot/admin/device/product/sub/delete'
+export const API_IOT_DEVICE_PRODUCT_SUB_UPDATE = '/iot/admin/device/product/sub/update'
+export const API_IOT_DEVICE_PRODUCT_SUB_ENABLED = '/iot/admin/device/product/sub/enabled'
 
 import request from '/@/utils/request'
 
@@ -348,6 +355,55 @@ export function doCmdDelete(data: object = {}) {
 export function doCmdEnabled(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_CMD_ENABLED,
+        method: 'POST',
+        data: data
+    })
+}
+
+
+export function getSubList(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_SUB_LIST,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getSubInfo(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_SUB_GET + id + '?t=' + new Date().getTime(),
+        method: 'GET'
+    })
+}
+
+export function doSubCreate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_SUB_CREATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doSubUpdate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_SUB_UPDATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doSubDelete(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_SUB_DELETE,
+        method: 'POST',
+        data: data
+    })
+}
+
+
+export function doSubEnabled(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_SUB_ENABLED,
         method: 'POST',
         data: data
     })

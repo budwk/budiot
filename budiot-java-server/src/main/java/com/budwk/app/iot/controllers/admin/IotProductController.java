@@ -222,7 +222,7 @@ public class IotProductController {
     @At("/attr/create")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "新增参数:${attr.name}")
     @ApiOperation(name = "新增参数")
     @ApiFormParams(
@@ -239,7 +239,7 @@ public class IotProductController {
     @At("/attr/update")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "修改参数:${attr.name}")
     @ApiOperation(name = "修改参数")
     @ApiFormParams(
@@ -255,7 +255,7 @@ public class IotProductController {
     @At("/attr/delete")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "删除参数:${name}")
     @ApiOperation(name = "删除参数")
     @ApiFormParams(
@@ -273,7 +273,7 @@ public class IotProductController {
     @At("/attr/sort")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @ApiOperation(name = "参数排序")
     @ApiFormParams(
             value = {
@@ -320,7 +320,7 @@ public class IotProductController {
             }
     )
     @ApiResponses
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     public void attrExport(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
         Cnd cnd = Cnd.NEW();
         if (ids != null) {
@@ -342,7 +342,7 @@ public class IotProductController {
     @POST
     @Ok("json:full")
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @ApiOperation(name = "导入参数")
     @SLog(value = "导入参数")
     @ApiFormParams(
@@ -409,7 +409,7 @@ public class IotProductController {
     @At("/prop/create")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "新增属性:${prop.name}")
     @ApiOperation(name = "新增属性")
     @ApiFormParams(
@@ -426,7 +426,7 @@ public class IotProductController {
     @At("/prop/update")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "修改属性:${prop.name}")
     @ApiOperation(name = "修改属性")
     @ApiFormParams(
@@ -442,7 +442,7 @@ public class IotProductController {
     @At("/prop/delete")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "删除属性:${name}")
     @ApiOperation(name = "删除属性")
     @ApiFormParams(
@@ -460,7 +460,7 @@ public class IotProductController {
     @At("/prop/sort")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @ApiOperation(name = "属性排序")
     @ApiFormParams(
             value = {
@@ -526,7 +526,7 @@ public class IotProductController {
     @At("/event/create")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "新增事件配置:${event.name}")
     @ApiOperation(name = "新增事件配置")
     @ApiFormParams(
@@ -543,7 +543,7 @@ public class IotProductController {
     @At("/event/update")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "修改事件配置:${event.name}")
     @ApiOperation(name = "修改事件配置")
     @ApiFormParams(
@@ -559,7 +559,7 @@ public class IotProductController {
     @At("/event/delete")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "删除事件配置:${name}")
     @ApiOperation(name = "删除事件配置")
     @ApiFormParams(
@@ -621,7 +621,7 @@ public class IotProductController {
     @At("/cmd/create")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "新增指令:${cmd.name}")
     @ApiOperation(name = "新增指令")
     @ApiFormParams(
@@ -638,7 +638,7 @@ public class IotProductController {
     @At("/cmd/update")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "修改指令:${cmd.name}")
     @ApiOperation(name = "修改指令")
     @ApiFormParams(
@@ -656,7 +656,7 @@ public class IotProductController {
     @At("/cmd/delete")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @SLog(value = "删除指令:${name}")
     @ApiOperation(name = "删除指令")
     @ApiFormParams(
@@ -690,7 +690,7 @@ public class IotProductController {
     @At("/cmd/enabled")
     @POST
     @Ok("json")
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @ApiOperation(name = "启用禁用指令")
     @ApiFormParams(
             value = {
@@ -699,7 +699,7 @@ public class IotProductController {
             }
     )
     @ApiResponses
-    public Result<?> cmdEnabled(@Param("id") String id, @Param("enabled") boolean enabled, HttpServletRequest req) {
+    public Result<?> cmdEnabled(@Param("id") String id, @Param("name") String name, @Param("enabled") boolean enabled, HttpServletRequest req) {
         iotProductCmdService.update(Chain.make("enabled", enabled), Cnd.where("id", "=", id));
         return Result.success();
     }
@@ -716,7 +716,7 @@ public class IotProductController {
             }
     )
     @ApiResponses
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     public void cmdExport(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
         Cnd cnd = Cnd.NEW();
         if (ids != null) {
@@ -744,7 +744,7 @@ public class IotProductController {
     @POST
     @Ok("json:full")
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
-    @SaCheckPermission("iot.device.product.device.config")
+    @SaCheckPermission("iot.device.product.config")
     @ApiOperation(name = "导入指令")
     @SLog(value = "导入指令")
     @ApiFormParams(
