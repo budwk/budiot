@@ -3,7 +3,6 @@ package com.budwk.app.iot.models;
 import com.budwk.app.iot.enums.DeviceDataType;
 import com.budwk.starter.common.openapi.annotation.ApiModel;
 import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
-import com.budwk.starter.database.model.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.nutz.dao.entity.annotation.*;
@@ -12,12 +11,13 @@ import org.nutz.dao.interceptor.annotation.PrevInsert;
 import java.io.Serializable;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @Table("iot_product_cmd_attr")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
 @Comment("产品指令定义表")
 @ApiModel(description = "产品指令定义")
-public class Iot_product_cmd_attr extends BaseModel implements Serializable {
+public class Iot_product_cmd_attr implements Serializable {
+
     @Column
     @Name
     @ColDefine(type = ColType.VARCHAR, width = 32)

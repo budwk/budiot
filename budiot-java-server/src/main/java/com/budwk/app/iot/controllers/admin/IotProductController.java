@@ -23,6 +23,7 @@ import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
@@ -628,10 +629,10 @@ public class IotProductController {
             implementation = Iot_product_cmd.class
     )
     @ApiResponses
-    public Result<?> eventCreate(@Param("..") Iot_product_cmd cmd, HttpServletRequest req) {
+    public Result<?> cmdCreate(@Param("..") Iot_product_cmd cmd, HttpServletRequest req) {
         cmd.setCreatedBy(SecurityUtil.getUserId());
         cmd.setUpdatedBy(SecurityUtil.getUserId());
-        iotProductCmdService.insert(cmd);
+        iotProductCmdService.insertLinks(iotProductCmdService.insert(cmd), "attrList");
         return Result.success();
     }
 
@@ -645,9 +646,11 @@ public class IotProductController {
             implementation = Iot_product_cmd.class
     )
     @ApiResponses
-    public Result<?> eventUpdate(@Param("..") Iot_product_cmd cmd, HttpServletRequest req) {
+    public Result<?> cmdUpdate(@Param("..") Iot_product_cmd cmd, HttpServletRequest req) {
         cmd.setUpdatedBy(SecurityUtil.getUserId());
         iotProductCmdService.updateIgnoreNull(cmd);
+        iotProductCmdAttrService.clear(Cnd.where("cmdId", "=", cmd.getId()));
+        iotProductCmdService.insertLinks(cmd, "attrList");
         return Result.success();
     }
 
@@ -666,6 +669,7 @@ public class IotProductController {
     @ApiResponses
     public Result<?> cmdDelete(@Param("id") String id, @Param("name") String name, HttpServletRequest req) {
         iotProductCmdService.delete(id);
+        iotProductCmdAttrService.clear(Cnd.where("cmdId", "=", id));
         return Result.success();
     }
 
@@ -681,7 +685,7 @@ public class IotProductController {
     )
     @ApiResponses
     public Result<?> getCmd(String id, HttpServletRequest req) {
-        return Result.success(iotProductCmdService.fetch(id));
+        return Result.success(iotProductCmdService.fetchLinks(iotProductCmdService.fetch(id), "attrList"));
     }
 
     @At("/cmd/enabled")

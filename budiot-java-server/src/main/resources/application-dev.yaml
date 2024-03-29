@@ -102,9 +102,9 @@ database:
     package:          #相关实体所在包
       - com.budwk.app
 jdbc:
-  url: jdbc:mysql://budwk.com:3306/budiot?useUnicode=true&characterEncoding=utf8&useSSL=false
+  url: jdbc:mysql://10.10.10.10:3306/budiot?useUnicode=true&characterEncoding=utf8&useSSL=false
   username: root
-  password: "@#pass123"
+  password: "root"
   validationQuery: select 1
   maxActive: 10
   testWhileIdle: true

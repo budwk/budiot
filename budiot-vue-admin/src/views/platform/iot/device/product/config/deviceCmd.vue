@@ -35,7 +35,7 @@
                 <span>{{ formatTime(scope.row.createdAt) }}</span>
             </template>
             <template v-if="item.prop == 'enabled'" #default="scope">
-                <el-switch v-model="scope.row.enabled" :active-value="false" :inactive-value="true"
+                <el-switch v-model="scope.row.enabled" :active-value="true" :inactive-value="false"
                             active-color="green" inactive-color="red" @change="enabledChange(scope.row)" />
             </template>
         </el-table-column>
@@ -60,7 +60,7 @@
 @pagination="list" />
 </el-row>
 
-<el-dialog title="新增指令" v-model="showCreate" width="45%" :close-on-click-modal="false">
+<el-dialog title="新增指令" v-model="showCreate" width="65%" :close-on-click-modal="false">
 <el-form ref="createRef" :model="formData" :rules="formRules" label-width="100px">
     <el-form-item label="指令名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入指令名称" />
@@ -103,13 +103,14 @@
                 <template #default="scope">
                     <div>
                         <el-tooltip content="删除" placement="top">
-                            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                            <el-button link type="danger" icon="Delete" @click="handleRowDelete(scope.row)"
                                 v-permission="['iot.device.product.device.config']"></el-button>
                         </el-tooltip>
                     </div>
                 </template>
             </el-table-column>`
         </el-table>
+        <el-button plain icon="Plus" @click="handleRowAdd" style="padding: 10px 10px;margin-top: 10px;">新增参数</el-button>
     </el-form-item>
     <el-form-item label="指令说明" prop="note">
         <el-input v-model="formData.note" placeholder="请输入指令说明" />
@@ -123,7 +124,7 @@
 </template>
 </el-dialog>
 
-<el-dialog title="修改指令" v-model="showUpdate" width="45%" :close-on-click-modal="false">
+<el-dialog title="修改指令" v-model="showUpdate" width="65%" :close-on-click-modal="false">
 <el-form ref="updateRef" :model="formData" :rules="formRules" label-width="100px">
     <el-form-item label="指令名称" prop="name">
         <el-input v-model="formData.name" placeholder="请输入指令名称" />
@@ -131,10 +132,49 @@
     <el-form-item label="指令标识" prop="code">
         <el-input v-model="formData.code" placeholder="请输入指令唯一标识" />
     </el-form-item>
-    <el-form-item label="指令类型" prop="eventType">
-        <el-radio-group v-model="formData.eventType">
-            <el-radio v-for="item in eventTypes" :key="item.value" :value="item.value">{{ item.text }}</el-radio>
+    <el-form-item label="是否启用" prop="enabled">
+        <el-radio-group v-model="formData.enabled">
+            <el-radio :value="true">启用</el-radio>
+            <el-radio :value="false">禁用</el-radio>
         </el-radio-group>
+    </el-form-item>
+    <el-form-item label="指令参数" class="label-font-weight">
+        <el-table :data="formData.attrList" row-key="code">
+            <el-table-column label="参数名称" prop="name">
+                <template #default="scope">
+                    <el-input v-model="scope.row.name" placeholder="请输入参数名称" />
+                </template>    
+            </el-table-column>
+            <el-table-column label="参数标识" prop="code">
+                <template #default="scope">
+                    <el-input v-model="scope.row.code" placeholder="请输入参数标识" />
+                </template>
+            </el-table-column>
+            <el-table-column label="数据类型" prop="dataType">
+                <template #default="scope">
+                    <el-select v-model="scope.row.dataType" placeholder="请选择数据类型">
+                        <el-option v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
+                    </el-select>
+                </template>
+            </el-table-column>
+            <el-table-column label="默认值" prop="defaultValue">
+                <template #default="scope">
+                    <el-input v-model="scope.row.defaultValue" :placeholder="scope.row.dataType==5?'请输入格式如 1=A,2=B':'请输入默认值'" />
+                </template>    
+            </el-table-column>
+            <el-table-column fixed="right" header-align="center" align="center" label="操作"
+                class-name="small-padding fixed-width" width="150">
+                <template #default="scope">
+                    <div>
+                        <el-tooltip content="删除" placement="top">
+                            <el-button link type="danger" icon="Delete" @click="handleRowDelete(scope.row)"
+                                v-permission="['iot.device.product.device.config']"></el-button>
+                        </el-tooltip>
+                    </div>
+                </template>
+            </el-table-column>`
+        </el-table>
+        <el-button plain icon="Plus" @click="handleRowAdd" style="padding: 10px 10px;margin-top: 10px;">新增参数</el-button>
     </el-form-item>
     <el-form-item label="指令说明" prop="note">
         <el-input v-model="formData.note" placeholder="请输入指令说明" />
@@ -255,12 +295,19 @@ const enabledChange = (row: any) => {
     })
 }
 
+const handleRowDelete = (row: any) => {
+    const index = formData.value.attrList.findIndex((item: any) => item._id === row._id)
+    formData.value.attrList.splice(index, 1)
+}
+
+const handleRowAdd = () => {
+    formData.value.attrList.push({ _id: new Date().getTime() , productId: id, name: '', code: '', dataType: 1, defaultValue: '' } as never)
+}
+
 // 新增按钮
 const handleCreate = (row: any) => {
     resetForm(createRef.value)
-    formData.value.attrList = [
-        { name: '', code: '', dataType: 1, defaultValue: ''}
-    ] as any
+    handleRowAdd()
     showCreate.value = true
 }
 
@@ -268,7 +315,10 @@ const handleCreate = (row: any) => {
 const handleUpdate = (row: any) => {
     getCmdInfo(row.id).then((res: any) => {
         formData.value = res.data
-        formData.value.eventType = res.data.eventType.value
+        formData.value.attrList.forEach((item: any) => {
+            item._id = new Date().getTime()
+            item.dataType = item.dataType.value
+        })
         showUpdate.value = true
     })
 }
@@ -288,11 +338,11 @@ const handleDelete = (row: any) => {
 const validatorAttrList = (attrList: any) => {
     let flag = true
     attrList.forEach((item: any) => {
-        if (!item.name || !item.code || !item.dataType) {
-            modal.msgError('指令参数：参数名称、参数标识、数据类型不能为空')
+        if (!item.name || !item.code ) {
+            modal.msgError('指令参数：参数名称、参数标识不能为空')
             flag = false
         }
-        if(item.dataType == 5 && !/^\d+=\w+$/.test(item.defaultValue)){
+        if(item.dataType == 5 && !/^\w+=\w+(,\w+=\w+)*$/.test(item.defaultValue)){
             modal.msgError('指令参数：枚举型默认值不能为空,且格式为 1=A,2=B ')
             flag = false
         }
