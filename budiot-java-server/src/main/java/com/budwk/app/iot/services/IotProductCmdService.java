@@ -7,5 +7,5 @@ import com.budwk.starter.database.service.BaseService;
 import java.util.List;
 
 public interface IotProductCmdService extends BaseService<Iot_product_cmd> {
-    void create(Iot_product_cmd cmd, List<Iot_product_attr> attrList);
+    String importData(String productId, String json, boolean over, String userId, String loginname);
 }

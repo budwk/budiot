@@ -1,0 +1,23 @@
+[{
+   "name": "阀门控制",
+   "code": "VALVE_CONTROL",
+   "enabled": true,
+   "note": "",
+   "attrList": [{
+      "name": "表号",
+      "code": "meter_no",
+      "dataType": {
+         "value": 3,
+         "text": "字符串"
+      },
+      "defaultValue": ""
+   }, {
+      "name": "阀门状态",
+      "code": "status",
+      "dataType": {
+         "value": 5,
+         "text": "枚举型"
+      },
+      "defaultValue": "0=开阀,1=强制关阀,2=临时关阀"
+   }]
+}]

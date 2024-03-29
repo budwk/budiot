@@ -19,12 +19,11 @@ import com.budwk.starter.security.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Sqls;
-import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.Lang;
+import org.nutz.json.JsonFormat;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.*;
@@ -34,8 +33,8 @@ import org.nutz.mvc.upload.UploadAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.List;
-import java.util.Map;
 
 @IocBean
 @At("/iot/admin/device/product")
@@ -616,7 +615,7 @@ public class IotProductController {
         if (Strings.isNotBlank(name)) {
             cnd.and(Cnd.exps("code", "like", "%" + name + "%").or("name", "like", "%" + name + "%"));
         }
-        return Result.data(iotProductCmdService.listPage(pageNo, pageSize, cnd));
+        return Result.data(iotProductCmdService.listPageLinks(pageNo, pageSize, cnd, "attrList"));
     }
 
     @At("/cmd/create")
@@ -703,5 +702,78 @@ public class IotProductController {
     public Result<?> cmdEnabled(@Param("id") String id, @Param("enabled") boolean enabled, HttpServletRequest req) {
         iotProductCmdService.update(Chain.make("enabled", enabled), Cnd.where("id", "=", id));
         return Result.success();
+    }
+
+    @At("/cmd/export")
+    @Ok("void")
+    @POST
+    @ApiOperation(name = "导出指令")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "productId", description = "产品ID"),
+                    @ApiFormParam(name = "fieldNames", description = "字段名"),
+                    @ApiFormParam(name = "ids", description = "ID数组")
+            }
+    )
+    @ApiResponses
+    @SaCheckPermission("iot.device.product.device.config")
+    public void cmdExport(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
+        Cnd cnd = Cnd.NEW();
+        if (ids != null) {
+            cnd.and("id", "in", ids);
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        try {
+            List<Iot_product_cmd> list = iotProductCmdService.query(cnd, "attrList");
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("utf-8");
+            response.setHeader("Content-Disposition", "attachment;");
+            try (PrintWriter writer = response.getWriter()) {
+                JsonFormat jsonFormat = JsonFormat.full();
+                jsonFormat.setLocked("^(id|cmdId|productId|createdAt|createdBy|updatedAt|updatedBy|delFlag)$");
+                writer.write(Json.toJson(list, jsonFormat));
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @At("/cmd/import")
+    @POST
+    @Ok("json:full")
+    @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
+    @SaCheckPermission("iot.device.product.device.config")
+    @ApiOperation(name = "导入指令")
+    @SLog(value = "导入指令")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "Filedata", example = "", description = "文件表单对象名"),
+                    @ApiFormParam(name = "cover", example = "", description = "是否覆盖"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
+            },
+            mediaType = "multipart/form-data"
+    )
+    @ApiResponses
+    public Result<?> cmdImport(@Param("Filedata") TempFile tf, @Param(value = "cover", df = "false") boolean cover, @Param("productId") String productId, HttpServletRequest req, AdaptorErrorContext err) {
+        if (err != null && err.getAdaptorErr() != null) {
+            return Result.error("上传文件错误");
+        } else if (tf == null) {
+            return Result.error("未上传文件");
+        } else {
+            String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+            if (!".json".equalsIgnoreCase(suffixName) && !".txt".equalsIgnoreCase(suffixName)) {
+                return Result.error("请上传 json/txt 格式文件");
+            }
+            try {
+                byte[] bytes = Streams.readBytesAndClose(tf.getInputStream());
+                String result = iotProductCmdService.importData(productId, new String(bytes), cover, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+                return Result.success(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new BaseException("文件处理失败");
+            }
+        }
     }
 }

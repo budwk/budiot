@@ -24,7 +24,7 @@
         >
             <div class="pro-export__inner">
                 <div class="export-column">
-                    <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"
+                    <el-checkbox v-if="columns&&columns.length>0" v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"
                         >全选</el-checkbox
                     >
                     <div style="margin: 15px 0" />
@@ -86,6 +86,10 @@ const props = defineProps({
     valueKey: {
         type: String,
         default: "id"
+    },
+    suffix: {
+        type: String,
+        default: "xlsx"
     }
 })
 
@@ -120,7 +124,7 @@ const handleCheckedColumnChange = (val: any) => {
 }
 
 const handleSubmit = async () => {
-    if (checkedColumn.value.length === 0) {
+    if (props.columns && props.columns.length>0 && checkedColumn.value.length === 0) {
         return modal.msgWarning("请勾选需要导出的列")
     }
     loading.value = true
@@ -134,7 +138,7 @@ const handleSubmit = async () => {
         delete params[props.idKey]
     }
 
-    download.download(props.action, { ...params}, props.title+`_${new Date().getTime()}.xlsx`);
+    download.download(props.action, { ...params}, props.title+`_${new Date().getTime()}`+`.${props.suffix}`);
     close()
     loading.value = false
 

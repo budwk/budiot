@@ -16,7 +16,29 @@
             </el-col>
             <el-col :span="10" style="text-align: right; ">
                <div style="display: inline-flex;">
-                
+                <import
+                                v-permission="['iot.device.product.device.config']"
+                                btn-text="导入"
+                                :action="API_IOT_DEVICE_PRODUCT_CMD_IMPORT"
+                                :data="queryParams"
+                                :cover="true"
+                                temp-url="/tpl/template_product_cmd.json"
+                                suffix="json,txt"
+                                @refresh="handleSearch"
+                                style="margin-right: 12px"
+                            />
+                            <export
+                v-permission="['iot.device.product.device.config']"
+                btn-text="导出"
+                title="导出指令"
+                :action="API_IOT_DEVICE_PRODUCT_CMD_EXPORT"
+                :columns="[]"
+                suffix="json"
+                :data="{
+                    productId: id
+                }"
+                style="margin-right: 12px"
+            />
                     <el-button
     plain type="success" @click="handleCreate"
                         v-permission="['iot.device.product.device.config']">新增
@@ -27,7 +49,16 @@
         <el-row class="mb8">
 
 <el-table ref="tableRef" v-loading="tableLoading" :data="tableData" row-key="id" @selection-change="handleSelectionChange">
-    <el-table-column type="selection" width="50" />
+    <el-table-column type="expand" fixed>
+        <template #default="props">
+            <el-table :data="props.row.attrList" style="width: 98%;margin-left: 10px;">
+                <el-table-column label="参数名称" prop="name" />
+                <el-table-column label="参数标识" prop="code" />
+                <el-table-column label="数据类型" prop="dataType.text" />
+                <el-table-column label="默认值" prop="defaultValue" />
+            </el-table>
+        </template>
+    </el-table-column>
     <template v-for="(item, idx) in columns" :key="idx">
         <el-table-column :prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
             :show-overflow-tooltip="true" :align="item.align" :width="item.width">
@@ -75,25 +106,25 @@
         </el-radio-group>
     </el-form-item>
     <el-form-item label="指令参数" class="label-font-weight">
-        <el-table :data="formData.attrList" row-key="code">
-            <el-table-column label="参数名称" prop="name">
+        <el-table :data="formData.attrList" row-key="_id">
+            <el-table-column label="参数名称">
                 <template #default="scope">
                     <el-input v-model="scope.row.name" placeholder="请输入参数名称" />
                 </template>    
             </el-table-column>
-            <el-table-column label="参数标识" prop="code">
+            <el-table-column label="参数标识">
                 <template #default="scope">
                     <el-input v-model="scope.row.code" placeholder="请输入参数标识" />
                 </template>
             </el-table-column>
-            <el-table-column label="数据类型" prop="dataType">
+            <el-table-column label="数据类型">
                 <template #default="scope">
                     <el-select v-model="scope.row.dataType" placeholder="请选择数据类型">
                         <el-option v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
                     </el-select>
                 </template>
             </el-table-column>
-            <el-table-column label="默认值" prop="defaultValue">
+            <el-table-column label="默认值">
                 <template #default="scope">
                     <el-input v-model="scope.row.defaultValue" :placeholder="scope.row.dataType==5?'请输入格式如 1=A,2=B':'请输入默认值'" />
                 </template>    
@@ -139,25 +170,25 @@
         </el-radio-group>
     </el-form-item>
     <el-form-item label="指令参数" class="label-font-weight">
-        <el-table :data="formData.attrList" row-key="code">
-            <el-table-column label="参数名称" prop="name">
+        <el-table :data="formData.attrList" row-key="_id">
+            <el-table-column label="参数名称">
                 <template #default="scope">
                     <el-input v-model="scope.row.name" placeholder="请输入参数名称" />
                 </template>    
             </el-table-column>
-            <el-table-column label="参数标识" prop="code">
+            <el-table-column label="参数标识">
                 <template #default="scope">
                     <el-input v-model="scope.row.code" placeholder="请输入参数标识" />
                 </template>
             </el-table-column>
-            <el-table-column label="数据类型" prop="dataType">
+            <el-table-column label="数据类型">
                 <template #default="scope">
                     <el-select v-model="scope.row.dataType" placeholder="请选择数据类型">
                         <el-option v-for="item in dataTypes" :key="item.value" :label="item.text" :value="item.value" />
                     </el-select>
                 </template>
             </el-table-column>
-            <el-table-column label="默认值" prop="defaultValue">
+            <el-table-column label="默认值">
                 <template #default="scope">
                     <el-input v-model="scope.row.defaultValue" :placeholder="scope.row.dataType==5?'请输入格式如 1=A,2=B':'请输入默认值'" />
                 </template>    
@@ -194,7 +225,8 @@ import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable, FormRules } from 'element-plus'
 import { useRoute } from "vue-router"
-import { getCmdList, getCmdInfo, doCmdCreate, doCmdUpdate, doCmdDelete, doCmdEnabled
+import { getCmdList, getCmdInfo, doCmdCreate, doCmdUpdate, doCmdDelete, doCmdEnabled,
+    API_IOT_DEVICE_PRODUCT_CMD_EXPORT, API_IOT_DEVICE_PRODUCT_CMD_IMPORT
  } from '/@/api/platform/iot/product'
  import sortable from 'sortablejs'
 
@@ -316,9 +348,10 @@ const handleUpdate = (row: any) => {
     getCmdInfo(row.id).then((res: any) => {
         formData.value = res.data
         formData.value.attrList.forEach((item: any) => {
-            item._id = new Date().getTime()
+            item['_id'] = item.id
             item.dataType = item.dataType.value
         })
+        console.log(formData.value)
         showUpdate.value = true
     })
 }
@@ -342,7 +375,8 @@ const validatorAttrList = (attrList: any) => {
             modal.msgError('指令参数：参数名称、参数标识不能为空')
             flag = false
         }
-        if(item.dataType == 5 && !/^\w+=\w+(,\w+=\w+)*$/.test(item.defaultValue)){
+        // = 左侧为字母数组，= 右侧可以为中文
+        if(item.dataType == 5 && !/^\w+=[\w\u4e00-\u9fa5]+(,\w+=[\w\u4e00-\u9fa5]+)*$/.test(item.defaultValue)){
             modal.msgError('指令参数：枚举型默认值不能为空,且格式为 1=A,2=B ')
             flag = false
         }

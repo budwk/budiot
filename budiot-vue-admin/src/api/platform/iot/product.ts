@@ -45,6 +45,8 @@ export const API_IOT_DEVICE_PRODUCT_CMD_CREATE = '/iot/admin/device/product/cmd/
 export const API_IOT_DEVICE_PRODUCT_CMD_DELETE = '/iot/admin/device/product/cmd/delete'
 export const API_IOT_DEVICE_PRODUCT_CMD_UPDATE = '/iot/admin/device/product/cmd/update'
 export const API_IOT_DEVICE_PRODUCT_CMD_ENABLED = '/iot/admin/device/product/cmd/enabled'
+export const API_IOT_DEVICE_PRODUCT_CMD_IMPORT = '/iot/admin/device/product/cmd/import'
+export const API_IOT_DEVICE_PRODUCT_CMD_EXPORT = '/iot/admin/device/product/cmd/export'
 
 import request from '/@/utils/request'
 

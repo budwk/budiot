@@ -29,7 +29,7 @@
                         <i class="el-icon-upload" />
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <template #tip>
-                            支持扩展名：.xls .xlsx {{ uploadLimit | filesize }}k以内文件
+                            支持扩展名：{{ suffix.split(",").toString() }} {{ uploadLimit | filesize }}k以内文件
                             <el-link type="primary" :href="tempUrl" target="_blank">下载模板</el-link>
                         </template>
                     </el-upload>
@@ -130,6 +130,10 @@ const props = defineProps({
     prefixValid: {
         type: Function,
         default: () => null
+    },
+    suffix: {
+        type: String,
+        default: "xlsx,xls"
     }
 })
 
@@ -213,9 +217,10 @@ const handleClose =() => {
 const handleFileChange = (file) => {
     const { name: fileName, size: fileSize } = file
     const ext = fileName.match(/^[^.]*\.{1}(.*)$/)
-    if (!ext || !["xls", "xlsx"].includes(ext[1])) {
+    const suffix = props.suffix.split(",")
+    if (!ext || !suffix.includes(ext[1])) {
         uploadRef.value?.clearFiles()
-        return modal.msgWarning("只能上传xlsx/xls格式文件")
+        return modal.msgWarning("只能上传"+ suffix.toString() +"格式文件")
     } else if (fileSize > props.uploadLimit * 1024) {
         uploadRef.value?.clearFiles()
         return modal.msgWarning(`文件大小不能超过${filesize(props.uploadLimit * 1024)}`)
