@@ -22,7 +22,7 @@ import org.nutz.mvc.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @IocBean
-@At("/iot/admin/device/sub/sub")
+@At("/iot/admin/device/product/sub")
 @SLog(tag = "订阅-订阅列表")
 @ApiDefinition(tag = "订阅-订阅列表")
 @Slf4j
