@@ -23,6 +23,8 @@
         <module>budiot-access-network/budiot-access-network-http</module>
         <module>budiot-access-processor</module>
         <module>budiot-access-protocol</module>
+        <module>budiot-access-protocol/budiot-access-protocol-core</module>
+        <module>budiot-access-protocol/budiot-access-protocol-demo</module>
     </modules>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

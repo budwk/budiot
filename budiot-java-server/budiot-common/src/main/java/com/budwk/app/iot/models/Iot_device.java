@@ -17,7 +17,8 @@ import java.io.Serializable;
 @Table("iot_device")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
 @TableIndexes({@Index(name = "IDX_DEVICE_METERNO", fields = {"meterNo"}, unique = false),
-        @Index(name = "IDX_DEVICE_DEVICE_NO", fields = {"productId", "deviceNo"}, unique = true)})
+        @Index(name = "IDX_DEVICE_DEVICE_NO", fields = {"productId", "deviceNo"}, unique = true),
+        @Index(name = "IDX_DEVICE_DEVICE_PROTOCOL", fields = {"protocolCode", "deviceNo"}, unique = true)})
 @Comment("设备信息表")
 @ApiModel(description = "设备信息")
 public class Iot_device extends BaseModel implements Serializable {
