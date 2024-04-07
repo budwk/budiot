@@ -39,7 +39,7 @@ import java.util.List;
 @IocBean(create = "init", depose = "depose")
 @AdaptBy(type = JsonAdaptor.class)
 @Slf4j
-public class WkMiniLauncher {
+public class MainLauncher {
     @Inject("refer:$ioc")
     private Ioc ioc;
     @Inject
