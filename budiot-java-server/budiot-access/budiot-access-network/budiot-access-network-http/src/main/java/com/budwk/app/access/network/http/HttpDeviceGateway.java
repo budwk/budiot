@@ -32,8 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * HTTP 网关
- *
- * @author zyang  2022/6/9 19:01
  */
 @Slf4j
 public class HttpDeviceGateway implements DeviceGateway {

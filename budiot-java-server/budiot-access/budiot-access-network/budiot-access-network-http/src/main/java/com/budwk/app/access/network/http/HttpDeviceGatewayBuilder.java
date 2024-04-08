@@ -1,17 +1,15 @@
 package com.budwk.app.access.network.http;
 
-import com.osdiot.gas.device.networks.config.DeviceGatewayConfiguration;
-import com.osdiot.gas.device.networks.core.DeviceGateway;
-import com.osdiot.gas.device.networks.core.DeviceGatewayBuilder;
-import com.osdiot.gas.device.protocols.dto.enums.TransportType;
-import com.osdiot.gas.starter.message.MessageTransfer;
+import com.budwk.app.access.message.MessageTransfer;
+import com.budwk.app.access.network.DeviceGateway;
+import com.budwk.app.access.network.DeviceGatewayBuilder;
+import com.budwk.app.access.network.TransportType;
+import com.budwk.app.access.network.config.DeviceGatewayConfiguration;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 
 /**
  * HTTP 网关构造器
- *
- * @author zyang  2022/6/9 19:04
  */
 @IocBean(name = "httpGatewayBuilder")
 public class HttpDeviceGatewayBuilder implements DeviceGatewayBuilder {
@@ -25,12 +23,12 @@ public class HttpDeviceGatewayBuilder implements DeviceGatewayBuilder {
 
     @Override
     public String getName() {
-        return "http网关";
+        return "HTTP";
     }
 
     @Override
     public TransportType getTransportType() {
-        return null;
+        return TransportType.HTTP;
     }
 
     @Override
