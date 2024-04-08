@@ -1,5 +1,7 @@
 package com.budwk.app.access.gateway;
 
+import com.budwk.app.access.network.DeviceGateway;
+import com.budwk.app.access.network.DeviceGatewayManager;
 import org.nutz.boot.starter.ServerFace;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
