@@ -1,6 +1,5 @@
 package com.budwk.app.access.objects.dto;
 
-import com.budwk.app.iot.enums.DeviceDataType;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,13 +15,9 @@ public class DeviceAttributeDTO implements Serializable {
     //标识符
     private String code;
     //数据类型
-    private DeviceDataType dataType;
+    private Integer dataType;
     //小数位
     private Integer scale;
     //单位
     private String unit;
-
-    public int getDataTypeValue() {
-        return dataType.getValue();
-    }
 }

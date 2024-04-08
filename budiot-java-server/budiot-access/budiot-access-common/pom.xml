@@ -18,11 +18,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.budwk.app</groupId>
-            <artifactId>budiot-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- nutzboot-starter -->
         <dependency>
             <groupId>org.nutz</groupId>

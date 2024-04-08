@@ -10,7 +10,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>budiot-access-network-gateway</artifactId>
+    <artifactId>budiot-access-network-common</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -19,23 +19,15 @@
     </properties>
 
     <dependencies>
+        <!-- nutzboot-starter -->
         <dependency>
-            <groupId>com.budwk.app</groupId>
-            <artifactId>budiot-access-network-common</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutzboot-core</artifactId>
         </dependency>
+        <!--lombok-->
         <dependency>
-            <groupId>com.budwk.app</groupId>
-            <artifactId>budiot-access-network-tcp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.budwk.starter</groupId>
-            <artifactId>wk-starter-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.budwk.starter</groupId>
-            <artifactId>wk-starter-log</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 </project>

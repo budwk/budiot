@@ -1,0 +1,23 @@
+nutz:
+  application:
+    name: gateway
+gateway:
+  demo:
+    transport: tcp # 固定 tcp
+    protocol: demo  # 对应的协议解析包的标识
+    properties: # 网关的配置参数
+      port: 9003 # 端口号
+      host: '[::1]' # 绑定的host，默认 0.0.0.0
+      payloadType: string # 数据类型，可选 hex 和string 默认是 hex。hex 16进制字符串，string 常规字符串
+
+rocketmq:
+  # 集群环境多个nameserver用;分割
+  nameserver-address: 127.0.0.1:9876
+  # 生产者组
+  producer-group: local_producer
+  consumer-thread-max: 300
+  consumer-thread-min: 10
+
+log:
+  color: true
+  level: info

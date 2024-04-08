@@ -1,9 +1,10 @@
 package com.budwk.app.access.protocol.codec;
 
-import com.budwk.app.device.handler.common.codec.context.DecodeContext;
-import com.budwk.app.device.handler.common.codec.context.EncodeContext;
-import com.budwk.app.device.handler.common.codec.result.DecodeResult;
-import com.budwk.app.device.handler.common.codec.result.EncodeResult;
+
+import com.budwk.app.access.protocol.codec.context.DecodeContext;
+import com.budwk.app.access.protocol.codec.context.EncodeContext;
+import com.budwk.app.access.protocol.codec.result.DecodeResult;
+import com.budwk.app.access.protocol.codec.result.EncodeResult;
 
 /**
  * 编解码

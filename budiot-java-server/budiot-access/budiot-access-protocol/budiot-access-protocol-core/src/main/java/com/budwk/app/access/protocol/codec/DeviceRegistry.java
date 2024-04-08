@@ -1,6 +1,7 @@
 package com.budwk.app.access.protocol.codec;
 
-import com.budwk.app.device.handler.common.device.CommandInfo;
+
+import com.budwk.app.access.protocol.device.CommandInfo;
 
 /**
  * 资源装载类

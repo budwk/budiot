@@ -1,6 +1,5 @@
 package com.budwk.app.access.objects.dto;
 
-import com.budwk.app.iot.enums.DeviceEventType;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -28,9 +27,9 @@ public class DeviceEventDataDTO implements Serializable {
      */
     private Long eventTime;
     /**
-     * 事件类型
+     * 事件类型 0 信息，1 警告，2 故障, 3 恢复
      */
-    private DeviceEventType eventType;
+    private Integer eventType;
     /**
      * 事件内容
      */
