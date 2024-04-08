@@ -28,7 +28,7 @@ public interface EncodedMessage extends Serializable {
      * 获取解析器标识
      * @return
      */
-    String getHandlerCode();
+    String getProtocolCode();
 
     byte[] getPayload();
 

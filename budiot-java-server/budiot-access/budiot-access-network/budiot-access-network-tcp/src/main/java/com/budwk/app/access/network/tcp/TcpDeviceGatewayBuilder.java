@@ -8,7 +8,7 @@ import com.budwk.app.access.network.config.DeviceGatewayConfiguration;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 
-@IocBean
+@IocBean(name = "tcpGatewayBuilder")
 public class TcpDeviceGatewayBuilder implements DeviceGatewayBuilder {
 
     @Inject

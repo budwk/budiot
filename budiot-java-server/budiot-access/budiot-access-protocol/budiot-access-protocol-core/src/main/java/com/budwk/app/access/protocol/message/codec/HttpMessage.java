@@ -13,7 +13,7 @@ import java.util.Map;
 public class HttpMessage implements EncodedMessage {
 
     private static final long serialVersionUID = 1588297065657636014L;
-    private final String handlerCode;
+    private final String protocolCode;
     private String messageId;
     private String platform;
     private byte[] payload;
@@ -35,8 +35,8 @@ public class HttpMessage implements EncodedMessage {
     }
 
     @Override
-    public String getHandlerCode() {
-        return handlerCode;
+    public String getProtocolCode() {
+        return protocolCode;
     }
 
     @Override
@@ -48,6 +48,7 @@ public class HttpMessage implements EncodedMessage {
     public String toString() {
         return "HttpMessage{" +
                 ", platform='" + platform + '\'' +
+                ", protocolCode='" + protocolCode + '\'' +
                 ", payload=" + payloadAsString() +
                 ", header=" + header +
                 ", method='" + method + '\'' +

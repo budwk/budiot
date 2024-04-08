@@ -31,7 +31,7 @@ public class MqttMessage implements EncodedMessage {
 
     private boolean retain;
 
-    private final String handlerCode;
+    private final String protocolCode;
 
     @Override
     public String getMessageId() {
@@ -44,8 +44,8 @@ public class MqttMessage implements EncodedMessage {
     }
 
     @Override
-    public String getHandlerCode() {
-        return handlerCode;
+    public String getProtocolCode() {
+        return protocolCode;
     }
 
 
@@ -69,6 +69,7 @@ public class MqttMessage implements EncodedMessage {
                 "clientId=" + clientId +
                 "qosLevel=" + qosLevel +
                 "messageId=" + messageId +
+                "protocolCode=" + protocolCode +
                 "will=" + will +
                 "dup=" + dup +
                 "retain=" + retain +

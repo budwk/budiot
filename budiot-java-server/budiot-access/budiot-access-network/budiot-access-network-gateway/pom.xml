@@ -19,14 +19,21 @@
     </properties>
 
     <dependencies>
+        <!-- tcp 网关 -->
         <dependency>
             <groupId>com.budwk.app</groupId>
-            <artifactId>budiot-access-network-common</artifactId>
+            <artifactId>budiot-access-network-tcp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- http 网关 -->
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-network-http</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.budwk.app</groupId>
-            <artifactId>budiot-access-network-tcp</artifactId>
+            <artifactId>budiot-access-network-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

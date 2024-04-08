@@ -18,6 +18,11 @@ rocketmq:
   consumer-thread-max: 300
   consumer-thread-min: 10
 
+message:
+  transfer:
+    # 消息发送者实例id，不设置则自动生成
+    instanceId: 001
+
 log:
   color: true
   level: info

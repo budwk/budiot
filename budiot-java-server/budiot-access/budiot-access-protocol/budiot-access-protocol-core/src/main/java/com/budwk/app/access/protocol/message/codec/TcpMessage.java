@@ -18,7 +18,7 @@ public class TcpMessage implements EncodedMessage {
      */
     private String payloadType = "hex";
     private String messageId;
-    private final String handlerCode;
+    private final String protocolCode;
 
     @Override
     public String getMessageId() {
@@ -31,8 +31,8 @@ public class TcpMessage implements EncodedMessage {
     }
 
     @Override
-    public String getHandlerCode() {
-        return handlerCode;
+    public String getProtocolCode() {
+        return protocolCode;
     }
 
     @Override
