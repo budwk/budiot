@@ -11,6 +11,14 @@
 
     <artifactId>budiot-access-network</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>budiot-access-network-gateway</module>
+        <module>budiot-access-network-tcp</module>
+        <module>budiot-access-network-udp</module>
+        <module>budiot-access-network-http</module>
+        <module>budiot-access-network-common</module>
+        <module>budiot-access-network-mqtt</module>
+    </modules>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>

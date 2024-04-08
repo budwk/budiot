@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.budwk.app</groupId>
-        <artifactId>budiot-access</artifactId>
+        <artifactId>budiot-access-network</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>budiot-access-network-gateway</artifactId>
@@ -25,10 +24,22 @@
             <artifactId>budiot-access-network-tcp</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- udp 网关 -->
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-network-udp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- http 网关 -->
         <dependency>
             <groupId>com.budwk.app</groupId>
             <artifactId>budiot-access-network-http</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- mqtt 网关 -->
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-network-mqtt</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

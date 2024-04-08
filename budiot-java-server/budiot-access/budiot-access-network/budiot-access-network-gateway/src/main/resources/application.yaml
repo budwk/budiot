@@ -4,7 +4,7 @@ nutz:
 gateway:
   demo:
     transport: tcp # 固定 tcp
-    protocol: demo  # 对应的协议解析包的标识
+    protocolCode: demo  # 设备协议标识
     properties: # 网关的配置参数
       port: 9003 # 端口号
       host: '[::1]' # 绑定的host，默认 0.0.0.0

@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.budwk.app</groupId>
-        <artifactId>budiot-access</artifactId>
+        <artifactId>budiot-access-protocol</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>budiot-access-protocol-demo</artifactId>
