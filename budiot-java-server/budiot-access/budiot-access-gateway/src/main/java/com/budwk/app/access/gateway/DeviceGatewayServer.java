@@ -1,4 +1,4 @@
-package com.budwk.app.access.network;
+package com.budwk.app.access.gateway;
 
 import org.nutz.boot.starter.ServerFace;
 import org.nutz.ioc.loader.annotation.Inject;

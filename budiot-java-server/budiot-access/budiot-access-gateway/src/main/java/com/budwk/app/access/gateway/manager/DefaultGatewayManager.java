@@ -1,4 +1,4 @@
-package com.budwk.app.access.network.manager;
+package com.budwk.app.access.gateway.manager;
 
 import com.budwk.app.access.network.DeviceGateway;
 import com.budwk.app.access.network.DeviceGatewayBuilder;

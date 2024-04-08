@@ -12,7 +12,6 @@
     <artifactId>budiot-access-network</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>budiot-access-network-gateway</module>
         <module>budiot-access-network-tcp</module>
         <module>budiot-access-network-udp</module>
         <module>budiot-access-network-http</module>
@@ -25,4 +24,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <version>4.1.77.Final</version>
+            <classifier>osx-aarch_64</classifier>
+        </dependency>
+    </dependencies>
 </project>
