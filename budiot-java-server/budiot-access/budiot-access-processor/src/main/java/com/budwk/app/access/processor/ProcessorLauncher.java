@@ -2,6 +2,7 @@ package com.budwk.app.access.processor;
 
 import com.budwk.app.access.processor.core.Processor;
 import com.budwk.app.access.processor.core.ProcessorContext;
+import com.budwk.app.access.processor.protocol.LocalProtocolLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.boot.NbApp;
 import org.nutz.ioc.Ioc;

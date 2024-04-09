@@ -1,4 +1,4 @@
-package com.budwk.app.access.processor;
+package com.budwk.app.access.processor.protocol;
 
 import com.budwk.app.access.protocol.codec.Protocol;
 import com.budwk.app.access.protocol.codec.ProtocolLoader;
