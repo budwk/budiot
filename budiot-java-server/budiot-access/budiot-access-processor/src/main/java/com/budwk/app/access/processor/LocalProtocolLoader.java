@@ -6,42 +6,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Mirror;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@IocBean
+@IocBean(create = "init")
 public class LocalProtocolLoader implements ProtocolLoader {
     @Inject
     private PropertiesProxy conf;
     private final ConcurrentHashMap<String, Protocol> loadProtocols = new ConcurrentHashMap<>();
 
+    public void init() {
+        try {
+            List<String> list = conf.getList("protocol.classes");
+            for (String className : list) {
+                Class<?> clazz = Class.forName(className);
+                if (clazz != null) {
+                    Method getCodeMethod = clazz.getDeclaredMethod("getCode");
+                    getCodeMethod.setAccessible(true);
+                    Protocol object = (Protocol) clazz.newInstance();
+                    String codeValue = (String) getCodeMethod.invoke(object);
+                    loadProtocols.put(codeValue, object);
+                }
+            }
+        } catch (Exception e) {
+            log.error("协议解析类加载出错", e);
+        }
+    }
+
     @Override
     public Protocol loadProtocols(String protocolCode) {
-        log.debug("protocolCode::"+protocolCode);
-        try {
-            log.debug("aaaa");
-            // 如果已经加载过了就直接返回
-            Protocol protocol = loadProtocols.get(protocolCode);
-            if (null != protocol) {
-                return protocol;
-            }
-            List<String> list = conf.getList("protocol.classes");
-            log.debug("list::"+list.size());
-            return protocol;
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("加载协议包出错", e);
-        }
-        return null;
+        return loadProtocols.get(protocolCode);
     }
 
 }

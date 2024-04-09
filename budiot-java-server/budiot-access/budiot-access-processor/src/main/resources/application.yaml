@@ -17,4 +17,4 @@ rocketmq:
 
 log:
   color: true
-  level: info
+  level: debug

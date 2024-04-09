@@ -40,8 +40,8 @@ public class ProcessorLauncher {
     }
 
     private void loadProtocols(){
-        log.info("bbbbb");
         loader.loadProtocols("DEMO");
+
     }
 
     private void runProcessor(Processor processor, ProcessorContext context) {
