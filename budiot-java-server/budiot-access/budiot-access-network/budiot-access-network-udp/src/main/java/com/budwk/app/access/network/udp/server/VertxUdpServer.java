@@ -45,13 +45,13 @@ public class VertxUdpServer implements UdpServer {
                 messageHandler.accept(new UdpSender(sender.host(), sender.port()), packet.data().getBytes());
             }
         });
-        datagramSocket.listen(port, host)
-                .onSuccess(event -> {
-                    log.info("udp server started at {}", configs.getInt("port", 0));
-
-                }).onFailure(throwable -> {
-                    log.error("udp server error", throwable);
-                });
+        datagramSocket.listen(port, host, res->{
+            if (res.succeeded()) {
+                log.info("tcp server started at {}:{}",host,port);
+            } else {
+                log.error("tcp server failed at {}:{}",host,port);
+            }
+        });
         return this;
     }
 

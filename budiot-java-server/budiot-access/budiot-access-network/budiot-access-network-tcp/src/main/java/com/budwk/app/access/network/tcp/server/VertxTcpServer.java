@@ -32,9 +32,13 @@ public class VertxTcpServer implements TcpServer {
 
         vertx.createNetServer(options)
                 .connectHandler(this::onConnect)
-                .listen()
-                .onSuccess(netServer -> log.debug("tcp server started at {}", netServer.actualPort()))
-                .onFailure(throwable -> log.error("tcp server error", throwable));
+                .listen(res -> {
+                    if (res.succeeded()) {
+                        log.info("tcp server started at {}:{}",options.getHost(),options.getPort());
+                    } else {
+                        log.error("tcp server failed at {}:{}",options.getHost(),options.getPort());
+                    }
+                });
         return this;
     }
 

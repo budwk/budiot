@@ -31,6 +31,10 @@ public class DeviceEventDataDTO implements Serializable {
      */
     private Integer eventType;
     /**
+     * 0 原生告警，1 规则告警
+     */
+    private Integer type;
+    /**
      * 事件内容
      */
     private String content;

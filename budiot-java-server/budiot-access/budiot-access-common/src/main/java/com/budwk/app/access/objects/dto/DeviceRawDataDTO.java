@@ -21,6 +21,8 @@ public class DeviceRawDataDTO implements Serializable {
     private String deviceId;
     private String deviceNo;
     private String meterNo;
+    private String productId;
+
     /**
      * U 上行, D 下行
      */
