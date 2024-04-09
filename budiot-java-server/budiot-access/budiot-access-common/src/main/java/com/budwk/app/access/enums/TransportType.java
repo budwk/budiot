@@ -1,4 +1,4 @@
-package com.budwk.app.access.network;
+package com.budwk.app.access.enums;
 
 public enum TransportType {
     TCP,

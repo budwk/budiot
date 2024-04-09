@@ -1,5 +1,6 @@
 package com.budwk.app.access.network;
 
+import com.budwk.app.access.enums.TransportType;
 import com.budwk.app.access.network.config.DeviceGatewayConfiguration;
 
 public interface DeviceGatewayBuilder {

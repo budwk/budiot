@@ -1,0 +1,20 @@
+nutz:
+  application:
+    name: gateway
+
+protocol:
+  # 加载包名
+  classes:
+    - com.budwk.app.access.protocol.demo.DemoProtocol
+
+rocketmq:
+  # 集群环境多个nameserver用;分割
+  nameserver-address: 127.0.0.1:9876
+  # 生产者组
+  producer-group: local_producer
+  consumer-thread-max: 300
+  consumer-thread-min: 10
+
+log:
+  color: true
+  level: info

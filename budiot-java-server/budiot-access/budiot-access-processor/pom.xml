@@ -17,4 +17,36 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <!-- 设备协议 start -->
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-protocol-demo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 设备协议 end -->
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-protocol-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-message</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-log</artifactId>
+        </dependency>
+    </dependencies>
 </project>

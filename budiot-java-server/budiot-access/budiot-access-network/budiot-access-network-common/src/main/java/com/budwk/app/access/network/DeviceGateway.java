@@ -1,5 +1,7 @@
 package com.budwk.app.access.network;
 
+import com.budwk.app.access.enums.TransportType;
+
 public interface DeviceGateway {
     /**
      * 获取传输协议

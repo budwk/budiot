@@ -4,7 +4,7 @@ import com.budwk.app.access.constants.TopicConstant;
 import com.budwk.app.access.message.Message;
 import com.budwk.app.access.message.MessageTransfer;
 import com.budwk.app.access.network.DeviceGateway;
-import com.budwk.app.access.network.TransportType;
+import com.budwk.app.access.enums.TransportType;
 import com.budwk.app.access.network.config.DeviceGatewayConfiguration;
 import com.budwk.app.access.network.tcp.client.TcpClient;
 import com.budwk.app.access.network.tcp.server.TcpServer;
