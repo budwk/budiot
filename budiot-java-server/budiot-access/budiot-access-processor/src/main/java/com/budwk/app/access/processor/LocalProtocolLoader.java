@@ -19,20 +19,18 @@ public class LocalProtocolLoader implements ProtocolLoader {
     private final ConcurrentHashMap<String, Protocol> loadProtocols = new ConcurrentHashMap<>();
 
     public void init() {
-        try {
-            List<String> list = conf.getList("protocol.classes");
-            for (String className : list) {
+        List<String> list = conf.getList("protocol.classes");
+        for (String className : list) {
+            try {
                 Class<?> clazz = Class.forName(className);
-                if (clazz != null) {
-                    Method getCodeMethod = clazz.getDeclaredMethod("getCode");
-                    getCodeMethod.setAccessible(true);
-                    Protocol object = (Protocol) clazz.newInstance();
-                    String codeValue = (String) getCodeMethod.invoke(object);
-                    loadProtocols.put(codeValue, object);
-                }
+                Method getCodeMethod = clazz.getDeclaredMethod("getCode");
+                getCodeMethod.setAccessible(true);
+                Protocol object = (Protocol) clazz.newInstance();
+                String codeValue = (String) getCodeMethod.invoke(object);
+                loadProtocols.put(codeValue, object);
+            } catch (Exception e) {
+                log.error("协议解析类加载出错 {}", className, e);
             }
-        } catch (Exception e) {
-            log.error("协议解析类加载出错", e);
         }
     }
 
