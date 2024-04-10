@@ -6,6 +6,7 @@ import com.budwk.app.access.objects.dto.DeviceAttributeDTO;
 import com.budwk.app.access.objects.dto.DeviceDataDTO;
 import com.budwk.app.access.objects.query.DeviceDataQuery;
 import com.budwk.app.access.storage.DeviceDataStorage;
+import com.budwk.starter.mongodb.ZMongoDatabase;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -15,7 +16,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
-import org.nutz.boot.starter.mongodb.plus.ZMongoClient;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -37,7 +37,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
     private final static String TABLE_PREFIX = "device_data_";
 
     @Inject
-    private ZMongoClient zMongoClient;
+    private ZMongoDatabase zMongoDatabase;
 
     @Inject
     private PropertiesProxy conf;
@@ -64,7 +64,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
     @Override
     public List<NutMap> list(DeviceDataQuery query) {
         String tableName = String.format("%s_%s", TABLE_PREFIX, query.getProtocolCode());
-        MongoCollection<Document> collection = zMongoClient.db().getCollection(tableName);
+        MongoCollection<Document> collection = zMongoDatabase.getCollection(tableName);
         if (null == collection) {
             return Collections.emptyList();
         }
@@ -88,7 +88,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
     @Override
     public long count(DeviceDataQuery query) {
         String tableName = String.format("%s_%s", TABLE_PREFIX, query.getProtocolCode());
-        MongoCollection<Document> collection = zMongoClient.db().getCollection(tableName);
+        MongoCollection<Document> collection = zMongoDatabase.getCollection(tableName);
         if (null == collection) {
             return 0L;
         }
@@ -102,7 +102,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
     }
 
     private synchronized MongoCollection<Document> getCollection(String table) {
-        MongoCollection<Document> collection = zMongoClient.db().getCollection(table);
+        MongoCollection<Document> collection = zMongoDatabase.getCollection(table);
         if (null == collection) {
             log.debug("集合 {} 不存在, 重新创建", table);
             collection = crateCollection(table);
@@ -121,7 +121,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
             options.expireAfter(3600 * 24 * expireDay, TimeUnit.SECONDS);
         }
         options.timeSeriesOptions(timeSeriesOptions);
-        MongoCollection<Document> collection = zMongoClient.db().createCollection(cName, options);
+        MongoCollection<Document> collection = zMongoDatabase.createCollection(cName, options);
         // 创建索引
         IndexOptions indexOptions = new IndexOptions().unique(false).background(true);
         collection.createIndexes(List.of(

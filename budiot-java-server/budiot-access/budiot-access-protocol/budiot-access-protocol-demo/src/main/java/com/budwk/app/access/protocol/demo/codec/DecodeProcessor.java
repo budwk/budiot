@@ -33,6 +33,7 @@ public class DecodeProcessor {
         deviceDataMessage.setDeviceId(deviceOperator.getDeviceId());
         deviceDataMessage.setTimestamp(System.currentTimeMillis());
         deviceDataMessage.setProperties(properties);
+        this.sendToDevice("hi!".getBytes());
         return new DefaultDecodeResult(deviceOperator.getDeviceId(), Arrays.asList(deviceDataMessage));
 
     }

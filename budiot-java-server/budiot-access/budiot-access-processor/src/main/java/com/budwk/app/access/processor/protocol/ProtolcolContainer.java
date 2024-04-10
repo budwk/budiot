@@ -5,15 +5,19 @@ import com.budwk.app.access.enums.TransportType;
 import com.budwk.app.access.message.Message;
 import com.budwk.app.access.message.MessageTransfer;
 import com.budwk.app.access.objects.dto.DeviceRawDataDTO;
+import com.budwk.app.access.processor.cache.RedissionCacheStore;
+import com.budwk.app.access.processor.protocol.impl.DefaultDecodeContext;
 import com.budwk.app.access.processor.timer.DelayTaskHelper;
-import com.budwk.app.access.protocol.codec.MessageCodec;
-import com.budwk.app.access.protocol.codec.Protocol;
+import com.budwk.app.access.protocol.codec.*;
+import com.budwk.app.access.protocol.codec.result.DecodeResult;
 import com.budwk.app.access.protocol.message.codec.EncodedMessage;
 import com.budwk.app.access.protocol.utils.ByteConvertUtil;
+import com.budwk.app.access.storage.DeviceRawDataStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.castor.Castors;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
@@ -43,6 +47,10 @@ public class ProtolcolContainer {
     private DelayTaskHelper delayTaskHelper;
     @Inject
     private MessageTransfer messageTransfer;
+    @Inject
+    private DeviceRawDataStorage deviceRawDataStorage;
+    @Inject
+    private DeviceRegistry deviceRegistry;
 
     public void init() {
         cacheMap = redissonClient.getMapCache("protocol_container");
@@ -75,7 +83,68 @@ public class ProtolcolContainer {
         try {
             // 加载编解码类
             MessageCodec messageCodec = getMessageCodec(encodedMessage.getProtocolCode(), encodedMessage.getTransportType());
-            log.debug(messageCodec.toString());
+            if(messageCodec!=null){
+                String sessionId = message.getHeader("sessionId");
+                // 从缓存中尝试获取设备
+                String sessionDeviceId = Strings.isNotBlank(sessionId) ? sessionDevice.get(sessionId) : null;
+                log.debug("缓存中设备 sessionDeviceId===>{}", sessionDeviceId);
+                DeviceOperator deviceOperator = null;
+                if (encodedMessage.getProtocolCode().contains("COLLECTOR")) {
+                    // 采集器/集中器设备
+                } else {
+                    deviceOperator = Strings.isNotBlank(sessionDeviceId) && !"null".equals(sessionDeviceId) ? deviceRegistry.getDeviceOperator("id", sessionDeviceId) : null;
+                }
+                // 构造解码上下文
+                DefaultDecodeContext decodeContext = new DefaultDecodeContext(deviceRegistry, encodedMessage) {
+                    /**
+                     * 提供方法可以让解析包中直接发送消息给设备
+                     * @param replyMessage 需要发送的消息
+                     */
+                    @Override
+                    public void send(EncodedMessage replyMessage) {
+                        if (null == replyMessage) {
+                            return;
+                        }
+                        DeviceRawDataDTO rawData = new DeviceRawDataDTO();
+                        DeviceOperator device = this.getDevice();
+                        rawData.setDeviceId(null != device ? device.getDeviceId() : null);
+                        rawData.setType("D");
+                        rawData.setOriginData(replyMessage.payloadAsString());
+                        rawData.setStartTime(System.currentTimeMillis());
+                        if (!replyMessage.isSend()) { // 指令回复
+                            Message<EncodedMessage> reply = new Message<>(message.getFrom(), replyMessage);
+                            reply.setFrom(TopicConstant.DEVICE_CMD_RESP);
+                            reply.getHeaders().putAll(message.getHeaders());
+                            messageTransfer.publish(reply);
+                        }
+                        rawData.setEndTime(System.currentTimeMillis());
+                        deviceRawDataStorage.save(rawData);
+                    }
+
+                    /**
+                     * 提供缓存实现
+                     * @param id 缓存存储的id
+                     * @return
+                     */
+                    @Override
+                    public CacheStore getCacheStore(String id) {
+                        return new RedissionCacheStore(id, redissonClient);
+                    }
+                };
+                // deviceOperator 重新赋值
+                if (null != decodeContext.getDevice()) {
+                    deviceOperator = decodeContext.getDevice();
+                } else if (null != decodeContext.getDevice(sessionId)) {
+                    deviceOperator = decodeContext.getDevice(sessionId);
+                } else {
+                    if (null != deviceOperator) {
+                        decodeContext.setDevice(deviceOperator);
+                    }
+                }
+                // 解析数据
+                DecodeResult result = messageCodec.decode(decodeContext);
+                log.info("解析数据: {}", result);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

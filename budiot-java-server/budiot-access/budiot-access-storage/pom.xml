@@ -24,8 +24,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-mongodb-plus</artifactId>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-mongodb</artifactId>
         </dependency>
         <!-- nutzboot-starter -->
         <dependency>

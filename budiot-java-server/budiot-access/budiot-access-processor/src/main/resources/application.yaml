@@ -1,10 +1,10 @@
 nutz:
   application:
-    name: gateway
+    name: processor
 
 # 设备协议配置
 protocol:
-  # 加载包名
+  # 加载解析包
   classes:
     - com.budwk.app.access.protocol.demo.DemoProtocol
 
@@ -16,6 +16,9 @@ rocketmq:
   producer-timeout: 50
   consumer-thread-max: 300
   consumer-thread-min: 10
+
+mongodb:
+  url: mongodb://127.0.0.1:27017/test
 
 redisson:
   # 集群/分片/主从等配置见 https://github.com/nutzam/nutzmore/tree/master/nutz-integration-redisson
