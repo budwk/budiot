@@ -52,7 +52,7 @@ public class UdpDeviceGateway implements DeviceGateway {
         server = new VertxUdpServer(configuration.getProperties())
                 .start()
                 .onMessage((sender, bytes) -> {
-                    log.debug("UDP收到来自 {} 的消息 {}", sender.getId(), ByteConvertUtil.bytesToHex(bytes));
+                    log.info("UDP收到来自 {} 的消息 {}", sender.getId(), ByteConvertUtil.bytesToHex(bytes));
                     senderMap.put(sender.getId(), sender);
                     Message<EncodedMessage> message =
                             new Message<>(TopicConstant.DEVICE_DATA_UP,

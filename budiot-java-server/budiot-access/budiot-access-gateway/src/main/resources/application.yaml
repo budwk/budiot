@@ -2,27 +2,28 @@ nutz:
   application:
     name: gateway
 gateway:
-  demo:
+  DEMO: # 和设备协议标识一致
     transport: tcp # 固定 tcp
-    protocolCode: demo  # 设备协议标识
+    protocolCode: DEMO  # 设备协议标识
     properties: # 网关的配置参数
       port: 9003 # 端口号
       host: '0.0.0.0' # 绑定的host，默认 0.0.0.0
-      payloadType: string # 数据类型，可选 hex 和string 默认是 hex。hex 16进制字符串，string 常规字符串
+      payloadType: string # 数据类型，可选 hex 和 string 默认 hex
 
 rocketmq:
   # 集群环境多个nameserver用;分割
   nameserver-address: 127.0.0.1:9876
   # 生产者组
-  producer-group: local_producer
+  producer-group: gateway_producer
+  producer-timeout: 100
   consumer-thread-max: 300
   consumer-thread-min: 10
 
 message:
   transfer:
     # 消息发送者实例id，不设置则自动生成
-    instanceId: 001
+    instanceId: '001'
 
 log:
   color: true
-  level: info
+  level: debug

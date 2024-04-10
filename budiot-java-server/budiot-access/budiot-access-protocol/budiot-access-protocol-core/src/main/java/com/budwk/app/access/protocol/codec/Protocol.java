@@ -1,7 +1,6 @@
 package com.budwk.app.access.protocol.codec;
 
-import com.budwk.app.access.protocol.codec.context.DeviceEventContext;
-import com.budwk.app.access.protocol.enums.TransportType;
+import com.budwk.app.access.enums.TransportType;
 
 import java.util.List;
 

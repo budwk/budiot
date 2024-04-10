@@ -1,6 +1,6 @@
 package com.budwk.app.access.protocol.message.codec;
 
-import com.budwk.app.access.protocol.enums.TransportType;
+import com.budwk.app.access.enums.TransportType;
 import lombok.Data;
 
 import java.util.Map;

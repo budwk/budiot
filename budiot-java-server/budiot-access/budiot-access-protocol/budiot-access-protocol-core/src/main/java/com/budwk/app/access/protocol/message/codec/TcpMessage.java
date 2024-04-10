@@ -1,7 +1,7 @@
 package com.budwk.app.access.protocol.message.codec;
 
 
-import com.budwk.app.access.protocol.enums.TransportType;
+import com.budwk.app.access.enums.TransportType;
 import com.budwk.app.access.protocol.utils.ByteConvertUtil;
 import lombok.Data;
 

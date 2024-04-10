@@ -82,13 +82,13 @@ public class MqttDeviceGateway implements DeviceGateway {
         // 连接到 MQTT 代理服务器
         client.connect(Integer.parseInt(Strings.sNull(configuration.getProperties().get("port"), "5000")), Strings.sNull(configuration.getProperties().get("host")), ar -> {
             if (ar.succeeded()) {
-                log.debug("Connected to MQTT broker");
+                log.info("Connected to MQTT broker");
                 // 订阅主题 # = 所有设备消息
                 client.subscribe(topic, 0, ar2 -> {
                     if (ar2.succeeded()) {
-                        log.debug("Subscribed to topic: {} " + topic);
+                        log.info("Subscribed to topic: {} " + topic);
                     } else {
-                        log.debug("Failed to subscribe to topic: " + topic);
+                        log.info("Failed to subscribe to topic: " + topic);
                     }
                 });
 

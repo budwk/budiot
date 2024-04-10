@@ -3,6 +3,7 @@ package com.budwk.app.access.processor;
 import com.budwk.app.access.processor.core.Processor;
 import com.budwk.app.access.processor.core.ProcessorContext;
 import com.budwk.app.access.processor.protocol.LocalProtocolLoader;
+import com.budwk.app.access.processor.protocol.ProtolcolContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.boot.NbApp;
 import org.nutz.ioc.Ioc;
@@ -21,7 +22,7 @@ public class ProcessorLauncher {
     @Inject
     private Ioc ioc;
     @Inject
-    private LocalProtocolLoader loader;
+    private ProtolcolContainer protolcolContainer;
 
     private List<Processor> processors = new ArrayList<>();
 
@@ -32,18 +33,14 @@ public class ProcessorLauncher {
     }
 
     public void init(){
-        // 加载设备协议
-        loadProtocols();
+        // 设备协议解析
+        protolcolContainer.start();
         // 加载业务处理类
         loadProcessors();
         // 监听解析后的数据
         //listenMessage();
     }
 
-    private void loadProtocols(){
-        loader.loadProtocols("DEMO");
-
-    }
 
     private void runProcessor(Processor processor, ProcessorContext context) {
         try {

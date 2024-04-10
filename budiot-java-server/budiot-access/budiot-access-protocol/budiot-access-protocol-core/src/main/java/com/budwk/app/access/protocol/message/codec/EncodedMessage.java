@@ -1,7 +1,6 @@
 package com.budwk.app.access.protocol.message.codec;
 
-
-import com.budwk.app.access.protocol.enums.TransportType;
+import com.budwk.app.access.enums.TransportType;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;

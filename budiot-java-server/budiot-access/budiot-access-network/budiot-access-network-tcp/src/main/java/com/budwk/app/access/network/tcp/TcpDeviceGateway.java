@@ -61,7 +61,7 @@ public class TcpDeviceGateway implements DeviceGateway {
         // 启动服务
         tcpServer.start()
                 .handleConnection(tcpClient -> {
-                    log.debug("客户端 {} 已连接", tcpClient.getId());
+                    log.info("客户端 {} 已连接", tcpClient.getId());
                     clientStorage.put(tcpClient.getId(), tcpClient);
                     tcpClient
                             .onMessage(bytes -> {

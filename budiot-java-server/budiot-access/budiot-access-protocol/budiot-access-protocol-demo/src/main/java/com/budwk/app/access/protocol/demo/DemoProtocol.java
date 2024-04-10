@@ -3,7 +3,7 @@ package com.budwk.app.access.protocol.demo;
 import com.budwk.app.access.protocol.codec.MessageCodec;
 import com.budwk.app.access.protocol.codec.Protocol;
 import com.budwk.app.access.protocol.demo.codec.DefaultMessageCodec;
-import com.budwk.app.access.protocol.enums.TransportType;
+import com.budwk.app.access.enums.TransportType;
 
 import java.util.Collections;
 import java.util.List;

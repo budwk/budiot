@@ -49,8 +49,9 @@ public class RMQMessageTransfer implements MessageTransfer {
     @Override
     public <T extends Serializable> void publish(Message<T> message) {
         try {
-            rocketMQServer.sendVoid(message.getTo(), FastSerializeUtil.serialize(message), 0);
+            rocketMQServer.sendVoid(message.getTo(), FastSerializeUtil.serialize(message));
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("topic {} 消息发送失败: {}", message.getTo(), e.getMessage());
         }
     }
@@ -81,7 +82,7 @@ public class RMQMessageTransfer implements MessageTransfer {
                 // 顺序消费
                 rmqConsumer.registerMessageListener((MessageListenerOrderly) (msgs, context) -> {
                     for (MessageExt ext : msgs) {
-                        log.info("Orderly message, {}", ext);
+                        log.debug("Orderly message, {}", ext);
                         consumer.accept(FastSerializeUtil.deserialize(ext.getBody()));
                     }
                     return ConsumeOrderlyStatus.SUCCESS;
@@ -90,22 +91,26 @@ public class RMQMessageTransfer implements MessageTransfer {
                 // 并发
                 rmqConsumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
                     for (MessageExt ext : msgs) {
-                        log.info("Concurrently message, {}", ext);
+                        log.debug("Concurrently message, {}", ext);
                         consumer.accept(FastSerializeUtil.deserialize(ext.getBody()));
                     }
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                 });
 
             }
+            rmqConsumer.start();
             consumerList.add(rmqConsumer);
         } catch (MQClientException e) {
             throw new RuntimeException("A consumer as " + topic + " subscribe fail, " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("RMQ exception",e);
         }
     }
 
     @Override
     public <T extends Serializable> void subscribe(String consumerGroup, String topic, Consumer<Message<T>> consumer) {
-        this.subscribe(consumerGroup, topic, "*", MessageModel.CLUSTERING, ConsumeMode.CONCURRENTLY, consumer);
+        this.subscribe(consumerGroup, topic, "*", MessageModel.CLUSTERING, ConsumeMode.ORDERLY, consumer);
     }
 
     public void close() {
