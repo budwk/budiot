@@ -1,4 +1,4 @@
-package com.budwk.app.access.objects.cache;
+package com.budwk.app.access.processor.cache;
 
 import lombok.Data;
 

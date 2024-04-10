@@ -12,7 +12,7 @@ gateway:
 
 rocketmq:
   # 集群环境多个nameserver用;分割
-  nameserver-address: 10.10.10.10:9876
+  nameserver-address: 10.10.10.42:9876
   # 生产者组
   producer-group: gateway_producer
   producer-timeout: 100

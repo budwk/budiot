@@ -1,6 +1,6 @@
 package com.budwk.app.access.processor.core;
 
-import com.budwk.app.access.objects.cache.DeviceProcessCache;
+import com.budwk.app.access.processor.cache.DeviceProcessCache;
 import com.budwk.app.access.protocol.codec.impl.DecodeReportResult;
 import lombok.Data;
 import org.nutz.castor.Castors;
