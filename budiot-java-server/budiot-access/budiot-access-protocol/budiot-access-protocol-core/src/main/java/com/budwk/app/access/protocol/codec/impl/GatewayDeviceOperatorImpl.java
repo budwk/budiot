@@ -5,8 +5,6 @@ import com.budwk.app.access.protocol.codec.DeviceOperator;
 
 /**
  * 网关设备（集中器/管理机）
- *
- * @author zyang
  */
 public class GatewayDeviceOperatorImpl extends DefaultDeviceOperator {
 

@@ -50,4 +50,6 @@ public interface DeviceRegistry {
      * @param deviceId 设备ID
      */
     void updateDeviceOnline(String deviceId);
+
+    void makeCommandSend(String cmdId);
 }

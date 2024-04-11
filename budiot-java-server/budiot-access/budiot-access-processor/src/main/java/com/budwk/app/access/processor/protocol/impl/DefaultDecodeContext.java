@@ -21,11 +21,19 @@ public abstract class DefaultDecodeContext implements DecodeContext {
     }
 
     @Override
-    public DeviceOperator getGatewayDevice(String deviceNo) {
+    public DeviceOperator getGatewayDeviceByNo(String deviceNo) {
         if (this.deviceOperator != null && Strings.sBlank(deviceOperator.getProperty("protocolCode")).equals(protocolCode) && Strings.sBlank(deviceOperator.getProperty("deviceNo")).equals(deviceNo)) {
             return deviceOperator;
         }
         return deviceRegistry.getGatewayDevice(protocolCode, deviceNo);
+    }
+
+    @Override
+    public DeviceOperator getGatewayDeviceById(String deviceId) {
+        if (this.deviceOperator != null && deviceOperator.getDeviceId().equals(deviceId)) {
+            return deviceOperator;
+        }
+        return deviceRegistry.getGatewayDevice(protocolCode, deviceId);
     }
 
     @Override

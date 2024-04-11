@@ -20,6 +20,7 @@ public class ProductInfo implements Serializable {
     private String protocolType;
     private String iotPlatform;
     private String dataFormat;
+    private String deviceType;
     /**
      * 计费方式(1-表端计费，2-平台计费）
      */

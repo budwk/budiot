@@ -42,7 +42,10 @@ public class DecodeCmdRespResult implements DecodeResult {
      */
     private List<DeviceMessage> messages;
 
-    private String handlerCode;
+    /**
+     * 设备协议标识
+     */
+    private String protocolCode;
 
     public DecodeCmdRespResult(String commandId, DeviceResponseMessage responseMessage) {
         this.commandId = commandId;

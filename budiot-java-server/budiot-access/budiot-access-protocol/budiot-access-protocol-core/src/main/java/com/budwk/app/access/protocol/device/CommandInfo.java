@@ -33,5 +33,5 @@ public class CommandInfo implements Serializable {
     /**
      * 参数
      */
-    private List<Map<String, String>> params;
+    private Map<String, Object> params;
 }

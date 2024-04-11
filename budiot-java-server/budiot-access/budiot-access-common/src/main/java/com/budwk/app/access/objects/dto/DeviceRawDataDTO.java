@@ -35,7 +35,7 @@ public class DeviceRawDataDTO implements Serializable {
     /**
      * 解析后的数据
      */
-    private List<Map<String,Object>> parsedData;
+    private String parsedData;
     /**
      * 接收到的时间
      */

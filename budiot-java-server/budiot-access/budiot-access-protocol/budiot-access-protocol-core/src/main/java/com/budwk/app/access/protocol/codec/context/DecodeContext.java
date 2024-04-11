@@ -45,7 +45,15 @@ public interface DecodeContext {
      * @param deviceNo 设备通信号
      * @return 设备信息
      */
-    DeviceOperator getGatewayDevice(String deviceNo);
+    DeviceOperator getGatewayDeviceByNo(String deviceNo);
+
+    /**
+     * 获取网关设备（集中器）
+     *
+     * @param deviceId 设备ID
+     * @return 设备信息
+     */
+    DeviceOperator getGatewayDeviceById(String deviceId);
 
     /**
      * 获取当前上下文的设备信息

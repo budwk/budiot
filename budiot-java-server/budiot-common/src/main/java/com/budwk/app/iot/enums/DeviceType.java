@@ -6,7 +6,7 @@ import org.nutz.json.JsonShape;
 public enum DeviceType {
     METER("METER", "表具"),
     ALARM("ALARM", "报警器"),
-    GATEWAY("GATWAY", "网关"),
+    GATEWAY("GATEWAY", "网关"),
     COLLECTOR("COLLECTOR", "采集器"),
     VALVE("VALVE", "阀控"),
     ONOFF("ONOFF", "开关"),

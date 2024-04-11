@@ -29,7 +29,12 @@ public class DecodeReportResult implements DecodeResult {
     /**
      * 协议code
      */
-    private String handlerCode;
+    private String protocolCode;
+
+    /**
+     * 是否最后一帧
+     */
+    private boolean isLastFrame;
 
     public DecodeReportResult(String deviceId, List<DeviceMessage> messages) {
         this.deviceId = deviceId;
