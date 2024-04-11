@@ -12,12 +12,12 @@ gateway:
 
 rocketmq:
   # 集群环境多个nameserver用;分割
-  nameserver-address: 10.10.10.42:9876
+  nameserver-address: 127.0.0.1:9876
   # 生产者组
   producer-group: gateway_producer
-  producer-timeout: 100
-  consumer-thread-max: 300
-  consumer-thread-min: 10
+  producer-timeout: 50
+  consumer-thread-max: 100
+  consumer-thread-min: 5
 
 message:
   transfer:

@@ -14,7 +14,6 @@ import java.util.List;
  * @author zyang
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class DefaultDecodeResult implements DecodeResult {
 
@@ -27,11 +26,6 @@ public class DefaultDecodeResult implements DecodeResult {
      * 解码消息
      */
     private List<DeviceMessage> messages;
-
-    /**
-     * 解析器标识
-     */
-    private String handlerCode;
 
     public DefaultDecodeResult(String deviceId, List<DeviceMessage> messages) {
         this.deviceId = deviceId;

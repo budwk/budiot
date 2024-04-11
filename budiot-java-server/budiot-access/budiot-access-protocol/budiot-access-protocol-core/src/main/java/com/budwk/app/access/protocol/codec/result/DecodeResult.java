@@ -24,9 +24,4 @@ public interface DecodeResult extends Serializable {
      */
     List<DeviceMessage> getMessages();
 
-    /**
-     * 解析器标识
-     * @return
-     */
-    String getHandlerCode();
 }

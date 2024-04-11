@@ -1,6 +1,5 @@
 package com.budwk.app.access.processor.core;
 
-import com.budwk.app.access.processor.cache.DeviceProcessCache;
 import com.budwk.app.access.protocol.codec.impl.DecodeReportResult;
 import lombok.Data;
 import org.nutz.castor.Castors;
@@ -10,10 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 public class ProcessorContext {
-    /**
-     * 设备缓存
-     */
-    private final DeviceProcessCache device;
     /**
      * 解析后的数据
      */

@@ -10,12 +10,12 @@ protocol:
 
 rocketmq:
   # 集群环境多个nameserver用;分割
-  nameserver-address: 10.10.10.42:9876
+  nameserver-address: 127.0.0.1:9876
   # 生产者组
   producer-group: processor_producer
   producer-timeout: 50
-  consumer-thread-max: 300
-  consumer-thread-min: 10
+  consumer-thread-max: 100
+  consumer-thread-min: 5
 
 mongodb:
   url: mongodb://127.0.0.1:27017/test
@@ -27,6 +27,16 @@ redisson:
     address: redis://127.0.0.1:6379
     #password: 123456
     database: 5
+
+jdbc:
+  url: jdbc:mysql://10.10.10.10:3306/budiot?useUnicode=true&characterEncoding=utf8&useSSL=false
+  username: root
+  password: "root"
+  validationQuery: select 1
+  maxActive: 30
+  testWhileIdle: true
+  connectionProperties: druid.stat.slowSqlMillis=2000
+  defaultAutoCommit: true
 
 log:
   color: true

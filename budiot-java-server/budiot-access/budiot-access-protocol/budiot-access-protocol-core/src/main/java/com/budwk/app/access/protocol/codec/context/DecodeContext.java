@@ -24,30 +24,28 @@ public interface DecodeContext {
     EncodedMessage getMessage();
 
     /**
-     * 根据设备通信号获取设备
+     * 根据指定字段获取设备信息
      *
      * @param deviceNo 设备通信号
      * @return 设备信息
      */
-    DeviceOperator getDevice(String deviceNo);
+    DeviceOperator getDeviceByNo(String deviceNo);
 
     /**
      * 根据指定字段获取设备信息
      *
-     * @param field 字段
-     * @param value 值
+     * @param deviceId 设备通信号
      * @return 设备信息
      */
-    DeviceOperator getDevice(String field, String value);
+    DeviceOperator getDeviceById(String deviceId);
 
     /**
      * 获取网关设备（集中器）
      *
-     * @param field 字段
-     * @param value 值
+     * @param deviceNo 设备通信号
      * @return 设备信息
      */
-    DeviceOperator getGatewayDevice(String field, String value);
+    DeviceOperator getGatewayDevice(String deviceNo);
 
     /**
      * 获取当前上下文的设备信息

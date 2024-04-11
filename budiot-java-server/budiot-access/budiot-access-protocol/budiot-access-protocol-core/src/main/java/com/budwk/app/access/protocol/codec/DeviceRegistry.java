@@ -13,20 +13,20 @@ public interface DeviceRegistry {
      * 通过指定字段获取网关设备
      * 如果是网关设备，调用这个接口获取
      *
-     * @param field 字段名。仅支持 collectorNo、id 这两个字段
-     * @param value 字段值
+     * @param protocolCode 协议标识
+     * @param deviceNo 设备通信号
      * @return
      */
-    DeviceOperator getGatewayDevice(String field, String value);
+    DeviceOperator getGatewayDevice(String protocolCode, String deviceNo);
 
     /**
      * 通过指定字段获取设备
      *
-     * @param field 字段名
-     * @param value 值
+     * @param protocolCode 协议标识
+     * @param deviceNo 设备通信号
      * @return
      */
-    DeviceOperator getDeviceOperator(String field, String value);
+    DeviceOperator getDeviceOperator(String protocolCode, String deviceNo);
 
     /**
      * 通过设备id获取设备

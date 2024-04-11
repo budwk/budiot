@@ -12,18 +12,20 @@ public abstract class DefaultDecodeContext implements DecodeContext {
 
     private final EncodedMessage message;
     private DeviceOperator deviceOperator;
+    private String protocolCode;
 
-    public DefaultDecodeContext(DeviceRegistry deviceRegistry, EncodedMessage message) {
+    public DefaultDecodeContext(String protocolCode, DeviceRegistry deviceRegistry, EncodedMessage message) {
+        this.protocolCode = protocolCode;
         this.deviceRegistry = deviceRegistry;
         this.message = message;
     }
 
     @Override
-    public DeviceOperator getGatewayDevice(String field, String value) {
-        if (this.deviceOperator != null && Strings.sBlank(deviceOperator.getProperty(field)).equals(value)) {
+    public DeviceOperator getGatewayDevice(String deviceNo) {
+        if (this.deviceOperator != null && Strings.sBlank(deviceOperator.getProperty("protocolCode")).equals(protocolCode) && Strings.sBlank(deviceOperator.getProperty("deviceNo")).equals(deviceNo)) {
             return deviceOperator;
         }
-        return deviceRegistry.getGatewayDevice(field, value);
+        return deviceRegistry.getGatewayDevice(protocolCode, deviceNo);
     }
 
     @Override
@@ -31,17 +33,31 @@ public abstract class DefaultDecodeContext implements DecodeContext {
         return this.message;
     }
 
+    /**
+     * 通过设备通信号获取对象
+     * @param deviceNo 设备通信号
+     * @return
+     */
     @Override
-    public DeviceOperator getDevice(String meterNo) {
-        return this.getDevice("meterNo", meterNo);
-    }
-
-    @Override
-    public DeviceOperator getDevice(String field, String value) {
-        if (null != deviceOperator && Strings.sBlank(deviceOperator.getProperty(field)).equals(value)) {
+    public DeviceOperator getDeviceByNo(String deviceNo) {
+        if (null != deviceOperator && Strings.sBlank(deviceOperator.getProperty("protocolCode")).equals(protocolCode) && Strings.sBlank(deviceOperator.getProperty("deviceNo")).equals(deviceNo)) {
             return deviceOperator;
         }
-        this.deviceOperator = deviceRegistry.getDeviceOperator(field, value);
+        this.deviceOperator = deviceRegistry.getDeviceOperator(protocolCode, deviceNo);
+        return this.deviceOperator;
+    }
+
+    /**
+     * 通过设备ID获取对象
+     * @param deviceId 设备ID
+     * @return
+     */
+    @Override
+    public DeviceOperator getDeviceById(String deviceId) {
+        if (null != deviceOperator && deviceOperator.getDeviceId().equals(deviceId)) {
+            return deviceOperator;
+        }
+        this.deviceOperator = deviceRegistry.getDeviceOperator(deviceId);
         return this.deviceOperator;
     }
 

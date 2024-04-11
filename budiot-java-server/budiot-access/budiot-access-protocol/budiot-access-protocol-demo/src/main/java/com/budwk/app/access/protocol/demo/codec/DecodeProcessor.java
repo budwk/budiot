@@ -17,7 +17,6 @@ import java.util.Map;
 public class DecodeProcessor {
     private final DecodeContext context;
     private final EncodedMessage message;
-    private DeviceOperator deviceOperator;
 
 
     public DecodeProcessor(DecodeContext context) {
@@ -27,6 +26,7 @@ public class DecodeProcessor {
 
     public DecodeResult process() {
         byte[] bytes = message.getPayload();
+        DeviceOperator deviceOperator = context.getDeviceByNo("demo");
         Map<String, Object> properties = new LinkedHashMap<>();
         properties.put("data", new String(bytes));
         DeviceDataMessage deviceDataMessage = new DeviceDataMessage();

@@ -3,7 +3,6 @@ package com.budwk.app.access.protocol.codec;
 /**
  * 缓存
  * @author wizzer.cn
- * @author zyang
  */
 public interface CacheStore {
     /**

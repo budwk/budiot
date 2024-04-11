@@ -46,8 +46,21 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-redisson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-websocket</artifactId>
         </dependency>
         <dependency>
             <groupId>com.budwk.starter</groupId>

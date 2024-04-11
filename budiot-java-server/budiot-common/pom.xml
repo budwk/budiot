@@ -48,16 +48,6 @@
             <artifactId>wk-starter-log</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.budwk.starter</groupId>
-            <artifactId>wk-starter-sms</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.budwk.starter</groupId>
-            <artifactId>wk-starter-email</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!-- nutzboot-starter -->
         <dependency>
             <groupId>org.nutz</groupId>
