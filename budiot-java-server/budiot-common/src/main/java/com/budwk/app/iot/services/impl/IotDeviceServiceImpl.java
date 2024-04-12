@@ -1,5 +1,6 @@
 package com.budwk.app.iot.services.impl;
 
+import com.budwk.app.access.cache.DeviceCacheStore;
 import com.budwk.app.access.constants.TopicConstant;
 import com.budwk.app.access.message.Message;
 import com.budwk.app.access.message.MessageTransfer;
@@ -7,6 +8,7 @@ import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_device_prop;
 import com.budwk.app.iot.models.Iot_product;
 import com.budwk.app.iot.models.Iot_protocol;
+import com.budwk.app.iot.objects.cache.DeviceProcessCache;
 import com.budwk.app.iot.services.*;
 import com.budwk.app.sys.enums.SysMsgType;
 import com.budwk.app.sys.services.SysMsgService;
@@ -44,6 +46,8 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
     private IotDevicePropService iotDevicePropService;
     @Inject
     private MessageTransfer messageTransfer;
+    @Inject
+    private DeviceCacheStore deviceCacheStore;
 
     public void importData(String productId, String fileName, List<Iot_device> list, boolean over, String userId, String loginname) {
         if (list == null || list.size() == 0) {
@@ -166,5 +170,35 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         sql.setParam("deviceId", deviceId)
                 .setVar("fields", String.join(",", fields.toArray(new String[0])));
         this.execute(sql);
+    }
+
+    public DeviceProcessCache getCache(String deviceId) {
+        DeviceProcessCache device = deviceCacheStore.getDevice(deviceId);
+        if (device == null || (device != null && Strings.isBlank(device.getProtocolCode()))) {
+            Iot_device deviceInfo = this.fetch(deviceId);
+            if (deviceInfo == null)
+                return null;
+            Iot_product product = iotProductService.fetch(Cnd.where("id", "=", deviceInfo.getProductId()));
+            if (product == null)
+                return null;
+            deviceCacheStore.cache(deviceInfo, product);
+            device = deviceCacheStore.getDevice(deviceId);
+        }
+        return device;
+    }
+
+    public DeviceProcessCache doRefreshCache(String deviceId) {
+        Iot_device deviceInfo = this.fetch(deviceId);
+        if (deviceInfo == null)
+            return null;
+        Iot_product product = iotProductService.fetch(Cnd.where("id", "=", deviceInfo.getProductId()));
+        if (product == null)
+            return null;
+        deviceCacheStore.cache(deviceInfo, product);
+        return deviceCacheStore.getDevice(deviceId);
+    }
+
+    public void doUpdateCache(DeviceProcessCache device){
+        deviceCacheStore.update(device);
     }
 }

@@ -1,6 +1,7 @@
 package com.budwk.app.iot.services;
 
 import com.budwk.app.iot.models.Iot_device;
+import com.budwk.app.iot.objects.cache.DeviceProcessCache;
 import com.budwk.starter.database.service.BaseService;
 
 import java.util.List;
@@ -20,4 +21,10 @@ public interface IotDeviceService extends BaseService<Iot_device> {
     void create(Iot_device device,Map<String, String> props);
 
     void delete(Iot_device device);
+
+    DeviceProcessCache getCache(String deviceId);
+
+    DeviceProcessCache doRefreshCache(String deviceId);
+
+    void doUpdateCache(DeviceProcessCache device);
 }

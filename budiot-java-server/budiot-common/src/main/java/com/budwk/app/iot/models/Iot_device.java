@@ -124,6 +124,12 @@ public class Iot_device extends BaseModel implements Serializable {
     private Boolean abnormal;
 
     @Column
+    @Comment("异常时间")
+    @ApiModelProperty(description = "异常时间")
+    @Excel(name = "异常时间", cellType = Excel.ColumnType.NUMERIC, prompt = "异常时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
+    private Long abnormalTime;
+
+    @Column
     @ColDefine(type = ColType.BOOLEAN)
     @Comment("在线状态")
     @ApiModelProperty(description = "在线状态：true-在线，false-不在线")
@@ -140,6 +146,6 @@ public class Iot_device extends BaseModel implements Serializable {
     @Column
     @Comment("最新数据时间")
     @ApiModelProperty(description = "最新数据时间")
-    @Excel(name = "数据时间", cellType = Excel.ColumnType.NUMERIC, prompt = "通讯时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
+    @Excel(name = "数据时间", cellType = Excel.ColumnType.NUMERIC, prompt = "数据时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
     private Long lastDataTime;
 }

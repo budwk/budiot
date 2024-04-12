@@ -4,9 +4,16 @@ nutz:
 
 # 设备协议配置
 protocol:
+  # 是否启用
+  enable: true
   # 加载解析包
   classes:
     - com.budwk.app.access.protocol.demo.DemoProtocol
+
+# 设备数据处理配置
+processor:
+  # 是否启用
+  enable: true
 
 rocketmq:
   # 集群环境多个nameserver用;分割

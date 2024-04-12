@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-@IocBean(create = "init")
+@IocBean
 public class ProtolcolContainer {
     /**
      * 存放会话ID-设备映射
@@ -90,6 +90,7 @@ public class ProtolcolContainer {
         cacheMap = redissonClient.getMapCache("protocol_container");
         deviceSessionCache = redissonClient.getMapCache("device_addr");
         sessionDevice = redissonClient.getMapCache("device_session");
+        listen();
     }
 
     public void listen() {
