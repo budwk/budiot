@@ -120,6 +120,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
         operator.setProperty("imei", device.getImei());
         operator.setProperty("iccid", device.getIccid());
         operator.setProperty("iotPlatformId", device.getIotPlatformId());
+        operator.setProperty("lastConnectionTime", device.getLastConnectionTime());
+        operator.setProperty("lastDataTime", device.getLastDataTime());
         Iot_device_prop deviceProp = iotDevicePropService.fetch(Cnd.where("deviceId", "=", device.getId()));
         if (null != deviceProp && null != deviceProp.getProperties()) {
             operator.getProperties().putAll(deviceProp.getProperties());

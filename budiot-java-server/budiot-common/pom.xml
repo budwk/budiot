@@ -21,6 +21,12 @@
     <dependencies>
         <dependency>
             <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-message</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.app</groupId>
             <artifactId>budiot-access-storage</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

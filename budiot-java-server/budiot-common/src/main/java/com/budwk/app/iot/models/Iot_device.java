@@ -136,4 +136,10 @@ public class Iot_device extends BaseModel implements Serializable {
     @ApiModelProperty(description = "最新通讯连接时间")
     @Excel(name = "通讯时间", cellType = Excel.ColumnType.NUMERIC, prompt = "通讯时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
     private Long lastConnectionTime;
+
+    @Column
+    @Comment("最新数据时间")
+    @ApiModelProperty(description = "最新数据时间")
+    @Excel(name = "数据时间", cellType = Excel.ColumnType.NUMERIC, prompt = "通讯时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
+    private Long lastDataTime;
 }

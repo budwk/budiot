@@ -1,18 +1,18 @@
 package com.budwk.app.iot.services.impl;
 
+import com.budwk.app.access.constants.TopicConstant;
+import com.budwk.app.access.message.Message;
+import com.budwk.app.access.message.MessageTransfer;
 import com.budwk.app.iot.models.Iot_device;
+import com.budwk.app.iot.models.Iot_device_prop;
 import com.budwk.app.iot.models.Iot_product;
 import com.budwk.app.iot.models.Iot_protocol;
-import com.budwk.app.iot.services.IotDeviceLogService;
-import com.budwk.app.iot.services.IotDeviceService;
-import com.budwk.app.iot.services.IotProductService;
-import com.budwk.app.iot.services.IotProtocolService;
+import com.budwk.app.iot.services.*;
 import com.budwk.app.sys.enums.SysMsgType;
 import com.budwk.app.sys.services.SysMsgService;
 import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.database.service.BaseServiceImpl;
 import com.budwk.starter.security.utils.SecurityUtil;
-import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -20,6 +20,7 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,10 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
     private IotProtocolService iotProtocolService;
     @Inject
     private IotDeviceLogService iotDeviceLogService;
+    @Inject
+    private IotDevicePropService iotDevicePropService;
+    @Inject
+    private MessageTransfer messageTransfer;
 
     public void importData(String productId, String fileName, List<Iot_device> list, boolean over, String userId, String loginname) {
         if (list == null || list.size() == 0) {
@@ -68,6 +73,12 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
             device.setUpdatedBy(userId);
             try {
                 this.fastInsert(device);
+                messageTransfer.publish(new Message<>(TopicConstant.DEVICE_EVENT,
+                        NutMap.NEW()
+                                .setv("event", "device-register")
+                                .setv("productId", device.getProductId())
+                                .setv("iotPlatformId", device.getIotPlatformId())
+                                .setv("protocolCode", device.getProtocolCode())));
                 iotDeviceLogService.log("新增设备", device.getId(), userId, loginname);
                 successNum++;
             } catch (Exception e) {
@@ -89,6 +100,50 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         }
         sysMsgService.sendMsg(userId, SysMsgType.USER, "设备信息表 " + fileName + " 导入完成", "", resultMsg.toString(), userId);
 
+    }
+
+    public void create(Iot_device device, Map<String, String> props) {
+        Iot_product product = iotProductService.fetch(device.getProductId());
+        if (product == null) {
+            throw new BaseException("产品不存在");
+        }
+        Iot_protocol protocol = iotProtocolService.fetch(product.getProtocolId());
+        if (protocol == null) {
+            throw new BaseException("设备协议不存在");
+        }
+        device.setDeviceType(product.getDeviceType());
+        device.setClassifyId(product.getClassifyId());
+        device.setProtocolId(product.getProtocolId());
+        device.setProtocolCode(protocol.getCode());
+        device.setCreatedBy(SecurityUtil.getUserId());
+        device.setUpdatedBy(SecurityUtil.getUserId());
+        this.insert(device);
+        Iot_device_prop prop = new Iot_device_prop();
+        prop.setDeviceId(device.getId());
+        prop.setProperties(props);
+        iotDevicePropService.insert(prop);
+        messageTransfer.publish(new Message<>(TopicConstant.DEVICE_EVENT,
+                NutMap.NEW()
+                        .setv("event", "device-register")
+                        .setv("productId", device.getProductId())
+                        .setv("iotPlatformId", device.getIotPlatformId())
+                        .setv("protocolCode", device.getProtocolCode())));
+        iotDeviceLogService.log("新增设备", device.getId(), SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+    }
+
+    public void delete(Iot_device device) {
+        if (device == null) {
+            throw new BaseException("设备不存在");
+        }
+        this.delete(device.getId());
+        iotDevicePropService.clear(Cnd.where("deviceId", "=", device.getId()));
+        messageTransfer.publish(new Message<>(TopicConstant.DEVICE_EVENT,
+                NutMap.NEW()
+                        .setv("event", "device-unregister")
+                        .setv("productId", device.getProductId())
+                        .setv("iotPlatformId", device.getIotPlatformId())
+                        .setv("protocolCode", device.getProtocolCode())));
+        iotDeviceLogService.log("删除设备", device.getId(), SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
     }
 
     public void saveExtraProperties(String deviceId, Map<String, Object> properties) {

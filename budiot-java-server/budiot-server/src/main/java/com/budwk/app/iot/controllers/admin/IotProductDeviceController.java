@@ -4,8 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_device_prop;
-import com.budwk.app.iot.models.Iot_product;
-import com.budwk.app.iot.models.Iot_protocol;
 import com.budwk.app.iot.services.*;
 import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.common.openapi.annotation.*;
@@ -180,26 +178,7 @@ public class IotProductDeviceController {
     )
     @ApiResponses
     public Result<?> createDevice(@Param("..") Iot_device device, @Param("props") Map<String, String> props, HttpServletRequest req) {
-        Iot_product product = iotProductService.fetch(device.getProductId());
-        if (product == null) {
-            throw new BaseException("产品不存在");
-        }
-        Iot_protocol protocol = iotProtocolService.fetch(product.getProtocolId());
-        if (protocol == null) {
-            throw new BaseException("设备协议不存在");
-        }
-        device.setDeviceType(product.getDeviceType());
-        device.setClassifyId(product.getClassifyId());
-        device.setProtocolId(product.getProtocolId());
-        device.setProtocolCode(protocol.getCode());
-        device.setCreatedBy(SecurityUtil.getUserId());
-        device.setUpdatedBy(SecurityUtil.getUserId());
-        iotDeviceService.insert(device);
-        Iot_device_prop prop = new Iot_device_prop();
-        prop.setDeviceId(device.getId());
-        prop.setProperties(props);
-        iotDevicePropService.insert(prop);
-        iotDeviceLogService.log("新增设备", device.getId(), SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+        iotDeviceService.create(device, props);
         return Result.success();
     }
 
@@ -244,9 +223,7 @@ public class IotProductDeviceController {
     )
     @ApiResponses
     public Result<?> deleteDevice(@Param("id") String id, @Param("deviceNo") String deviceNo, HttpServletRequest req) {
-        iotDeviceService.delete(id);
-        iotDevicePropService.clear(Cnd.where("deviceId", "=", id));
-        iotDeviceLogService.log("删除设备", id, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+        iotDeviceService.delete(iotDeviceService.fetch(id));
         return Result.success();
     }
 
@@ -263,10 +240,8 @@ public class IotProductDeviceController {
     )
     @ApiResponses
     public Result<?> deleteDevices(@Param("ids") String[] ids, HttpServletRequest req) {
-        iotDeviceService.delete(ids);
         for (String id : ids) {
-            iotDevicePropService.clear(Cnd.where("deviceId", "=", id));
-            iotDeviceLogService.log("删除设备", id, SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
+            iotDeviceService.delete(iotDeviceService.fetch(id));
         }
         return Result.success();
     }

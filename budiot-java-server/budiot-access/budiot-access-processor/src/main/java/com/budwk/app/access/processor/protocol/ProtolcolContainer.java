@@ -92,7 +92,7 @@ public class ProtolcolContainer {
         sessionDevice = redissonClient.getMapCache("device_session");
     }
 
-    public void start() {
+    public void listen() {
         listenEvent();//设备事件(注册/注销)
         listenData();//数据上报
         listenCmd();//指令发送(手动)
@@ -295,14 +295,14 @@ public class ProtolcolContainer {
             String sessionId = message.getHeader("sessionId");
             // 从缓存中尝试获取设备
             String sessionDeviceId = Strings.isNotBlank(sessionId) ? sessionDevice.get(sessionId) : null;
-            log.debug("缓存中设备 sessionDeviceId===>{}", sessionDeviceId);
+            log.debug("sessionDeviceId===>{}", sessionDeviceId);
             DeviceOperator deviceOperator = null;
-            if (protocolCode.contains("COLLECTOR")) {
+            if (protocolCode.contains("COLLECTOR") || protocolCode.contains("GATEWAY")) {
                 // 采集器/集中器设备
-                deviceOperator = Strings.isNotBlank(sessionDeviceId) && !"null".equals(sessionDeviceId) ? deviceRegistry.getGatewayDevice("id", sessionDeviceId) : null;
+                deviceOperator = Strings.isNotBlank(sessionDeviceId) && !"null".equals(sessionDeviceId) ? deviceRegistry.getGatewayDevice(protocolCode, sessionDeviceId) : null;
 
             } else {
-                deviceOperator = Strings.isNotBlank(sessionDeviceId) && !"null".equals(sessionDeviceId) ? deviceRegistry.getDeviceOperator("id", sessionDeviceId) : null;
+                deviceOperator = Strings.isNotBlank(sessionDeviceId) && !"null".equals(sessionDeviceId) ? deviceRegistry.getDeviceOperator(sessionDeviceId) : null;
             }
             // 构造解码上下文
             DefaultDecodeContext decodeContext = new DefaultDecodeContext(protocolCode, deviceRegistry, encodedMessage) {

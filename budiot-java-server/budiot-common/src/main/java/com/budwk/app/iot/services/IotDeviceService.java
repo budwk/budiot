@@ -16,4 +16,8 @@ public interface IotDeviceService extends BaseService<Iot_device> {
      * @param properties 属性配置
      */
     void saveExtraProperties(String deviceId, Map<String, Object> properties);
+
+    void create(Iot_device device,Map<String, String> props);
+
+    void delete(Iot_device device);
 }

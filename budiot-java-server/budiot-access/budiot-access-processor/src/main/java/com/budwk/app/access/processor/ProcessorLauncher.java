@@ -34,7 +34,7 @@ public class ProcessorLauncher {
 
     public void init(){
         // 设备协议解析
-        protolcolContainer.start();
+        protolcolContainer.listen();
         // 加载业务处理类
         loadProcessors();
         // 监听解析后的数据
