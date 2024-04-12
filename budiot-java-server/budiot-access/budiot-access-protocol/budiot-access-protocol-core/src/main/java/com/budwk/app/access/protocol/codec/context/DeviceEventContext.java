@@ -1,25 +1,16 @@
 package com.budwk.app.access.protocol.codec.context;
 
-import java.util.Map;
 
 /**
- * 设备事件
+ * 设备事件上下文
  */
 public interface DeviceEventContext {
     /**
-     * 更新设备字段
+     * 更新设备iotPlatformId
      *
-     * @param deviceId
-     * @param key
-     * @param value
+     * @param deviceId 设备ID
+     * @param iotPlatformId 设备第三方平台ID
      */
-    void updateDeviceField(String deviceId, String key, Object value);
+    void updateDeviceIotPlatformId(String deviceId, String iotPlatformId);
 
-    /**
-     * 更新设备字段
-     *
-     * @param deviceId
-     * @param kv
-     */
-    void updateDeviceField(String deviceId, Map<String, Object> kv);
 }

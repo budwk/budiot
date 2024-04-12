@@ -11,16 +11,24 @@ import com.budwk.app.access.processor.protocol.impl.DefaultEncodeContext;
 import com.budwk.app.access.processor.support.DeviceOperatorSupport;
 import com.budwk.app.access.processor.timer.DelayTaskHelper;
 import com.budwk.app.access.protocol.codec.*;
+import com.budwk.app.access.protocol.codec.context.DeviceEventContext;
 import com.budwk.app.access.protocol.codec.context.EncodeContext;
+import com.budwk.app.access.protocol.codec.impl.DefaultDeviceOperator;
 import com.budwk.app.access.protocol.codec.impl.GatewayDeviceOperatorImpl;
-import com.budwk.app.access.protocol.codec.result.*;
+import com.budwk.app.access.protocol.codec.result.DecodeResult;
+import com.budwk.app.access.protocol.codec.result.DefaultDecodeResult;
+import com.budwk.app.access.protocol.codec.result.DefaultResponseResult;
+import com.budwk.app.access.protocol.codec.result.EncodeResult;
 import com.budwk.app.access.protocol.device.CommandInfo;
+import com.budwk.app.access.protocol.device.ProductInfo;
 import com.budwk.app.access.protocol.message.DeviceMessage;
 import com.budwk.app.access.protocol.message.DeviceResponseMessage;
 import com.budwk.app.access.protocol.message.codec.EncodedMessage;
 import com.budwk.app.access.protocol.utils.ByteConvertUtil;
 import com.budwk.app.access.storage.DeviceRawDataStorage;
 import com.budwk.app.iot.enums.DeviceCmdStatus;
+import com.budwk.starter.rocketmq.enums.ConsumeMode;
+import com.budwk.starter.rocketmq.enums.MessageModel;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.castor.Castors;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -34,6 +42,7 @@ import org.nutz.lang.util.NutMap;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -72,6 +81,8 @@ public class ProtolcolContainer {
     @Inject
     private DeviceOperatorSupport deviceOperatorSupport;
     @Inject
+    private DeviceEventContext deviceEventContext;
+    @Inject
     private PropertiesProxy conf;
     private String instanceId;
 
@@ -82,9 +93,181 @@ public class ProtolcolContainer {
     }
 
     public void start() {
-        listenData();
-        //listenCmd();
-        //listenCmdResp();
+        listenEvent();//设备事件(注册/注销)
+        listenData();//数据上报
+        listenCmd();//指令发送(手动)
+        listenCmdResp();//指令回复(网关设备)
+    }
+
+    private void listenEvent() {
+        messageTransfer.subscribe("CONTAINER", TopicConstant.DEVICE_EVENT,
+                "*", MessageModel.CLUSTERING, ConsumeMode.ORDERLY,
+                message -> {
+                    log.debug("监听事件 {}", message.getBody());
+                    //延迟10s等待设备新增入库,否则查询为空
+                    delayTaskHelper.delayRun(() -> {
+                        NutMap map = Lang.obj2nutmap(message.getBody());
+                        String event = map.getString("event", "");
+                        String protocolCode = map.getString("protocolCode");
+                        String deviceId = map.getString("deviceId");
+                        String productId = map.getString("productId");
+                        switch (event) {
+                            // 设备注册事件
+                            case "device-register": {
+                                DeviceOperator operator = null;
+                                if (Strings.isNotBlank(deviceId)) {
+                                    operator = deviceRegistry.getDeviceOperator(deviceId);
+                                    if (Strings.isBlank(protocolCode)) {
+                                        protocolCode = (String) operator.getProperty("protocolCode");
+                                    }
+                                }
+                                Protocol protocol = protocolLoader.loadProtocols(protocolCode);
+                                log.info("设备注册事件 协议解析包{} 设备对象{}", protocol, operator);
+                                if (null != protocol && null != operator) {
+                                    protocol.onDeviceRegistered(deviceEventContext, operator);
+                                }
+                                break;
+                            }
+                            // 设备注销事件
+                            case "device-unregister": {
+                                DeviceOperator operator = null;
+                                if (Strings.isNotBlank(deviceId)) {
+                                    operator = deviceRegistry.getDeviceOperator(deviceId);
+                                    if (Strings.isBlank(protocolCode)) {
+                                        protocolCode = (String) operator.getProperty("protocolCode");
+                                    }
+                                }
+                                Protocol protocol = protocolLoader.loadProtocols(protocolCode);
+                                if (null != protocol) {
+                                    if (null == operator) {
+                                        operator = new DefaultDeviceOperator() {
+                                            @Override
+                                            public ProductInfo getProduct() {
+                                                return Strings.isBlank(productId) ? null : deviceRegistry.getProductInfo(productId);
+                                            }
+                                        };
+                                        operator.setProperty("deviceId", deviceId);
+                                        operator.setProperty("iotDevId", map.getString("iotDevId"));
+                                    }
+                                    protocol.onDeviceUnRegistered(deviceEventContext, operator);
+                                }
+                                break;
+                            }
+                            // 采集器注册事件
+                            case "collector-register": {
+                                DeviceOperator operator = null;
+                                if (Strings.isNotBlank(deviceId)) {
+                                    operator = deviceRegistry.getGatewayDevice("id", deviceId);
+                                    if (Strings.isBlank(protocolCode)) {
+                                        protocolCode = (String) operator.getProperty("protocolCode");
+                                    }
+                                }
+                                Protocol protocol = protocolLoader.loadProtocols(protocolCode);
+                                log.info("设备注册事件 协议解析包{} 设备对象{}", protocol, operator);
+                                if (null != protocol && null != operator) {
+                                    protocol.onDeviceRegistered(deviceEventContext, operator);
+                                }
+                                break;
+                            }
+                            // 采集器注销事件
+                            case "collector-unregister": {
+                                DeviceOperator operator = null;
+                                if (Strings.isNotBlank(deviceId)) {
+                                    operator = deviceRegistry.getGatewayDevice("id", deviceId);
+                                    if (Strings.isBlank(protocolCode)) {
+                                        protocolCode = (String) operator.getProperty("protocolCode");
+                                    }
+                                }
+                                Protocol protocol = protocolLoader.loadProtocols(protocolCode);
+                                if (null != protocol) {
+                                    if (null == operator) {
+                                        operator = new DefaultDeviceOperator() {
+                                            @Override
+                                            public ProductInfo getProduct() {
+                                                return Strings.isBlank(productId) ? null : deviceRegistry.getProductInfo(productId);
+                                            }
+                                        };
+                                        operator.setProperty("deviceId", deviceId);
+                                        operator.setProperty("iotDevId", map.getString("iotDevId"));
+                                    }
+                                    protocol.onDeviceUnRegistered(deviceEventContext, operator);
+                                }
+                                break;
+                            }
+                        }
+                    }, 10);
+
+                });
+    }
+
+    /**
+     * 监听网关设备指令回复
+     */
+    private void listenCmdResp() {
+        // 指令回复使用 CLUSTERING模式，只需要一个处理即可
+        messageTransfer.subscribe("CONTAINER", TopicConstant.DEVICE_CMD_RESP,
+                "*", MessageModel.CLUSTERING, ConsumeMode.ORDERLY,
+                this::handleCmdResp);
+    }
+
+    private <T extends Serializable> void handleCmdResp(Message<T> message) {
+        String deviceId = message.getHeader("deviceId");
+        String commandId = message.getHeader("commandId");
+        if (Strings.isBlank(commandId)) {
+            return;
+        }
+        log.debug("设备 {} 指令 {} 发送到设备结果 {}", deviceId, commandId, message.getBody());
+        // 如果需要指令的中间状态，那么就放开下面的注释
+        if (Strings.isBlank(deviceId) || Strings.isBlank(commandId)) {
+            return;
+        }
+        NutMap nutMap = (NutMap) message.getBody();
+
+    }
+
+    /**
+     * 监听手动下发的指令
+     */
+    private void listenCmd() {
+        // 指令下发使用 BROADCASTING 模式，因为有多个客户端
+        messageTransfer.subscribe("CONTAINER", TopicConstant.DEVICE_CMD_TRIGGER,
+                "*", MessageModel.BROADCASTING, ConsumeMode.ORDERLY,
+                this::handleCmd);
+    }
+
+    private <T extends Serializable> void handleCmd(Message<T> message) {
+        log.debug("收到指令{}", message.toString());
+        CommandInfo commandInfoDTO = (CommandInfo) message.getBody();
+        if (null == commandInfoDTO) {
+            return;
+        }
+
+        String key;
+        DeviceOperator device = deviceRegistry.getDeviceOperator(commandInfoDTO.getDeviceId());
+        if (Lang.isNotEmpty(device) && Lang.isNotEmpty(device.getProduct()) &&
+                ("TCP".equals(device.getProduct().getProtocolType())
+                        ||
+                        "MQ".equals(device.getProduct().getProtocolType()) ||
+                        "MQTT".equals(device.getProduct().getProtocolType()))) {
+            key = "cmd:send:" + commandInfoDTO.getDeviceId();
+        } else {
+            return;
+        }
+        Object o = cacheMap.get(key);
+        if (null != o) {
+            log.warn("正在下发其他指令 {}", o);
+            return;
+        }
+        CommandInfo cmdInfo = new CommandInfo();
+        cmdInfo.setCommandId(commandInfoDTO.getCommandId());
+        cmdInfo.setCommandCode(commandInfoDTO.getCommandCode());
+        cmdInfo.setDeviceId(commandInfoDTO.getDeviceId());
+        cmdInfo.setParams(commandInfoDTO.getParams());
+        if (Strings.isBlank(cmdInfo.getCommandId())) {
+            cmdInfo.setCommandId(cmdInfo.getDeviceId() + "_" + cmdInfo.getCommandCode() + "_" + System.currentTimeMillis());
+        }
+        // 构造指令
+        this.buildCommand(cmdInfo);
     }
 
     public void listenData() {
@@ -139,7 +322,6 @@ public class ProtolcolContainer {
                     rawData.setOriginData(replyMessage.payloadAsString());
                     rawData.setStartTime(System.currentTimeMillis());
                     if (!replyMessage.isSend()) {
-                        log.debug("message.getFrom():::" + message.getFrom());
                         Message<EncodedMessage> reply = new Message<>(message.getFrom(), replyMessage);
                         reply.setFrom(TopicConstant.DEVICE_CMD_RESP);
                         reply.getHeaders().putAll(message.getHeaders());
@@ -215,7 +397,6 @@ public class ProtolcolContainer {
                     Message<DefaultDecodeResult> processorMessage = new Message<>(TopicConstant.SERVICE_PROCESSOR, reportResult);
                     processorMessage.setSender("protocol");
                     processorMessage.addHeader("protocolCode", protocolCode);
-                    //processorMessage.addHeader("deviceType", deviceOperator.getProduct().getDeviceType());
                     if (deviceOperator instanceof GatewayDeviceOperatorImpl) {
                         // 集中器或采集器等网关设备
                         List<DeviceMessage> messages = reportResult.getMessages();

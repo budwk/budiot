@@ -76,6 +76,14 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
         return null;
     }
 
+    public ProductInfo getProductInfo(String productId) {
+        Iot_product product = iotProductService.fetch(productId);
+        if (product == null) {
+            return null;
+        }
+        return buildProductInfo(product);
+    }
+
     @Override
     public void updateDeviceOnline(String deviceId) {
         iotDeviceService.update(Chain.make("online", true).add("lastConnectionTime", System.currentTimeMillis()), Cnd.where("id", "=", deviceId));
@@ -88,7 +96,7 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
 
     @Override
     public void makeCommandFinish(String cmdId, int status, String result) {
-        iotDeviceCmdService.makeCommandFinish(cmdId,DeviceCmdStatus.from(status),result);
+        iotDeviceCmdService.makeCommandFinish(cmdId, DeviceCmdStatus.from(status), result);
     }
 
     private DeviceOperator buildDefaultOperator(Iot_device device, Iot_product product) {

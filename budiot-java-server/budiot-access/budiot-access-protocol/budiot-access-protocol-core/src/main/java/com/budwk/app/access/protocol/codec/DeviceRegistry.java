@@ -2,6 +2,7 @@ package com.budwk.app.access.protocol.codec;
 
 
 import com.budwk.app.access.protocol.device.CommandInfo;
+import com.budwk.app.access.protocol.device.ProductInfo;
 
 /**
  * 资源装载类
@@ -44,6 +45,7 @@ public interface DeviceRegistry {
      */
     CommandInfo getDeviceCommand(String deviceId);
 
+    ProductInfo getProductInfo(String productId);
     /**
      * 设置设备在线状态
      *

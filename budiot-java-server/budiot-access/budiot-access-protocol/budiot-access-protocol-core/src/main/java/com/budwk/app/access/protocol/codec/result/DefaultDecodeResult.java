@@ -28,11 +28,6 @@ public class DefaultDecodeResult implements DecodeResult {
     private List<DeviceMessage> messages;
 
     /**
-     * 协议code
-     */
-    private String protocolCode;
-
-    /**
      * 是否最后一帧
      */
     private boolean isLastFrame;
