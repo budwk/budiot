@@ -4,7 +4,16 @@ import com.budwk.app.iot.models.Iot_device;
 import com.budwk.starter.database.service.BaseService;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IotDeviceService extends BaseService<Iot_device> {
-    void importData(String productId,String fileName, List<Iot_device> list, boolean over, String userId, String loginname);
+    void importData(String productId, String fileName, List<Iot_device> list, boolean over, String userId, String loginname);
+
+    /**
+     * 更新设备扩展属性
+     *
+     * @param deviceId   设备ID
+     * @param properties 属性配置
+     */
+    void saveExtraProperties(String deviceId, Map<String, Object> properties);
 }

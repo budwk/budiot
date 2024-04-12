@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -39,18 +40,20 @@ public class DefaultResponseResult implements DecodeResult {
      * 响应结果消息
      */
     private List<DeviceMessage> messages;
-    /**
-     * 解析器标识
-     */
-    private String handlerCode;
 
-    public DefaultResponseResult(String commandId, String commandCode, DeviceResponseMessage responseMessage) {
+    /**
+     * 设备协议标识
+     */
+    private String protocolCode;
+
+    private boolean isLastFrame;
+
+    public DefaultResponseResult(String commandId, DeviceResponseMessage responseMessage) {
         this.commandId = commandId;
-        this.commandCode = commandCode;
         this.success = responseMessage.isSuccess();
         this.commandCode = responseMessage.getCommandCode();
         this.deviceId = responseMessage.getDeviceId();
-        this.messages = List.of(responseMessage);
+        this.messages = Arrays.asList(responseMessage);
     }
 
     public DefaultResponseResult(String commandId, String deviceId, String commandCode, boolean success, List<DeviceMessage> messages) {

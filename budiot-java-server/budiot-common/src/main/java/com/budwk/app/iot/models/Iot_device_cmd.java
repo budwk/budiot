@@ -87,4 +87,10 @@ public class Iot_device_cmd extends BaseModel implements Serializable {
     @Comment("结束时间")
     @ApiModelProperty(description = "结束时间")
     private Long finishTime;
+
+    @Column
+    @ColDefine(type = ColType.VARCHAR, width = 500)
+    @Comment("指令回复结果")
+    @ApiModelProperty(description = "指令回复结果")
+    private String respResult;
 }

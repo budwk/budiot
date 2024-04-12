@@ -1,6 +1,6 @@
 package com.budwk.app.access.processor.core;
 
-import com.budwk.app.access.protocol.codec.impl.DecodeReportResult;
+import com.budwk.app.access.protocol.codec.result.DefaultDecodeResult;
 import lombok.Data;
 import org.nutz.castor.Castors;
 
@@ -12,7 +12,7 @@ public class ProcessorContext {
     /**
      * 解析后的数据
      */
-    private final DecodeReportResult decodeResult;
+    private final DefaultDecodeResult decodeResult;
     private final Map<String, Object> properties = new ConcurrentHashMap<>();
 
     public ProcessorContext addProperty(String key, Object value) {

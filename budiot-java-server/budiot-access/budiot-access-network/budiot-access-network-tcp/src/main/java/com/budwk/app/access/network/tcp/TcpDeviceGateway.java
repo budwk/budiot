@@ -208,7 +208,7 @@ public class TcpDeviceGateway implements DeviceGateway {
     }
 
     private String getReplyAddress() {
-        return String.format(this.configuration.getId() + ":%s.%s", TopicConstant.DEVICE_CMD_DOWN, getInstanceId());
+        return String.format(this.configuration.getId() + "_%s_%s", TopicConstant.DEVICE_CMD_DOWN, getInstanceId());
     }
 
     public String getInstanceId() {
@@ -217,7 +217,7 @@ public class TcpDeviceGateway implements DeviceGateway {
         }
         instanceId = Strings.sBlank(this.configuration.getInstanceId());
         if (Strings.isBlank(instanceId)) {
-            String id = configuration.getId() + "." + NetUtil.LOCALHOST + ManagementFactory.getRuntimeMXBean().getName();
+            String id = configuration.getId() + "_" + NetUtil.LOCALHOST + ManagementFactory.getRuntimeMXBean().getName();
             instanceId = Integer.toHexString(id.hashCode());
         }
         return instanceId;

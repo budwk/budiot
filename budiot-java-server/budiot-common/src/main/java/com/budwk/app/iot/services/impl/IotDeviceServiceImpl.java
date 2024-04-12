@@ -15,10 +15,15 @@ import com.budwk.starter.security.utils.SecurityUtil;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @IocBean(args = {"refer:dao"})
 public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements IotDeviceService {
@@ -84,5 +89,27 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         }
         sysMsgService.sendMsg(userId, SysMsgType.USER, "设备信息表 " + fileName + " 导入完成", "", resultMsg.toString(), userId);
 
+    }
+
+    public void saveExtraProperties(String deviceId, Map<String, Object> properties) {
+        String sqlStr = "UPDATE iot_device_prop SET properties = JSON_SET(properties,$fields) WHERE deviceId=@deviceId";
+        Sql sql = Sqls.create(sqlStr);
+        // 移除时序字段
+        properties.remove("ts");
+        List<String> fields = new ArrayList<>();
+        properties.forEach((k, v) -> {
+            fields.add("'$." + k + "'");
+            if (v == null) {
+                fields.add("NULL");
+            } else if (v instanceof Number) {
+                fields.add(Strings.safeToString(v, "NULL"));
+            } else {
+                fields.add("'" + Strings.sBlank(v) + "'");
+            }
+        });
+
+        sql.setParam("deviceId", deviceId)
+                .setVar("fields", String.join(",", fields.toArray(new String[0])));
+        this.execute(sql);
     }
 }

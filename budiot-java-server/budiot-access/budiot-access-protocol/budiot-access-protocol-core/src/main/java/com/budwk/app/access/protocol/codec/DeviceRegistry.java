@@ -52,4 +52,6 @@ public interface DeviceRegistry {
     void updateDeviceOnline(String deviceId);
 
     void makeCommandSend(String cmdId);
+
+    void makeCommandFinish(String cmdId,int status,String result);
 }

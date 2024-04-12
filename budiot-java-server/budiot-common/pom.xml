@@ -19,6 +19,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-storage</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- wk-starter -->
         <dependency>
             <groupId>com.budwk.starter</groupId>

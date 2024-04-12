@@ -5,6 +5,7 @@ import com.budwk.app.access.protocol.codec.DeviceRegistry;
 import com.budwk.app.access.protocol.codec.impl.DefaultDeviceOperator;
 import com.budwk.app.access.protocol.device.CommandInfo;
 import com.budwk.app.access.protocol.device.ProductInfo;
+import com.budwk.app.access.storage.DeviceCmdDataStorage;
 import com.budwk.app.iot.enums.DeviceCmdStatus;
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_device_cmd;
@@ -81,10 +82,13 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
     }
 
     @Override
-    public void makeCommandSend(String cmdId){
-        iotDeviceCmdService.update(Chain.make("",""),Cnd.where("id","=",cmdId));
-        // todo 已发送指令转存
+    public void makeCommandSend(String cmdId) {
+        iotDeviceCmdService.makeCommandSend(cmdId);
+    }
 
+    @Override
+    public void makeCommandFinish(String cmdId, int status, String result) {
+        iotDeviceCmdService.makeCommandFinish(cmdId,DeviceCmdStatus.from(status),result);
     }
 
     private DeviceOperator buildDefaultOperator(Iot_device device, Iot_product product) {

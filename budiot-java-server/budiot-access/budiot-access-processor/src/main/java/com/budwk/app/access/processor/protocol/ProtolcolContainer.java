@@ -7,21 +7,23 @@ import com.budwk.app.access.message.MessageTransfer;
 import com.budwk.app.access.objects.dto.DeviceRawDataDTO;
 import com.budwk.app.access.processor.cache.RedissionCacheStore;
 import com.budwk.app.access.processor.protocol.impl.DefaultDecodeContext;
+import com.budwk.app.access.processor.protocol.impl.DefaultEncodeContext;
+import com.budwk.app.access.processor.support.DeviceOperatorSupport;
 import com.budwk.app.access.processor.timer.DelayTaskHelper;
 import com.budwk.app.access.protocol.codec.*;
 import com.budwk.app.access.protocol.codec.context.EncodeContext;
-import com.budwk.app.access.protocol.codec.impl.DecodeCmdRespResult;
-import com.budwk.app.access.protocol.codec.impl.DecodeReportResult;
 import com.budwk.app.access.protocol.codec.impl.GatewayDeviceOperatorImpl;
-import com.budwk.app.access.protocol.codec.result.DecodeResult;
-import com.budwk.app.access.protocol.codec.result.EncodeResult;
+import com.budwk.app.access.protocol.codec.result.*;
 import com.budwk.app.access.protocol.device.CommandInfo;
 import com.budwk.app.access.protocol.message.DeviceMessage;
+import com.budwk.app.access.protocol.message.DeviceResponseMessage;
 import com.budwk.app.access.protocol.message.codec.EncodedMessage;
 import com.budwk.app.access.protocol.utils.ByteConvertUtil;
 import com.budwk.app.access.storage.DeviceRawDataStorage;
+import com.budwk.app.iot.enums.DeviceCmdStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.castor.Castors;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
@@ -36,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @IocBean(create = "init")
@@ -66,6 +69,11 @@ public class ProtolcolContainer {
     private DeviceRawDataStorage deviceRawDataStorage;
     @Inject
     private DeviceRegistry deviceRegistry;
+    @Inject
+    private DeviceOperatorSupport deviceOperatorSupport;
+    @Inject
+    private PropertiesProxy conf;
+    private String instanceId;
 
     public void init() {
         cacheMap = redissonClient.getMapCache("protocol_container");
@@ -130,7 +138,8 @@ public class ProtolcolContainer {
                     rawData.setType("D");
                     rawData.setOriginData(replyMessage.payloadAsString());
                     rawData.setStartTime(System.currentTimeMillis());
-                    if (!replyMessage.isSend()) { // 指令回复
+                    if (!replyMessage.isSend()) {
+                        log.debug("message.getFrom():::" + message.getFrom());
                         Message<EncodedMessage> reply = new Message<>(message.getFrom(), replyMessage);
                         reply.setFrom(TopicConstant.DEVICE_CMD_RESP);
                         reply.getHeaders().putAll(message.getHeaders());
@@ -186,8 +195,8 @@ public class ProtolcolContainer {
                 deviceRegistry.updateDeviceOnline(decodeContext.getDevice().getDeviceId());
             }
             // 处理数据上报
-            if (result instanceof DecodeReportResult) {
-                DecodeReportResult reportResult = (DecodeReportResult) result;
+            if (result instanceof DefaultDecodeResult) {
+                DefaultDecodeResult reportResult = (DefaultDecodeResult) result;
                 String deviceId = reportResult.getDeviceId();
                 // 保存一下信息，用于发送指令时的处理
                 deviceSessionCache.put(deviceId,
@@ -203,10 +212,10 @@ public class ProtolcolContainer {
                 deviceRawDataStorage.save(rawData);
                 if (Lang.isNotEmpty(reportResult.getMessages())) {
                     // 将解析后的数据推送到业务处理模块
-                    Message<DecodeReportResult> processorMessage = new Message<>(TopicConstant.SERVICE_PROCESSOR, reportResult);
+                    Message<DefaultDecodeResult> processorMessage = new Message<>(TopicConstant.SERVICE_PROCESSOR, reportResult);
                     processorMessage.setSender("protocol");
                     processorMessage.addHeader("protocolCode", protocolCode);
-                    processorMessage.addHeader("deviceType", deviceOperator.getProduct().getDeviceType());
+                    //processorMessage.addHeader("deviceType", deviceOperator.getProduct().getDeviceType());
                     if (deviceOperator instanceof GatewayDeviceOperatorImpl) {
                         // 集中器或采集器等网关设备
                         List<DeviceMessage> messages = reportResult.getMessages();
@@ -221,7 +230,7 @@ public class ProtolcolContainer {
                             }
                             if (Lang.isNotEmpty(messages)) {
                                 // 将解析后的数据推送到业务处理模块
-                                Message<DecodeReportResult> processorMessage2 = getSubDeviceMessage(protocolCode, deviceId, messages, deviceOperator);
+                                Message<DefaultDecodeResult> processorMessage2 = getSubDeviceMessage(protocolCode, deviceId, messages, deviceOperator);
                                 // 将解析后的数据推送到业务处理去
                                 messageTransfer.publish(processorMessage2);
                             }
@@ -237,7 +246,7 @@ public class ProtolcolContainer {
             }
             // 处理指令回复的数据
             else {
-                DecodeCmdRespResult cmdRespResult = (DecodeCmdRespResult) result;
+                DefaultResponseResult cmdRespResult = (DefaultResponseResult) result;
                 this.processCmdResp(decodeContext.getDevice(), cmdRespResult);
                 // 存储上报的原始数据
                 rawData.setDeviceId(null != decodeContext.getDevice() ? decodeContext.getDevice().getDeviceId() : null);
@@ -246,9 +255,73 @@ public class ProtolcolContainer {
                 deviceRawDataStorage.save(rawData);
             }
             // 刷新设备信息
-            deviceOperatorFlushSupport.flush(decodeContext.getDevice());
+            deviceOperatorSupport.flush(decodeContext.getDevice());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void processCmdResp(DeviceOperator deviceOperator, DefaultResponseResult cmdRespResult) {
+        if (null == deviceOperator) {
+            return;
+        }
+        String deviceId = deviceOperator.getDeviceId();
+        String messageId = cmdRespResult.getCommandId();
+        if (deviceOperator instanceof GatewayDeviceOperatorImpl) {
+            // 是集中器
+            deviceId = cmdRespResult.getDeviceId();
+        }
+        String commandCode = cmdRespResult.getCommandCode();
+        String protocolCode = cmdRespResult.getProtocolCode();
+        if (Strings.isBlank(messageId)) {
+            // 这个就当做是指令id
+            if (Strings.isNotBlank(protocolCode) && protocolCode.equals("LORA")) {
+                messageId = (String) cacheMap.get("cmd:send:" + deviceId + ":" + commandCode);
+            } else {
+                messageId = (String) cacheMap.get("cmd:send:" + deviceId);
+            }
+        }
+        List<DeviceMessage> messages = cmdRespResult.getMessages()
+                .stream().filter(m -> !(m instanceof DeviceResponseMessage)).collect(Collectors.toList());
+
+        // 如果指令响应中存在业务处理需要的数据，那么也就推送到业务处理去
+        if (Lang.isNotEmpty(messages)) {
+            Iterator<DeviceMessage> iterator = messages.iterator();
+            while (iterator.hasNext()) {
+                DeviceMessage deviceMessage = iterator.next();
+                // 同时更新集中器设备状态为在线以及最近通讯时间
+                log.info("更新集中器 {} 设备状态为在线以及最近通讯时间", deviceMessage.getDeviceId());
+                deviceRegistry.updateDeviceOnline(deviceMessage.getDeviceId());
+            }
+            if (Lang.isNotEmpty(messages)) {
+                // 将解析后的数据推送到业务处理模块
+                Message<DefaultDecodeResult> processorMessage = getSubDeviceMessage(deviceId, protocolCode, messages, deviceOperator);
+                // 将解析后的数据推送到业务处理去
+                messageTransfer.publish(processorMessage);
+            }
+        }
+        // 为空或者是最后一条自动发送的结束指令，则不处理
+        if (Strings.isBlank(messageId) || messageId.contains("END")) {
+            return;
+        }
+        if (cmdRespResult.isLastFrame()) {
+            try {
+                deviceRegistry.makeCommandFinish(messageId,
+                        cmdRespResult.isSuccess() ? DeviceCmdStatus.FINISHED.value() : DeviceCmdStatus.FAILED.value(), Json.toJson(cmdRespResult.getMessages(), JsonFormat.tidy()));
+            } finally {
+                if (Strings.isNotBlank(protocolCode) && protocolCode.equals("LORA")) {
+                    cacheMap.remove("cmd:send:" + deviceId + ":" + commandCode);
+                } else {
+                    cacheMap.remove("cmd:send:" + deviceId);
+                }
+                // 获取指令并构造指令
+                CommandInfo deviceCommand = deviceRegistry.getDeviceCommand(deviceId);
+                if (null != deviceCommand) {
+                    this.buildCommand(deviceCommand);
+                } else {
+                    this.noMoreCommand(deviceOperator);
+                }
+            }
         }
     }
 
@@ -276,7 +349,8 @@ public class ProtolcolContainer {
     }
 
     /**
-     * 最好回复指令
+     * 最后回复指令
+     *
      * @param deviceOperator
      */
     private void noMoreCommand(DeviceOperator deviceOperator) {
@@ -295,6 +369,7 @@ public class ProtolcolContainer {
 
     /**
      * 构造指令
+     *
      * @param commandInfo
      */
     private void buildCommand(CommandInfo commandInfo) {
@@ -308,11 +383,7 @@ public class ProtolcolContainer {
             DeviceOperator device = null;
             if (null == session) {
                 device = deviceRegistry.getDeviceOperator(deviceId);
-                if (Lang.isNotEmpty(device) && Lang.isNotEmpty(device.getProduct()) && device.getProperty("protocolCode").equals("LORA")) {
-                    session = NutMap.NEW().setv("address", getReplyAddress()).
-                            setv("protocolCode", device.getProperty("protocolCode")).
-                            setv("transportType", device.getProduct().getProtocolType());
-                } else {
+                if (device == null) {
                     log.warn("未找到设备会话");
                     return;
                 }
@@ -355,7 +426,7 @@ public class ProtolcolContainer {
                 }
             }
             if (null == device) {
-                device = deviceRegistry.getDeviceOperator("id", deviceId);
+                device = deviceRegistry.getDeviceOperator(deviceId);
             }
             // 构造编码上下文
             EncodeContext encodeCtx = new DefaultEncodeContext(deviceRegistry, commandInfo, device) {
@@ -398,9 +469,9 @@ public class ProtolcolContainer {
         return protocol.getMessageCodec(transportType);
     }
 
-    private static Message<DecodeReportResult> getSubDeviceMessage(String deviceId, String protocolCode, List<DeviceMessage> deviceMessage, DeviceOperator deviceOperator) {
-        Message<DecodeReportResult> processorMessage =
-                new Message<>(TopicConstant.SERVICE_PROCESSOR, new DecodeReportResult(deviceId, deviceMessage));
+    private static Message<DefaultDecodeResult> getSubDeviceMessage(String deviceId, String protocolCode, List<DeviceMessage> deviceMessage, DeviceOperator deviceOperator) {
+        Message<DefaultDecodeResult> processorMessage =
+                new Message<>(TopicConstant.SERVICE_PROCESSOR, new DefaultDecodeResult(deviceId, deviceMessage));
         processorMessage.setSender("protocol");
         processorMessage.addHeader("protocolCode", protocolCode);
         if (null != deviceOperator.getProduct()) {
