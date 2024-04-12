@@ -1,6 +1,7 @@
 package com.budwk.app.iot.models;
 
 import com.budwk.app.iot.enums.DeviceType;
+import com.budwk.app.iot.enums.DeviceValveState;
 import com.budwk.starter.common.openapi.annotation.ApiModel;
 import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
 import com.budwk.starter.database.model.BaseModel;
@@ -109,6 +110,11 @@ public class Iot_device extends BaseModel implements Serializable {
     @Comment("第三方IOT平台设备id")
     @Excel(name = "第三方设备编号", cellType = Excel.ColumnType.STRING, prompt = "第三方设备编号", type = Excel.Type.EXPORT)
     private String iotPlatformId;
+
+    @Column
+    @ColDefine(type = ColType.INT)
+    @Comment("阀门/开关状态")
+    private DeviceValveState valveState;
 
     @Column
     @ColDefine(type = ColType.INT, width = 2)

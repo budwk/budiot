@@ -66,7 +66,7 @@ public class UdpDeviceGateway implements DeviceGateway {
 
 
     private void startCmdListener() {
-        messageTransfer.subscribe(this.configuration.getId(), getReplyAddress(), "*", MessageModel.BROADCASTING, ConsumeMode.CONCURRENTLY, message -> {
+        messageTransfer.subscribe(this.configuration.getId(), getReplyAddress(), "*", MessageModel.BROADCASTING, ConsumeMode.ORDERLY, message -> {
             Object body = message.getBody();
             EncodedMessage encodedMessage = Castors.me().castTo(body, EncodedMessage.class);
             byte[] bytes = encodedMessage.getPayload();
@@ -75,7 +75,7 @@ public class UdpDeviceGateway implements DeviceGateway {
                     .setv("result", 0)
                     .setv("deviceId", message.getHeader("deviceId"))
                     .setv("commandId", message.getHeader("commandId"));
-            log.debug("发送指令：{}", message.getHeader("commandId"));
+            log.debug("发送指令 commandId: {}", message.getHeader("commandId"));
             if (null != sender && null != bytes) {
                 server.send(sender, bytes).whenComplete((unused, throwable) -> {
                     if (null == throwable) {

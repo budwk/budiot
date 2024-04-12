@@ -101,7 +101,7 @@ public class MqttDeviceGateway implements DeviceGateway {
     }
 
     private void startCmdListener() {
-        messageTransfer.subscribe(this.configuration.getId(), getReplyAddress(), "*", MessageModel.BROADCASTING, ConsumeMode.CONCURRENTLY, message -> {
+        messageTransfer.subscribe(this.configuration.getId(), getReplyAddress(), "*", MessageModel.BROADCASTING, ConsumeMode.ORDERLY, message -> {
             Object body = message.getBody();
             EncodedMessage encodedMessage = Castors.me().castTo(body, EncodedMessage.class);
             byte[] bytes = encodedMessage.getPayload();
@@ -109,7 +109,7 @@ public class MqttDeviceGateway implements DeviceGateway {
                     .setv("result", 0)
                     .setv("deviceId", message.getHeader("deviceId"))
                     .setv("commandId", message.getHeader("commandId"));
-            log.debug("发送指令：{}", message.getHeader("commandId"));
+            log.debug("发送指令 commandId: {}", message.getHeader("commandId"));
             if (null != bytes) {
                 Buffer payload = Buffer.buffer(bytes);
                 client.publish(message.getHeader("sessionId"), payload, MqttQoS.valueOf(0), false, false,

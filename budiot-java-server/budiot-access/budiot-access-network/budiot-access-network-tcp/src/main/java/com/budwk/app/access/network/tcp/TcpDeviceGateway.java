@@ -156,7 +156,11 @@ public class TcpDeviceGateway implements DeviceGateway {
 
     private void startCmdListener() {
         // 接收指令进行下发，使用广播模式订阅
-        messageTransfer.subscribe(this.configuration.getId(), getReplyAddress(), "*", MessageModel.BROADCASTING, ConsumeMode.CONCURRENTLY, message -> {
+        messageTransfer.subscribe(
+                this.configuration.getId(),
+                getReplyAddress(), "*",
+                MessageModel.BROADCASTING,
+                ConsumeMode.ORDERLY, message -> {
             Object body = message.getBody();
             EncodedMessage encodedMessage = Castors.me().castTo(body, EncodedMessage.class);
             byte[] bytes = encodedMessage.getPayload();
@@ -165,7 +169,7 @@ public class TcpDeviceGateway implements DeviceGateway {
                     .setv("result", 0)
                     .setv("deviceId", message.getHeader("deviceId"))
                     .setv("commandId", message.getHeader("commandId"));
-            log.debug("发送指令 {}", message.getHeader("commandId"));
+            log.debug("发送指令 commandId: {}", message.getHeader("commandId"));
             log.debug("指令信息 {}", ByteConvertUtil.bytesToHex(bytes));
             if (null != client && null != bytes) {
                 if ("LuoMeiTe".equals(this.configuration.getId())) {

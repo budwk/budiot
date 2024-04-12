@@ -178,7 +178,7 @@ public class HttpDeviceGateway implements DeviceGateway {
      */
     private void startCmdListener() {
         // 那些挂起的请求，如果有后续响应，就会到这里来
-        messageTransfer.subscribe(this.configuration.getId(), getReplyAddress(), "*", MessageModel.BROADCASTING, ConsumeMode.CONCURRENTLY, message -> {
+        messageTransfer.subscribe(this.configuration.getId(), getReplyAddress(), "*", MessageModel.BROADCASTING, ConsumeMode.ORDERLY, message -> {
             // 获取会话信息，将数据发送给设备
             Object body = message.getBody();
             EncodedMessage encodedMessage = Castors.me().castTo(body, EncodedMessage.class);
@@ -188,7 +188,7 @@ public class HttpDeviceGateway implements DeviceGateway {
                     .setv("result", 0)
                     .setv("deviceId", message.getHeader("deviceId"))
                     .setv("commandId", message.getHeader("commandId"));
-            log.debug("发送指令：{}", message.getHeader("commandId"));
+            log.debug("发送指令 commandId: {}", message.getHeader("commandId"));
             if (null != rtx) {
                 if (rtx.response().closed()) {
                     result.setv("result", -1).setv("msg", "未找到设备会话信息");
