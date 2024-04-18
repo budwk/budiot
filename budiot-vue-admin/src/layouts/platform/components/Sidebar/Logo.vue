@@ -2,17 +2,19 @@
     <div class="sidebar-logo-container" :class="{ 'collapse': collapse }" :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
       <transition name="sidebarLogoFade">
         <router-link v-if="props.collapse" key="collapse" class="sidebar-logo-link" to="/platform/dashboard">
-          <img v-if="logo" :src="logo" class="sidebar-logo" />
+          <img v-if="logo && showLogo" :src="logo" class="sidebar-logo" />
+          <h1 v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }}</h1>
         </router-link>
         <router-link v-else key="expand" class="sidebar-logo-link" to="/platform/dashboard">
-          <span class="sidebar-title">{{ title }}</span>
+          <img v-if="logo && showLogo" :src="logo" class="sidebar-logo" />
+          <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }}</h1>
         </router-link>
       </transition>
     </div>
 </template>
 <script setup lang="ts">
 import variables from '/@/assets/styles/variables.module.scss'
-import logo from '/@/assets/images/logo.png'
+import logo from '/@/assets/images/logo.svg'
 import { useUserSettings } from '/@/stores/userSettings'
 import { usePlatformInfo } from '/@/stores/platformInfo'
 import { computed } from 'vue';
@@ -26,6 +28,8 @@ const props = defineProps({
 
 const title =  computed(() => usePlatformInfo().AppShrotName)
 const sideTheme = computed(() => useUserSettings().sideTheme)
+const showLogo = computed(() => useUserSettings().sidebarLogo)
+
 </script>
 
 
@@ -42,17 +46,18 @@ const sideTheme = computed(() => useUserSettings().sideTheme)
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
   line-height: 50px;
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
+  flex: 0 0 50px;
 
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
 
     & .sidebar-logo {
+      width: 32px;
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;
@@ -62,10 +67,11 @@ const sideTheme = computed(() => useUserSettings().sideTheme)
       display: inline-block;
       margin: 0;
       color: #fff;
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 16px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      padding: 0 10px;
+      line-height: 1.6;
+      font-family: var(--el-font-base);
       vertical-align: middle;
     }
   }

@@ -5,6 +5,7 @@ import { staticRoutes } from '/@/router/static'
 import { loading } from '/@/utils/loading'
 import { useUserViews } from '../stores/userViews'
 import { useUserInfo } from '../stores/userInfo'
+import { isExternal } from '../utils/common'
 import { setupLayouts } from 'virtual:generated-layouts'
 import generatedRoutes from 'virtual:generated-pages'
 import { usePlatformInfo } from '/@/stores/platformInfo'
@@ -27,6 +28,7 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
+    const home = process.env.BASE_APP_HOME_PATH
     NProgress.configure({ showSpinner: false })
     NProgress.start()
     if (!window.existLoading) {
@@ -34,11 +36,15 @@ router.beforeEach((to, from, next) => {
         window.existLoading = true
     }
     // 登录页清除缓存 & 初始化平台信息
-    if(to.path=='/platform/login'){
+    if(to.path=='/platform/login' && !useUserInfo().hasToken()){
         Local.remove(USER_INFO)
         Local.remove(USER_VIEWS)
         Local.remove(TAGS_VIEW)
         usePlatformInfo().init()
+    }
+    if(to.path=='/platform/login' && useUserInfo().hasToken()){
+        next(home)
+        return
     }
     // 获取用户信息、权限角色、菜单
     if(useUserInfo().hasToken()){
@@ -56,12 +62,12 @@ router.beforeEach((to, from, next) => {
                         to.meta.breadcrumb = rou.breadcrumb
                         to.meta.tree = rou.tree
                         next()
-                    } else if(!to.path.startsWith('/redirect') && to.path!='/platform/dashboard'){
+                    } else if(!to.path.startsWith('/redirect') && to.path!=home){
                         ElNotification({
                             type: 'error',
                             message: `没有访问 ${to.fullPath} 的权限`,
                         })
-                        next('/platform/dashboard')
+                        next(home)
                     } else {
                         next()
                     }
@@ -79,12 +85,12 @@ router.beforeEach((to, from, next) => {
                 to.meta.breadcrumb = rou.breadcrumb
                 to.meta.tree = rou.tree
                 next()
-            } else if(!to.path.startsWith('/redirect') && to.path!='/platform/dashboard'){
+            } else if(!to.path.startsWith('/redirect') && to.path!=home){
                 ElNotification({
                     type: 'error',
                     message: `没有访问 ${to.fullPath} 的权限`,
                 })
-                next('/platform/dashboard')
+                next(home)
             } else {
                 next()
             }

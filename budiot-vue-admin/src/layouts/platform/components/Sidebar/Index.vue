@@ -1,6 +1,6 @@
 <template>
-    <div :class="{ 'has-logo': showLogo }" :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
-      <Logo v-if="showLogo" :collapse="isCollapse" />
+    <div :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
+      <Logo :collapse="isCollapse" />
       <el-scrollbar :class="sideTheme" wrap-class="scrollbar-wrapper">
         <el-menu
           :default-active="activeMenu"
@@ -29,11 +29,11 @@ import variables from '/@/assets/styles/variables.module.scss'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue';
 import { useClient } from '/@/stores/client'
+import { useUserInfo } from '/@/stores/userInfo'
 import { useUserViews } from '/@/stores/userViews'
 import { useUserSettings } from '/@/stores/userSettings'
 
 const sidebarRouters =  computed(() => useUserViews().sidebarRouters)
-const showLogo = computed(() => useUserSettings().sidebarLogo)
 const sideTheme = computed(() => useUserSettings().sideTheme)
 const themeColor = computed(() =>  useUserSettings().themeColor)
 const sidebarHide = computed(() =>  useClient().sidebar.hide)

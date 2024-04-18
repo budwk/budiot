@@ -102,13 +102,27 @@
                         <div class="get-pwd">
                             <el-button type="primary" link @click="showSetPwd">忘记密码</el-button>
                         </div>
+                        <div class="third-login">
+                            <el-divider>第三方登录</el-divider>
+                            <div class="third-way">
+                                <span class="third-icon" @click="handleSocial()">
+                                    <img src="~assets/images/wechat.svg" style="width: 32px;height: 32px;">
+                                </span>
+                                <span class="third-icon" @click="handleSocial()">
+                                    <img src="~assets/images/qq.svg" style="width: 32px;height: 32px;">
+                                </span>
+                                <span class="third-icon" @click="handleSocial()">
+                                    <img src="~assets/images/alipay.svg" style="width: 32px;height: 32px;">
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </el-col>
             </el-row>
         </div>
         <div id="el-login-footer" class="login-footer">
             <span>
-                ©
+                <a href="https://budwk.com" target="_blank">BudWk.com</a> ©
                 <span>{{year}}</span>
             </span>
         </div>
@@ -122,7 +136,7 @@
                     <el-form-item v-if="pwdStep>=2" prop="type" label="验证方式"
                         :rules="{ required: true, message: '请选择验证方式', trigger: ['blur','change']}">
                         <el-radio-group v-model="pwdFormData.type" tabindex="2">
-                            <el-radio v-for="obj in pwdType" :key="obj.key" :value="obj.key">{{ obj.val }}</el-radio>
+                            <el-radio v-for="obj in pwdType" :key="obj.key" :label="obj.key">{{ obj.val }}</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item v-if="pwdStep==3" prop="password" label="新密码"
@@ -318,7 +332,8 @@ const handleLogin = (formEl: InstanceType<typeof ElForm> | undefined) => {
                 setTimeout(()=>{
                     ElMessage.success('登录成功！') 
                 },300)
-                router.push({ path: redirect?.toString() || "/platform/dashboard" });
+                const home = process.env.BASE_APP_HOME_PATH
+                router.push({ path: redirect?.toString() || home });
             }).catch(() => {
                 loginData.btnLoading = false
                 loginData.captchaCode = ''
