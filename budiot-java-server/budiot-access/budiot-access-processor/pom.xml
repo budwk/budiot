@@ -32,11 +32,6 @@
         </dependency>
         <dependency>
             <groupId>com.budwk.app</groupId>
-            <artifactId>budiot-access-cache</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.budwk.app</groupId>
             <artifactId>budiot-access-message</artifactId>
             <version>${project.version}</version>
         </dependency>

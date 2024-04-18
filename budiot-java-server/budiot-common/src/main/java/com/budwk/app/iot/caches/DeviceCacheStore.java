@@ -1,4 +1,4 @@
-package com.budwk.app.access.cache;
+package com.budwk.app.iot.caches;
 
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_product;
