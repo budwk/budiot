@@ -1,0 +1,19 @@
+{
+  "name": "budiot-docs",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "authors": {
+    "name": "wizzer",
+    "email": "wizzer.cn@gmail.com"
+  },
+  "repository": "/budiot-docs",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.9.10"
+  }
+}
