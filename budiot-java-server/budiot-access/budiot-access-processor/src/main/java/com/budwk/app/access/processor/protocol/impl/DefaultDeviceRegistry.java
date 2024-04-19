@@ -92,7 +92,7 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
 
     @Override
     public void updateDeviceOnline(String deviceId) {
-        iotDeviceService.update(Chain.make("online", true).add("lastConnectionTime", System.currentTimeMillis()), Cnd.where("id", "=", deviceId));
+        iotDeviceService.doUpdateOnline(deviceId);
     }
 
     @Override

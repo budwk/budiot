@@ -16,19 +16,24 @@ import com.budwk.app.sys.services.SysMsgService;
 import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.database.service.BaseServiceImpl;
 import com.budwk.starter.security.utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @IocBean(args = {"refer:dao"})
 public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements IotDeviceService {
     public IotDeviceServiceImpl(Dao dao) {
@@ -207,5 +212,29 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
 
     public void doUpdateCache(DeviceProcessCache device) {
         deviceCacheStore.update(device);
+    }
+
+    public void doUpdateCache(String deviceId, String field, Object value) {
+        DeviceProcessCache device = deviceCacheStore.getDevice(deviceId);
+        if (device != null && value != null) {
+            try {
+                Field declaredField = device.getClass().getDeclaredField(field);
+                declaredField.setAccessible(true); // 允许访问私有属性
+                if (declaredField.getType() == value.getClass()) {
+                    declaredField.set(device, value); // 更新属性值
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("doUpdateCache 更新字段值失败 {} ",e.getMessage());
+            }
+            device.setRefreshTime(System.currentTimeMillis());
+            deviceCacheStore.update(device);
+        }
+    }
+
+    public void doUpdateOnline(String deviceId) {
+        long lastReceiveTime = System.currentTimeMillis();
+        this.update(Chain.make("online", true).add("lastConnectionTime", lastReceiveTime), Cnd.where("id", "=", deviceId));
+        this.doUpdateCache(deviceId, "lastReceiveTime", lastReceiveTime);
     }
 }

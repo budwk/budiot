@@ -4,6 +4,7 @@ import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_product;
 import com.budwk.app.iot.objects.cache.DeviceProcessCache;
 import com.budwk.starter.database.service.BaseService;
+import org.nutz.lang.util.NutMap;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface IotDeviceService extends BaseService<Iot_device> {
      */
     void saveExtraProperties(String deviceId, Map<String, Object> properties);
 
-    void create(Iot_device device,Map<String, String> props);
+    void create(Iot_device device, Map<String, String> props);
 
     void delete(Iot_device device);
 
@@ -30,4 +31,8 @@ public interface IotDeviceService extends BaseService<Iot_device> {
     DeviceProcessCache doRefreshCache(String deviceId);
 
     void doUpdateCache(DeviceProcessCache device);
+
+    void doUpdateCache(String deviceId, String field, Object value);
+
+    void doUpdateOnline(String deviceId);
 }
