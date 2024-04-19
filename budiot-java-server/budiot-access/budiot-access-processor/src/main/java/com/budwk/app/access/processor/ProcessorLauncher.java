@@ -62,58 +62,63 @@ public class ProcessorLauncher {
     }
 
     private void listenMessage() {
-        messageTransfer.subscribe("PROCESSOR", TopicConstant.SERVICE_PROCESSOR,
+        messageTransfer.subscribe("PROCESSOR", TopicConstant.DEVICE_DATA_PROCESSOR,
                 "*", MessageModel.CLUSTERING, ConsumeMode.ORDERLY, this::process);
     }
 
     private void process(Message<Serializable> message) {
-        log.info("解析后的数据 {} ", message);
-        DefaultDecodeResult result = (DefaultDecodeResult) message.getBody();
-        if (null == result || Lang.isEmpty(result.getMessages())) {
-            log.warn("数据为空");
-            return;
-        }
-        // 获取设备缓存
-        DeviceProcessCache deviceCache = iotDeviceService.getCache(result.getDeviceId());
-        if (null == deviceCache) {
-            log.warn("设备 {} 不存在", result.getDeviceId());
-            return;
-        }
-
-        //重新进行刷新下redis缓存,后续可根据时间判断进行刷新
-        if (deviceCache.getRefreshTime() == null) {
-            deviceCache = iotDeviceService.doRefreshCache(result.getDeviceId());
-        }
-
-        // 判断是否是集中器/采集器等网关设备
-        boolean isGatewayDevice = Strings.isNotBlank(message.getHeader("gateway"));
-        if (isGatewayDevice) {
-            String parentId = message.getHeader("parentId");
-            deviceCache.setParentId(parentId);
-        }
-        // 更新最新接收数据时间
-        deviceCache.setLastReceiveTime(System.currentTimeMillis());
-        String md5 = Lang.md5(deviceCache.toString());
-        ProcessorContext context = new ProcessorContext(deviceCache, result);
-        context.addProperties(message.getHeaders());
-        //按顺序执行processor
-        DeviceProcessCache finalDeviceCache = deviceCache;
-        this.processors.stream().forEach(processor -> {
-            try {
-                long st = System.currentTimeMillis();
-                this.runProcessor(processor, context);
-                String md5New = Lang.md5(finalDeviceCache.toString());
-                // 刷新设备缓存
-                if (!md5New.equals(md5)) {
-                    flushDeviceCache(finalDeviceCache);
-                }
-                long ed = System.currentTimeMillis();
-                log.info("设备 {} 处理 {} 业务处理结束,耗时: {} ms", finalDeviceCache.getDeviceNo(), processor.getOrder(), (ed - st));
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error("业务处理出错", e);
+        try {
+            log.info("process 解析后的数据 {} ", message);
+            DefaultDecodeResult result = (DefaultDecodeResult) message.getBody();
+            if (null == result || Lang.isEmpty(result.getMessages())) {
+                log.warn("数据为空");
+                return;
             }
-        });
+            // 获取设备缓存
+            DeviceProcessCache deviceCache = iotDeviceService.getCache(result.getDeviceId());
+            if (null == deviceCache) {
+                log.warn("设备 {} 不存在", result.getDeviceId());
+                return;
+            }
+
+            //重新进行刷新下redis缓存,后续可根据时间判断进行刷新
+            if (deviceCache.getRefreshTime() == null) {
+                deviceCache = iotDeviceService.doRefreshCache(result.getDeviceId());
+            }
+
+            // 判断是否是集中器/采集器等网关设备
+            boolean isGatewayDevice = Strings.isNotBlank(message.getHeader("gateway"));
+            if (isGatewayDevice) {
+                String parentId = message.getHeader("parentId");
+                deviceCache.setParentId(parentId);
+            }
+            // 更新最新接收数据时间
+            deviceCache.setLastReceiveTime(System.currentTimeMillis());
+            String md5 = Lang.md5(deviceCache.toString());
+            ProcessorContext context = new ProcessorContext(deviceCache, result);
+            context.addProperties(message.getHeaders());
+            //按顺序执行processor
+            DeviceProcessCache finalDeviceCache = deviceCache;
+            this.processors.stream().forEach(processor -> {
+                try {
+                    long st = System.currentTimeMillis();
+                    this.runProcessor(processor, context);
+                    String md5New = Lang.md5(finalDeviceCache.toString());
+                    // 刷新设备缓存
+                    if (!md5New.equals(md5)) {
+                        flushDeviceCache(finalDeviceCache);
+                    }
+                    long ed = System.currentTimeMillis();
+                    log.info("设备 {} 处理 {} 业务处理结束,耗时: {} ms", finalDeviceCache.getDeviceNo(), processor.getOrder(), (ed - st));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("子业务处理出错", e);
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("主业务处理出错", e);
+        }
     }
 
     private void flushDeviceCache(DeviceProcessCache device) {

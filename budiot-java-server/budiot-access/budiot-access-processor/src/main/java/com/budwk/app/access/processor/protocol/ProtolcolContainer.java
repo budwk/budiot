@@ -277,12 +277,11 @@ public class ProtolcolContainer {
     }
 
     private void handleDataUp(Message<?> message) {
-        log.info("收到消息 {}", message.toString());
+        log.info("收到设备上报消息 {}", message.toString());
         Object body = message.getBody();
         EncodedMessage encodedMessage = Castors.me().castTo(body, EncodedMessage.class);
-        log.info("encodedMessage {}", encodedMessage.payloadAsString());
         String protocolCode = encodedMessage.getProtocolCode();
-
+        log.info("设备协议标识 {}", protocolCode);
         DeviceRawDataDTO rawData = new DeviceRawDataDTO();
         rawData.setType("U");
         rawData.setOriginData(ByteConvertUtil.bytesToHex(encodedMessage.getPayload()));
@@ -296,7 +295,7 @@ public class ProtolcolContainer {
             String sessionId = message.getHeader("sessionId");
             // 从缓存中尝试获取设备
             String sessionDeviceId = Strings.isNotBlank(sessionId) ? sessionDevice.get(sessionId) : null;
-            log.debug("sessionDeviceId===>{}", sessionDeviceId);
+            log.info(" session deviceId ===> {}", sessionDeviceId);
             DeviceOperator deviceOperator = null;
             if (protocolCode.contains("COLLECTOR") || protocolCode.contains("GATEWAY")) {
                 // 采集器/集中器设备
@@ -345,8 +344,6 @@ public class ProtolcolContainer {
             // deviceOperator 重新赋值
             if (null != decodeContext.getDevice()) {
                 deviceOperator = decodeContext.getDevice();
-            } else if (null != decodeContext.getDeviceById(sessionId)) {
-                deviceOperator = decodeContext.getDeviceById(sessionId);
             } else {
                 if (null != deviceOperator) {
                     decodeContext.setDevice(deviceOperator);
@@ -354,7 +351,7 @@ public class ProtolcolContainer {
             }
             // 解析数据
             DecodeResult result = messageCodec.decode(decodeContext);
-            log.info("解析数据: {}", result);
+            log.info("协议解析数据: {}", result);
             if (null == result) {
                 log.warn("数据解析失败 {}", encodedMessage.getProtocolCode());
                 // 存储上报的原始数据
@@ -377,6 +374,7 @@ public class ProtolcolContainer {
                 // 同时更新状态为在线以及最近通讯时间
                 deviceRegistry.updateDeviceOnline(decodeContext.getDevice().getDeviceId());
             }
+
             // 处理数据上报
             if (result instanceof DefaultDecodeResult) {
                 DefaultDecodeResult reportResult = (DefaultDecodeResult) result;
@@ -395,10 +393,11 @@ public class ProtolcolContainer {
                 deviceRawDataStorage.save(rawData);
                 if (Lang.isNotEmpty(reportResult.getMessages())) {
                     // 将解析后的数据推送到业务处理模块
-                    Message<DefaultDecodeResult> processorMessage = new Message<>(TopicConstant.SERVICE_PROCESSOR, reportResult);
+                    Message<DefaultDecodeResult> processorMessage = new Message<>(TopicConstant.DEVICE_DATA_PROCESSOR, reportResult);
                     processorMessage.setSender("protocol");
                     processorMessage.addHeader("protocolCode", protocolCode);
                     if (deviceOperator instanceof GatewayDeviceOperatorImpl) {
+                        log.info("66666");
                         // 集中器或采集器等网关设备
                         List<DeviceMessage> messages = reportResult.getMessages();
                         // 如果指令响应中存在业务处理需要的数据，那么也就推送到业务处理去
@@ -653,7 +652,7 @@ public class ProtolcolContainer {
 
     private static Message<DefaultDecodeResult> getSubDeviceMessage(String deviceId, String protocolCode, List<DeviceMessage> deviceMessage, DeviceOperator deviceOperator) {
         Message<DefaultDecodeResult> processorMessage =
-                new Message<>(TopicConstant.SERVICE_PROCESSOR, new DefaultDecodeResult(deviceId, deviceMessage));
+                new Message<>(TopicConstant.DEVICE_DATA_PROCESSOR, new DefaultDecodeResult(deviceId, deviceMessage));
         processorMessage.setSender("protocol");
         processorMessage.addHeader("protocolCode", protocolCode);
         if (null != deviceOperator.getProduct()) {

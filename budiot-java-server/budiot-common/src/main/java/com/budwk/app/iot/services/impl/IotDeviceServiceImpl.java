@@ -4,6 +4,7 @@ import com.budwk.app.access.constants.TopicConstant;
 import com.budwk.app.access.message.Message;
 import com.budwk.app.access.message.MessageTransfer;
 import com.budwk.app.iot.caches.DeviceCacheStore;
+import com.budwk.app.iot.enums.DeviceValveState;
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_device_prop;
 import com.budwk.app.iot.models.Iot_product;
@@ -73,6 +74,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
             device.setProtocolCode(protocol.getCode());
             device.setAbnormal(false);
             device.setOnline(false);
+            device.setValveState(DeviceValveState.UNKNOWN);
             device.setCreatedBy(userId);
             device.setUpdatedBy(userId);
             try {
@@ -119,6 +121,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         device.setClassifyId(product.getClassifyId());
         device.setProtocolId(product.getProtocolId());
         device.setProtocolCode(protocol.getCode());
+        device.setValveState(DeviceValveState.UNKNOWN);
         device.setCreatedBy(SecurityUtil.getUserId());
         device.setUpdatedBy(SecurityUtil.getUserId());
         this.insert(device);
@@ -187,6 +190,10 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         return device;
     }
 
+    public void setCache(Iot_device deviceInfo, Iot_product product) {
+        deviceCacheStore.cache(deviceInfo, product);
+    }
+
     public DeviceProcessCache doRefreshCache(String deviceId) {
         Iot_device deviceInfo = this.fetch(deviceId);
         if (deviceInfo == null)
@@ -198,7 +205,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         return deviceCacheStore.getDevice(deviceId);
     }
 
-    public void doUpdateCache(DeviceProcessCache device){
+    public void doUpdateCache(DeviceProcessCache device) {
         deviceCacheStore.update(device);
     }
 }

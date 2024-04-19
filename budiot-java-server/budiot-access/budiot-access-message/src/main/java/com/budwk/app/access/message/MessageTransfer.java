@@ -31,4 +31,5 @@ public interface MessageTransfer {
 
     <T extends Serializable> void subscribe(String consumerGroup, String topic, Consumer<Message<T>> consumer);
 
+    void clearMessage();
 }

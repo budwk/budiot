@@ -12,7 +12,7 @@ public class TopicConstant {
     // 指令回复topic
     public static final String DEVICE_CMD_RESP = "device_cmd_resp";
     // 业务处理器topic
-    public static final String SERVICE_PROCESSOR = "device_data_processor";
+    public static final String DEVICE_DATA_PROCESSOR = "device_data_processor";
     // 设备告警topic
-    public static final String SERVICE_NOTIFY_ALARM = "device_data_alarm";
+    public static final String DEVICE_DATA_ALARM = "device_data_alarm";
 }

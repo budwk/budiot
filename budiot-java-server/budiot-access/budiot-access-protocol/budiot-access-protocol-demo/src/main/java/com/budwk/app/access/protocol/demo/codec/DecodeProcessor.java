@@ -26,7 +26,7 @@ public class DecodeProcessor {
 
     public DecodeResult process() {
         byte[] bytes = message.getPayload();
-        DeviceOperator deviceOperator = context.getDeviceByNo("demo");
+        DeviceOperator deviceOperator = context.getDeviceByNo("demo2");
         Map<String, Object> properties = new LinkedHashMap<>();
         properties.put("data", new String(bytes));
         DeviceDataMessage deviceDataMessage = new DeviceDataMessage();

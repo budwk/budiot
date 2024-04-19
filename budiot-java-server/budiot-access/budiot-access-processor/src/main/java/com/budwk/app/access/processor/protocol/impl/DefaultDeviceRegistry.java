@@ -38,6 +38,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
             return null;
         }
         Iot_product product = iotProductService.fetch(device.getProductId());
+        // 设置设备缓存
+        iotDeviceService.setCache(device,product);
         return this.buildDefaultOperator(device, product);
     }
 
@@ -48,6 +50,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
             return null;
         }
         Iot_product product = iotProductService.fetch(device.getProductId());
+        // 设置设备缓存
+        iotDeviceService.setCache(device,product);
         return this.buildDefaultOperator(device, product);
     }
 
@@ -58,6 +62,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
             return null;
         }
         Iot_product product = iotProductService.fetch(device.getProductId());
+        // 设置设备缓存
+        iotDeviceService.setCache(device,product);
         return this.buildDefaultOperator(device, product);
     }
 

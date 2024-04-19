@@ -39,6 +39,15 @@ web:
   validation:
     enable: true
 
+rocketmq:
+  # 集群环境多个nameserver用;分割
+  nameserver-address: 127.0.0.1:9876
+  # 生产者组
+  producer-group: web_producer
+  producer-timeout: 50
+  consumer-thread-max: 100
+  consumer-thread-min: 5
+
 websocket:
   # 实现方式
   type: redis

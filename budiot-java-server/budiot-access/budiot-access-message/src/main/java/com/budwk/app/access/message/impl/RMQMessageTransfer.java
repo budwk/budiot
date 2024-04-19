@@ -113,6 +113,10 @@ public class RMQMessageTransfer implements MessageTransfer {
         this.subscribe(consumerGroup, topic, "*", MessageModel.CLUSTERING, ConsumeMode.ORDERLY, consumer);
     }
 
+    @Override
+    public void clearMessage() {
+    }
+
     public void close() {
         for (DefaultMQPushConsumer consumer : consumerList) {
             if (consumer != null) {
