@@ -369,7 +369,7 @@ public class ProtolcolContainer {
             }
             if (null != decodeContext.getDevice()) {
                 if (Strings.isNotBlank(sessionId)) {
-                    sessionDevice.put(sessionId, decodeContext.getDevice().getDeviceId());
+                    sessionDevice.put(sessionId, decodeContext.getDevice().getDeviceId(), 120, TimeUnit.SECONDS);
                 }
                 // 同时更新状态为在线以及最近通讯时间
                 deviceRegistry.updateDeviceOnline(decodeContext.getDevice().getDeviceId());

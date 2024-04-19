@@ -41,7 +41,7 @@ public class DeviceEventDataDTO implements Serializable {
     /**
      * 事件数据
      */
-    private List<Map<String,Object>> eventData;
+    private List<ValueItemDTO<? extends Serializable>> eventData;
     /**
      * 存储id 用于回显
      */
