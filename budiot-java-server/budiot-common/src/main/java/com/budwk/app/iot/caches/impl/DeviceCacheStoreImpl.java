@@ -11,7 +11,7 @@ import org.redisson.api.RedissonClient;
 
 @IocBean(create = "init")
 public class DeviceCacheStoreImpl implements DeviceCacheStore {
-    private final static String cacheName = "DEVICE";
+    private final static String cacheName = "DEVICE_CACHE";
     @Inject
     private RedissonClient redissonClient;
     RMapCache<String, Object> rMapCache;
@@ -42,7 +42,11 @@ public class DeviceCacheStoreImpl implements DeviceCacheStore {
     }
 
     public DeviceProcessCache getDevice(String deviceId) {
-        return (DeviceProcessCache) rMapCache.get(deviceId);
+        Object obj = rMapCache.get(deviceId);
+        if (obj != null) {
+            return (DeviceProcessCache) obj;
+        }
+        return null;
     }
 
     public void update(DeviceProcessCache deviceProcessCache) {

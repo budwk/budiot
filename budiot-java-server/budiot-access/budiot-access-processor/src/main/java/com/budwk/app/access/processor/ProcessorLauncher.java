@@ -109,7 +109,7 @@ public class ProcessorLauncher {
                         flushDeviceCache(finalDeviceCache);
                     }
                     long ed = System.currentTimeMillis();
-                    log.info("设备 {} 处理 {} 业务处理结束,耗时: {} ms", finalDeviceCache.getDeviceNo(), processor.getOrder(), (ed - st));
+                    log.info("设备 dievceNo = {} 处理 processor = {} 业务处理结束,耗时: {} ms", finalDeviceCache.getDeviceNo(), processor.getOrder(), (ed - st));
                 } catch (Exception e) {
                     e.printStackTrace();
                     log.error("子业务处理出错", e);

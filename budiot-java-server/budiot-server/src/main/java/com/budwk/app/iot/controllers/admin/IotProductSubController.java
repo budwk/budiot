@@ -9,6 +9,7 @@ import com.budwk.starter.common.openapi.enums.ParamIn;
 import com.budwk.starter.common.page.PageUtil;
 import com.budwk.starter.common.page.Pagination;
 import com.budwk.starter.common.result.Result;
+import com.budwk.starter.common.result.ResultCode;
 import com.budwk.starter.log.annotation.SLog;
 import com.budwk.starter.security.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -47,9 +48,9 @@ public class IotProductSubController {
             implementation = Pagination.class
     )
     @SaCheckPermission("iot.device.product")
-    public Result<?> list(@Param("productId") String productId,  @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+    public Result<?> list(@Param("productId") String productId, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
-        cnd.and("productId","=",productId);
+        cnd.and("productId", "=", productId);
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
@@ -70,6 +71,7 @@ public class IotProductSubController {
         sub.setCreatedBy(SecurityUtil.getUserId());
         sub.setUpdatedBy(SecurityUtil.getUserId());
         iotProductSubService.insert(sub);
+        iotProductSubService.setCache(sub.getProductId());
         return Result.success();
     }
 
@@ -86,6 +88,7 @@ public class IotProductSubController {
     public Result<?> update(@Param("..") Iot_product_sub sub, HttpServletRequest req) {
         sub.setUpdatedBy(SecurityUtil.getUserId());
         iotProductSubService.updateIgnoreNull(sub);
+        iotProductSubService.setCache(sub.getProductId());
         return Result.success();
     }
 
@@ -103,7 +106,12 @@ public class IotProductSubController {
     )
     @ApiResponses
     public Result<?> delete(@Param("id") String id, @Param("url") String url, HttpServletRequest req) {
+        Iot_product_sub sub = iotProductSubService.fetch(id);
+        if (sub == null) {
+            return Result.error(ResultCode.NULL_DATA_ERROR);
+        }
         iotProductSubService.delete(id);
+        iotProductSubService.setCache(sub.getProductId());
         return Result.success();
     }
 

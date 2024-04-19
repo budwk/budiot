@@ -56,16 +56,15 @@ public class ProtolcolContainer {
      * 存放会话ID-设备映射
      */
     private RMapCache<String, String> sessionDevice;
-
     /**
      * 存放设备ID-会话信息映射
      */
     private RMapCache<String, NutMap> deviceSessionCache;
-
     /**
      * 缓存
      */
     private RMapCache<String, Object> cacheMap;
+    private final static long SESSION_CACHE_TIMEOUT = 600;
     @Inject
     private LocalProtocolLoader protocolLoader;
     @Inject
@@ -369,7 +368,7 @@ public class ProtolcolContainer {
             }
             if (null != decodeContext.getDevice()) {
                 if (Strings.isNotBlank(sessionId)) {
-                    sessionDevice.put(sessionId, decodeContext.getDevice().getDeviceId(), 120, TimeUnit.SECONDS);
+                    sessionDevice.put(sessionId, decodeContext.getDevice().getDeviceId(), SESSION_CACHE_TIMEOUT, TimeUnit.SECONDS);
                 }
                 // 同时更新状态为在线以及最近通讯时间
                 deviceRegistry.updateDeviceOnline(decodeContext.getDevice().getDeviceId());
@@ -385,7 +384,7 @@ public class ProtolcolContainer {
                                 .setv("address", message.getFrom())
                                 .setv("sessionId", message.getHeader("sessionId"))
                                 .setv("transportType", encodedMessage.getTransportType().name())
-                                .setv("protocolCode", protocolCode), 600, TimeUnit.SECONDS);
+                                .setv("protocolCode", protocolCode), SESSION_CACHE_TIMEOUT, TimeUnit.SECONDS);
                 // 存储上报的原始数据
                 rawData.setDeviceId(deviceId);
                 rawData.setParsedData(Json.toJson(reportResult.getMessages(), JsonFormat.tidy()));

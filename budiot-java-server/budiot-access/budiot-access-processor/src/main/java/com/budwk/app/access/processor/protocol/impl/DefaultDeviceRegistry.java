@@ -11,10 +11,7 @@ import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_device_cmd;
 import com.budwk.app.iot.models.Iot_device_prop;
 import com.budwk.app.iot.models.Iot_product;
-import com.budwk.app.iot.services.IotDeviceCmdService;
-import com.budwk.app.iot.services.IotDevicePropService;
-import com.budwk.app.iot.services.IotDeviceService;
-import com.budwk.app.iot.services.IotProductService;
+import com.budwk.app.iot.services.*;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -30,6 +27,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
     private IotProductService iotProductService;
     @Inject
     private IotDeviceCmdService iotDeviceCmdService;
+    @Inject
+    private IotProductSubService iotProductSubService;
 
     @Override
     public DeviceOperator getGatewayDevice(String protocolCode, String deviceNo) {
@@ -38,8 +37,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
             return null;
         }
         Iot_product product = iotProductService.fetch(device.getProductId());
-        // 设置设备缓存
-        iotDeviceService.setCache(device,product);
+        // 设置设备缓存,后续 processor 从缓存获取设备及产品数据
+        iotDeviceService.setCache(device, product);
         return this.buildDefaultOperator(device, product);
     }
 
@@ -50,8 +49,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
             return null;
         }
         Iot_product product = iotProductService.fetch(device.getProductId());
-        // 设置设备缓存
-        iotDeviceService.setCache(device,product);
+        // 设置设备缓存,后续 processor 从缓存获取设备及产品数据
+        iotDeviceService.setCache(device, product);
         return this.buildDefaultOperator(device, product);
     }
 
@@ -62,8 +61,8 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
             return null;
         }
         Iot_product product = iotProductService.fetch(device.getProductId());
-        // 设置设备缓存
-        iotDeviceService.setCache(device,product);
+        // 设置设备缓存,后续 processor 从缓存获取设备及产品数据
+        iotDeviceService.setCache(device, product);
         return this.buildDefaultOperator(device, product);
     }
 

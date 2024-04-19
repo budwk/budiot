@@ -8,4 +8,8 @@ import java.util.List;
 
 public interface IotProductSubService extends BaseService<Iot_product_sub> {
     List<Iot_product_sub> getList(String productId, SubscribeType type);
+
+    List<Iot_product_sub> setCache(String productId);
+
+    List<Iot_product_sub> getSubCache(String productId);
 }
