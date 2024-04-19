@@ -14,6 +14,7 @@ import com.budwk.app.access.protocol.message.DeviceMessage;
 import com.budwk.app.access.protocol.message.DeviceResponseMessage;
 import com.budwk.app.access.storage.DeviceDataStorage;
 import com.budwk.app.access.storage.DeviceEventDataStorage;
+import com.budwk.app.iot.caches.DeviceCacheStore;
 import com.budwk.app.iot.enums.DeviceEventType;
 import com.budwk.app.iot.enums.SubscribeType;
 import com.budwk.app.iot.models.Iot_product_sub;
@@ -57,6 +58,8 @@ public class SaveProcessor implements Processor {
 
     @Inject
     private IotDeviceService iotDeviceService;
+    @Inject
+    private DeviceCacheStore deviceCacheStore;
     @Inject
     private IotProductSubService iotProductSubService;
 
@@ -104,12 +107,14 @@ public class SaveProcessor implements Processor {
         Map<String, Object> data = Lang.obj2map(message);
         data.put("timestamp", System.currentTimeMillis());
         data.put("type", type.text());
-        data.put("deviceNo",device.getDeviceNo());
-        data.put("meterNo",device.getMeterNo());
+        data.put("deviceNo", device.getDeviceNo());
+        data.put("meterNo", device.getMeterNo());
 
-        List<Iot_product_sub> subscribeList = iotProductSubService.getList(productId, type);
+        List<Iot_product_sub> subscribeList = deviceCacheStore.getSubCache(productId);
         for (Iot_product_sub dto : subscribeList) {
-            pushToUrl(data, dto);
+            if (type == dto.getSubType()) {
+                pushToUrl(data, dto);
+            }
         }
     }
 

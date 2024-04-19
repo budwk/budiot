@@ -17,6 +17,6 @@ public class IotProductSubServiceImpl extends BaseServiceImpl<Iot_product_sub> i
     }
 
     public List<Iot_product_sub> getList(String productId, SubscribeType type) {
-        return this.query(Cnd.where("productId", "=", productId).and("type", "=", type.value()));
+        return this.query(Cnd.where("productId", "=", productId).and("subType", "=", type.value()));
     }
 }

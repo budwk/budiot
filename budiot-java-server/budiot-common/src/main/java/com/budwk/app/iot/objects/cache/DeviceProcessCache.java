@@ -2,9 +2,11 @@ package com.budwk.app.iot.objects.cache;
 
 import com.budwk.app.iot.enums.DeviceDataType;
 import com.budwk.app.iot.enums.DeviceType;
+import com.budwk.app.iot.models.Iot_product_sub;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
