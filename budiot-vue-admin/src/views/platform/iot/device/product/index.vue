@@ -143,7 +143,7 @@
                 <el-form-item label="数据格式" prop="dataFormat">
                     <el-select v-model="formData.dataFormat" placeholder="请选择数据格式" clearable style="width: 100%;">
                         <el-option label="JSON" value="json" />
-                        <el-option label="自定义/透传" value="custom" />
+                        <el-option label="自定义/透传" value="raw" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备协议" prop="protocolId">
@@ -210,7 +210,7 @@
                 <el-form-item label="数据格式" prop="dataFormat">
                     <el-select v-model="formData.dataFormat" placeholder="请选择数据格式" clearable style="width: 100%;">
                         <el-option label="JSON" value="json" />
-                        <el-option label="自定义/透传" value="custom" />
+                        <el-option label="自定义/透传" value="raw" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="设备协议" prop="protocolId">

@@ -65,7 +65,7 @@ public class Iot_product extends BaseModel implements Serializable {
     private IotPlatform iotPlatform;
 
     @Column
-    @Comment("数据格式(json/custom)")
+    @Comment("数据格式(json/raw)")
     @ColDefine(type = ColType.VARCHAR, width = 10)
     @ApiModelProperty(name = "dataFormat", description = "数据格式")
     private String dataFormat;

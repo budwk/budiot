@@ -35,6 +35,9 @@ public class DeviceCacheStoreImpl implements DeviceCacheStore {
         deviceProcessCache.setPayMode(product.getPayMode());
         deviceProcessCache.setLastDataTime(device.getLastDataTime());
         deviceProcessCache.setRefreshTime(System.currentTimeMillis());
+        deviceProcessCache.setProductProperties(product.getProperties());
+        deviceProcessCache.setDeviceType(product.getDeviceType());
+        deviceProcessCache.setDataFormat(product.getDataFormat());
         rMapCache.put(device.getId(), deviceProcessCache);
     }
 
