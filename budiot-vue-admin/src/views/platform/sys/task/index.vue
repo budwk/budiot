@@ -14,12 +14,13 @@
                 <el-table-column :prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
                     :show-overflow-tooltip="item.overflow" :align="item.align" :width="item.width"
                     :sortable="item.sortable">
-                    <template v-if="item.prop == 'createdAt'" #default="scope">
-                        <span>{{ formatTime(scope.row.createdAt) }}</span>
-                    </template>
+
                     <template v-if="item.prop == 'disabled'" #default="scope">
                         <el-switch v-model="scope.row.disabled" :active-value="false" :inactive-value="true"
                             active-color="green" inactive-color="red" @change="disabledChange(scope.row)" />
+                    </template>
+                    <template v-if="item.prop == 'updatedAt'" #default="scope">
+                        <span>{{ formatTime(scope.row.updatedAt) }}</span>
                     </template>
                 </el-table-column>
             </template>
@@ -92,6 +93,11 @@
                                 active-color="green" inactive-color="red" />
                         </el-form-item>
                     </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="说明" prop="note">
+                            <el-input v-model="formData.note" placeholder="说明" type="textarea" />
+                        </el-form-item>
+                    </el-col>
                 </el-row>
             </el-form>
             <template #footer>
@@ -142,6 +148,11 @@
                         <el-form-item label="启用状态" prop="disabled">
                             <el-switch v-model="formData.disabled" :active-value="false" :inactive-value="true"
                                 active-color="green" inactive-color="red" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="说明" prop="note">
+                            <el-input v-model="formData.note" placeholder="说明" type="textarea" />
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -241,6 +252,7 @@ const data = reactive({
         jobName: '',
         cron: '',
         params: '',
+        note: '',
         disabled: false,
     },
     queryParams: {
@@ -276,8 +288,9 @@ const columns = ref([
     { prop: 'jobName', label: `方法名`, show: true, fixed: false },
     { prop: 'cron', label: `Cron`, show: true, fixed: false, align: 'center', },
     { prop: 'params', label: `传参`, show: true, fixed: false, overflow: true },
-    { prop: 'createdAt', label: `创建时间`, show: true, fixed: false, width: 160, sortable: true },
-    { prop: 'disabled', label: `启用状态`, show: true, fixed: false, width: 100, sortable: true }
+    { prop: 'note', label: `说明`, show: true, fixed: false },
+    { prop: 'disabled', label: `启用状态`, show: true, fixed: false, width: 100, sortable: true },
+    { prop: 'updatedAt', label: `修改时间`, show: true, fixed: false, width: 160, sortable: true },
 ])
 
 // 重置表单
@@ -289,6 +302,7 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         jobName: '',
         cron: '',
         params: '',
+        note: '',
         disabled: false,
     }
     formEl?.resetFields()

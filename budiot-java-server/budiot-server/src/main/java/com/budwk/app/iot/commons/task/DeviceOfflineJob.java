@@ -13,8 +13,8 @@ public class DeviceOfflineJob {
     @Inject
     private IotDeviceService iotDeviceService;
 
-    @SJob("check")
-    public void check(String taskId, String params) {
+    @SJob("deviceOffline")
+    public void deviceOffline(String taskId, String params) {
         try {
             int minutes = 30;
             if (Strings.isNotBlank(params) && Strings.isNumber(params)) {
