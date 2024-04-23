@@ -67,29 +67,6 @@ public class IotProductController {
 
     @At
     @Ok("json")
-    @GET
-    @ApiOperation(name = "获取初始化数据")
-    @ApiImplicitParams
-    @ApiResponses(
-            value = {
-                    @ApiResponse(name = "typeList", description = "设备类型"),
-                    @ApiResponse(name = "supplierList", description = "厂家列表"),
-                    @ApiResponse(name = "iotPlatform", description = "接入平台")
-            }
-    )
-    @SaCheckLogin
-    public Result<?> init(HttpServletRequest req) {
-        NutMap map = NutMap.NEW();
-        map.addv("classifyList", iotClassifyService.query(Cnd.NEW()));
-        map.addv("protocolList", iotProtocolService.query(Cnd.NEW()));
-        map.addv("iotPlatform", IotPlatform.values());
-        map.addv("protocolType", ProtocolType.values());
-        map.addv("deviceType", DeviceType.values());
-        return Result.success(map);
-    }
-
-    @At
-    @Ok("json")
     @POST
     @ApiOperation(name = "分页查询")
     @ApiFormParams(

@@ -234,7 +234,8 @@
 <script setup lang="ts" name="platform-device-device-product">
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import modal from '/@/utils/modal'
-import { getInit, doCreate, doUpdate, getInfo, getList, doDelete, getDeviceCount } from '/@/api/platform/iot/product'
+import { doCreate, doUpdate, getInfo, getList, doDelete, getDeviceCount } from '/@/api/platform/iot/product'
+import { getInit } from '/@/api/platform/iot/common'
 import { toRefs } from '@vueuse/core'
 import { handleTree, findOneValue } from '/@/utils/common'
 import { ElForm, ElUpload } from 'element-plus'

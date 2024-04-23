@@ -1,4 +1,3 @@
-export const API_IOT_DEVICE_PRODUCT_INIT = '/iot/admin/device/product/init'
 export const API_IOT_DEVICE_PRODUCT_LIST = '/iot/admin/device/product/list'
 export const API_IOT_DEVICE_PRODUCT_GET = '/iot/admin/device/product/get/'
 export const API_IOT_DEVICE_PRODUCT_CREATE = '/iot/admin/device/product/create'
@@ -56,14 +55,6 @@ export const API_IOT_DEVICE_PRODUCT_SUB_UPDATE = '/iot/admin/device/product/sub/
 export const API_IOT_DEVICE_PRODUCT_SUB_ENABLED = '/iot/admin/device/product/sub/enabled'
 
 import request from '/@/utils/request'
-
-export function getInit(data: object = {}) {
-    return request({
-        url: API_IOT_DEVICE_PRODUCT_INIT,
-        method: 'GET',
-        data: data
-    })
-}
 
 export function getList(data: object = {}) {
     return request({

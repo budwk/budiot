@@ -188,15 +188,16 @@ const multipleSelection = ref([])
 const props = ref({})    
 const filedList = ref([
     { code: 'deviceNo', name: '设备通信号' },
-    { code: 'meterNo', name: '设备编号' },
+    { code: 'meterNo', name: '设备编号/表号' },
     { code: 'imei', name: 'IMEI' },
     { code: 'iccid', name: 'ICCID' },
+    { code: 'iotPlatformId', name: '第三方平台设备编号' },
 ])
 const tableData = ref([])
 const tableLoading = ref(false)
 const columns = ref([
     { prop: 'deviceNo', label: '设备通信号', show: true, fixed: 'left' },
-    { prop: 'meterNo', label: '设备编号', show: true },
+    { prop: 'meterNo', label: '设备编号/表号', show: true },
     { prop: 'iotPlatformId', label: '第三方平台设备号', show: false },
     { prop: 'imei', label: 'IMEI', show: true },
     { prop: 'iccid', label: 'ICCID', show: true },

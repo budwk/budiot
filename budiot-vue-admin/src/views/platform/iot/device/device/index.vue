@@ -10,7 +10,7 @@
     v-model="queryParams.filedValue" placeholder="请输入" clearable style="width: 380px"
                             @keyup.enter="handleSearch" >
                             <template #prepend>
-                                    <el-select v-model="queryParams.filedName" placeholder="请选择查询条件" style="width: 180px">
+                                    <el-select v-model="queryParams.filedName" placeholder="查询条件" style="width: 180px">
                                     <el-option
                                         v-for="(el, index) in filedList"
                                         :key="index"
@@ -20,6 +20,12 @@
                                 </el-select>
                             </template>
                         </el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-cascader style="width: 100%;" clearable :options="classifyList" placeholder="产品分类"
+                        :props="{ expandTrigger: 'hover', value: 'id', label: 'name', children: 'children', emitPath: false }"
+                        v-model="queryParams.classifyId"
+                        />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
@@ -109,15 +115,25 @@
 <script setup lang="ts" name="platform-device-device-device">
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
+import { handleTree } from '/@/utils/common';
+import { getInit } from '/@/api/platform/iot/common'
+const iotPlatform = ref([])
+const classifyList = ref([])
+const classifyListOrigin = ref([])
+const protocolList = ref([])
+const protocolType = ref([])
+const deviceType = ref([])
+
 const filedList = ref([
     { code: 'deviceNo', name: '设备通信号' },
-    { code: 'meterNo', name: '设备编号' },
+    { code: 'meterNo', name: '设备编号/表号' },
     { code: 'imei', name: 'IMEI' },
     { code: 'iccid', name: 'ICCID' },
+    { code: 'iotPlatformId', name: '第三方平台设备编号' },
 ])
 const data = reactive({
     queryParams: {
-        productId: '',
+        classifyId: '',
         filedName: 'deviceNo',
         filedValue: '',
         pageOrderName: '',
@@ -125,9 +141,18 @@ const data = reactive({
     }
 })
 const { queryParams, } = toRefs(data)
+const init = async () => {
+    const { data } = await getInit()
+    iotPlatform.value = data.iotPlatform
+    classifyList.value = handleTree(data.classifyList) as never
+    classifyListOrigin.value = data.classifyList
+    protocolList.value = data.protocolList
+    protocolType.value = data.protocolType
+    deviceType.value = data.deviceType
+}
 
 onMounted(() => {
-    
+    init()
 })
 </script>
 <!--定义布局-->
