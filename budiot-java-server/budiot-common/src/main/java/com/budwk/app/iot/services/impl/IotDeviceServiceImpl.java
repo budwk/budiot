@@ -237,4 +237,10 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         this.update(Chain.make("online", true).add("lastConnectionTime", lastReceiveTime), Cnd.where("id", "=", deviceId));
         this.doUpdateCache(deviceId, "lastReceiveTime", lastReceiveTime);
     }
+
+    public void doUpdateOffline(int minutes) {
+        long time = System.currentTimeMillis() - minutes * 60_000L;
+        this.update(Chain.make("online", false), Cnd.where("lastConnectionTime", "<", time)
+                .and("online", "=", true));
+    }
 }

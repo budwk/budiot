@@ -62,43 +62,49 @@
         </el-row>
         <el-row class="mb8">
 
-            <el-table v-loading="tableLoading" :data="tableData" row-key="id" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" />
-            <template v-for="(item, idx) in columns" :key="idx">
+            <pro-table-list 
+                ref="tableRef"
+                :url="API_IOT_DEVICE_PRODUCT_DEVICE_LIST" 
+                :queryParams="queryParams"
+                v-model:selectRows="multipleSelection"
+                :pageSize="10"
+                style="width: 100%;"
+            >
+                <template v-for="(item, idx) in columns" :key="idx">
+                    <el-table-column
+    :prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
+                        :show-overflow-tooltip="true" :align="item.align" :width="item.width">
+                        <template v-if="item.prop == 'createdAt'" #default="scope">
+                            <span>{{ formatTime(scope.row.createdAt) }}</span>
+                        </template>
+                        <template v-if="item.prop == 'lastConnectionTime'" #default="scope">
+                            <span>{{ formatTime(scope.row.lastConnectionTime) }}</span>
+                        </template>
+                        <template v-if="item.prop == 'online'" #default="scope">
+                            <el-tag v-if="scope.row.online" type="success">在线</el-tag>
+                            <el-tag v-else type="danger">离线</el-tag>
+                        </template>
+                    </el-table-column>
+                </template>
                 <el-table-column
-:prop="item.prop" :label="item.label" :fixed="item.fixed" v-if="item.show"
-                    :show-overflow-tooltip="true" :align="item.align" :width="item.width">
-                    <template v-if="item.prop == 'createdAt'" #default="scope">
-                        <span>{{ formatTime(scope.row.createdAt) }}</span>
-                    </template>
-                    <template v-if="item.prop == 'online'" #default="scope">
-                        <el-tag v-if="scope.row.online" type="success">在线</el-tag>
-                        <el-tag v-else type="danger">离线</el-tag>
+    fixed="right" header-align="center" align="center" label="操作"
+                    class-name="small-padding fixed-width" width="150">
+                    <template #default="scope">
+                        <div>
+                            <el-tooltip content="修改" placement="top">
+                                <el-button
+    link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                                    v-permission="['iot.device.product.device.update']"></el-button>
+                            </el-tooltip>
+                            <el-tooltip content="删除" placement="top">
+                                <el-button
+    link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                                    v-permission="['iot.device.product.device.delete']"></el-button>
+                            </el-tooltip>
+                        </div>
                     </template>
                 </el-table-column>
-            </template>
-            <el-table-column
-fixed="right" header-align="center" align="center" label="操作"
-                class-name="small-padding fixed-width" width="150">
-                <template #default="scope">
-                    <div>
-                        <el-tooltip content="修改" placement="top">
-                            <el-button
-link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                                v-permission="['iot.device.product.device.update']"></el-button>
-                        </el-tooltip>
-                        <el-tooltip content="删除" placement="top">
-                            <el-button
-link type="danger" icon="Delete" @click="handleDelete(scope.row)"
-                                v-permission="['iot.device.product.device.delete']"></el-button>
-                        </el-tooltip>
-                    </div>
-                </template>
-            </el-table-column>
-        </el-table>
-        <pagination
-:total="queryParams.totalCount" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize"
-            @pagination="list" />
+            </pro-table-list>
         </el-row>
 
         <el-dialog title="添加设备" v-model="showCreate" width="45%" :close-on-click-modal="false">
@@ -164,7 +170,7 @@ v-for="(item, index) in props" :key="index" :label="item.name" :prop="item.name"
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { useRoute } from "vue-router"
-import { getDeviceList, API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT, API_IOT_DEVICE_PRODUCT_DEVICE_EXPORT, getDeviceProp,
+import { API_IOT_DEVICE_PRODUCT_DEVICE_LIST, getDeviceList, API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT, API_IOT_DEVICE_PRODUCT_DEVICE_EXPORT, getDeviceProp,
     getDeviceInfo, doDeviceCreate, doDeviceUpdate, doDeviceDelete, doDeviceDeletes } from '/@/api/platform/iot/product'
 import { ElForm } from 'element-plus'
 
@@ -174,7 +180,8 @@ const id = route.params.id as string
 const createRef = ref<InstanceType<typeof ElForm>>()
 const updateRef = ref<InstanceType<typeof ElForm>>()
 const queryRef = ref<InstanceType<typeof ElForm>>()
-
+const tableRef = ref(null)
+    
 const showCreate = ref(false)
 const showUpdate = ref(false)
 const multipleSelection = ref([])
@@ -210,9 +217,6 @@ const data = reactive({
         productId: id,
         filedName: 'deviceNo',
         filedValue: '',
-        pageNo: 1,
-        pageSize: 10,
-        totalCount: 0,
         pageOrderName: '',
         pageOrderBy: '',
     },
@@ -251,17 +255,12 @@ const getDynamicRule = (code: string, name: string,required: boolean) =>{
 }
 
 const handleSearch = () => {
-    queryParams.value.pageNo = 1
-    list()
+    tableRef.value?.query()
 }
 
 const resetSearch = () => {
     queryRef.value?.resetFields()
-    list()
-}
-
-const handleSelectionChange = (val: any) => {
-    multipleSelection.value = val
+    tableRef.value?.query()
 }
 
 // 新增按钮
@@ -289,8 +288,7 @@ const handleDelete = (row: any) => {
     modal.confirm('确定删除设备（设备通信号 ' + row.deviceNo + '）？').then(() => {
         return doDeviceDelete(row)
     }).then(() => {
-        queryParams.value.pageNo = 1
-        list()
+        tableRef.value?.query()
         modal.msgSuccess('删除成功')
     }).catch(() => { })
 }
@@ -305,8 +303,7 @@ const handleDeletes = () => {
     modal.confirm('确定删除选中的设备？').then(() => {
         return doDeviceDeletes({ ids: ids})
     }).then(() => {
-        queryParams.value.pageNo = 1
-        list()
+        tableRef.value?.query()
         modal.msgSuccess('删除成功')
     }).catch(() => { })
 }
@@ -319,8 +316,7 @@ const create = () => {
             doDeviceCreate(formData.value).then((res: any) => {
                 modal.msgSuccess(res.msg)
                 showCreate.value = false
-                queryParams.value.pageNo = 1
-                list()
+                tableRef.value?.query()
             })
         }
     })
@@ -334,18 +330,9 @@ const update = () => {
             doDeviceUpdate(formData.value).then((res: any) => {
                 modal.msgSuccess(res.msg)
                 showUpdate.value = false
-                list()
+                tableRef.value?.query()
             })
         }
-    })
-}
-
-const list = () => {
-    tableLoading.value = true
-    getDeviceList(queryParams.value).then((res) => {
-        tableLoading.value = false
-        tableData.value = res.data.list
-        queryParams.value.totalCount = res.data.totalCount
     })
 }
 
@@ -356,7 +343,6 @@ const listProp = () => {
 }
 
 onMounted(() => {
-    list()
     listProp()
 })
 </script>

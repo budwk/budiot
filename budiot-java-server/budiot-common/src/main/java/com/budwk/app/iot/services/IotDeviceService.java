@@ -35,4 +35,6 @@ public interface IotDeviceService extends BaseService<Iot_device> {
     void doUpdateCache(String deviceId, String field, Object value);
 
     void doUpdateOnline(String deviceId);
+
+    void doUpdateOffline(int minutes);
 }
