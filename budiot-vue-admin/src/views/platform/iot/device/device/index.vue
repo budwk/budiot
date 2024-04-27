@@ -5,7 +5,7 @@
         <el-row :gutter="10" class="mb8">
             <el-col :span="12">
                 <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-                    <el-form-item>
+                    <el-form-item prop="filedValue">
                         <el-input
     v-model="queryParams.filedValue" placeholder="请输入" clearable style="width: 380px"
                             @keyup.enter="handleSearch" >
@@ -21,8 +21,9 @@
                             </template>
                         </el-input>
                     </el-form-item>
-                    <el-form-item>
-                        <el-cascader style="width: 100%;" clearable :options="classifyList" placeholder="产品分类"
+                    <el-form-item prop="classifyId">
+                        <el-cascader
+style="width: 100%;" clearable :options="classifyList" placeholder="产品分类"
                         :props="{ expandTrigger: 'hover', value: 'id', label: 'name', children: 'children', emitPath: false }"
                         v-model="queryParams.classifyId"
                         />
@@ -35,34 +36,15 @@
             </el-col>
             <el-col :span="12" style="text-align: right; ">
                <div style="display: inline-flex;">
-                    <import
-                                v-permission="['iot.device.product.device.import']"
-                                btn-text="导入设备"
-                                :action="API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT"
-                                :data="queryParams"
-                                temp-url="/tpl/template_product_device.xlsx"
-                                @refresh="handleSearch"
-                                style="margin-right: 12px"
-                            />
                             <export
-                v-permission="['iot.device.product.device.export']"
+                v-permission="['iot.device.device.export']"
                 btn-text="导出设备"
                 :check-list="multipleSelection"
-                :action="API_IOT_DEVICE_PRODUCT_DEVICE_EXPORT"
+                :action="API_IOT_DEVICE_DEVICE_EXPORT"
                 :columns="columns"
-                :data="{
-                    productId: id
-                }"
+                :data="queryParams"
                 style="margin-right: 12px"
             />
-                    <el-button
-    plain type="success" @click="handleCreate"
-                        v-permission="['iot.device.product.device.create']">添加设备
-                    </el-button>
-                    <el-button
-    plain type="danger" @click="handleDeletes"
-                        v-permission="['iot.device.product.device.delete']">批量删除
-                    </el-button>
                     <right-toolbar :columns="columns" :quickSearchShow="false" @quickSearch="handleSearch" />
 
                </div>
@@ -72,7 +54,7 @@
 
             <pro-table-list 
                 ref="tableRef"
-                :url="API_IOT_DEVICE_PRODUCT_DEVICE_LIST" 
+                :url="API_IOT_DEVICE_DEVICE_LIST" 
                 :queryParams="queryParams"
                 v-model:selectRows="multipleSelection"
                 :pageSize="10"
@@ -99,10 +81,10 @@
                     class-name="small-padding fixed-width" width="150">
                     <template #default="scope">
                         <div>
-                            <el-tooltip content="修改" placement="top">
+                            <el-tooltip content="详情" placement="top">
                                 <el-button
-    link type="primary" icon="View" @click="handleView(scope.row)"
-                                    v-permission="['iot.device.product.device.update']"></el-button>
+    link type="primary" icon="View" @click="handleDetail(scope.row.id)"
+                                    v-permission="['iot.device.device']"></el-button>
                             </el-tooltip>
                         </div>
                     </template>
@@ -117,13 +99,26 @@ import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { handleTree } from '/@/utils/common';
 import { getInit } from '/@/api/platform/iot/common'
+import { API_IOT_DEVICE_DEVICE_LIST, API_IOT_DEVICE_DEVICE_EXPORT } from '/@/api/platform/iot/device'
+import { useRouter } from "vue-router"
+const router = useRouter()
+
 const iotPlatform = ref([])
 const classifyList = ref([])
 const classifyListOrigin = ref([])
 const protocolList = ref([])
 const protocolType = ref([])
 const deviceType = ref([])
-
+const multipleSelection = ref([])
+const columns = ref([
+    { prop: 'deviceNo', label: '设备通信号', show: true, fixed: 'left' },
+    { prop: 'meterNo', label: '设备编号/表号', show: true },
+    { prop: 'iotPlatformId', label: '第三方平台设备号', show: false },
+    { prop: 'imei', label: 'IMEI', show: true },
+    { prop: 'iccid', label: 'ICCID', show: true },
+    { prop: 'lastConnectionTime', label: '最后通信时间', show: true },
+    { prop: 'online', label: '在线状态', show: true }
+])
 const filedList = ref([
     { code: 'deviceNo', name: '设备通信号' },
     { code: 'meterNo', name: '设备编号/表号' },
@@ -131,6 +126,7 @@ const filedList = ref([
     { code: 'iccid', name: 'ICCID' },
     { code: 'iotPlatformId', name: '第三方平台设备编号' },
 ])
+
 const data = reactive({
     queryParams: {
         classifyId: '',
@@ -140,7 +136,9 @@ const data = reactive({
         pageOrderBy: '',
     }
 })
+
 const { queryParams, } = toRefs(data)
+
 const init = async () => {
     const { data } = await getInit()
     iotPlatform.value = data.iotPlatform
@@ -150,6 +148,24 @@ const init = async () => {
     protocolType.value = data.protocolType
     deviceType.value = data.deviceType
 }
+
+const tableRef = ref(null)
+const queryRef = ref(null)
+
+const handleSearch = () => {
+    tableRef.value?.query()
+}
+
+const resetSearch = () => {
+    queryRef.value?.resetFields()
+    tableRef.value?.query()
+}
+
+// 查看详情
+const handleDetail = (id: string) => {
+    router.push('/platform/iot/device/detail/' + id+'/base')
+}
+
 
 onMounted(() => {
     init()

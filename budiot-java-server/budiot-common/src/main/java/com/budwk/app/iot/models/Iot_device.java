@@ -12,6 +12,7 @@ import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.interceptor.annotation.PrevInsert;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -148,4 +149,7 @@ public class Iot_device extends BaseModel implements Serializable {
     @ApiModelProperty(description = "最新数据时间")
     @Excel(name = "数据时间", cellType = Excel.ColumnType.NUMERIC, prompt = "数据时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
     private Long lastDataTime;
+
+    @Many(field = "deviceId")
+    private List<Iot_device_prop> propList;
 }

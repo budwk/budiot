@@ -63,6 +63,57 @@ const staticRoutes: Array<RouteRecordRaw> = [
         },
     },
     {
+        path: '/platform/iot/device/detail/:id',
+        component: () => import('/@/views/platform/iot/device/device/detail/index.vue'),
+        meta: {
+            title: '设备详情',
+            jump: true,
+            layout: "platform/index"
+        },
+        children: [
+            {
+                path: 'base',
+                component: () => import('/@/views/platform/iot/device/device/detail/base.vue'),
+                meta: {
+                    title: '设备信息',
+                    jump: true,
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/device'
+                },
+            },
+            {
+                path: 'data',
+                component: () => import('/@/views/platform/iot/device/device/detail/data.vue'),
+                meta: {
+                    title: '数据上报',
+                    jump: true,
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/device'
+                },
+            },
+            {
+                path: 'raw',
+                component: () => import('/@/views/platform/iot/device/device/detail/raw.vue'),
+                meta: {
+                    title: '通信报文',
+                    jump: true,
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/device'
+                },
+            },
+            {
+                path: 'cmd',
+                component: () => import('/@/views/platform/iot/device/device/detail/cmd.vue'),
+                meta: {
+                    title: '指令下发',
+                    jump: true,
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/device'
+                },
+            },
+        ]
+    },
+    {
         path: '/platform/iot/device/product/:id',
         component: () => import('/@/views/platform/iot/device/product/id.vue'),
         meta: {
