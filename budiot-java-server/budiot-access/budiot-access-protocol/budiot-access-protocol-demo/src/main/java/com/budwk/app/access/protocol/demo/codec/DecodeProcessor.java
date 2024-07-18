@@ -41,6 +41,7 @@ public class DecodeProcessor {
         deviceDataMessage.addProperty("valve_status", map.getInt("valve_status"));
         deviceDataMessage.addProperty("flow", map.getDouble("flow"));
         deviceDataMessage.addProperty("temp", map.getDouble("temp"));
+        //回复消息（指令）=》发送给设备
         this.sendToDevice("hi!".getBytes());
         return new DefaultDecodeResult(deviceOperator.getDeviceId(), Arrays.asList(deviceDataMessage));
 
