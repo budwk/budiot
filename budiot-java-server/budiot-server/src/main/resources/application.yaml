@@ -26,7 +26,7 @@ openapi:
   scanner:
     package: com.budwk.app
   info:
-    title: blend
+    title: budiot
     version: 8.0.1
     contact:
       name: 大鲨鱼

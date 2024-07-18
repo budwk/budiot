@@ -8,6 +8,8 @@ import com.budwk.app.access.protocol.message.DeviceDataMessage;
 import com.budwk.app.access.protocol.message.codec.EncodedMessage;
 import com.budwk.app.access.protocol.message.codec.TcpMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.nutz.json.Json;
+import org.nutz.lang.util.NutMap;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -33,6 +35,12 @@ public class DecodeProcessor {
         deviceDataMessage.setDeviceId(deviceOperator.getDeviceId());
         deviceDataMessage.setTimestamp(System.currentTimeMillis());
         deviceDataMessage.setProperties(properties);
+        String json = new String(bytes);
+        NutMap map = Json.fromJson(NutMap.class,json);
+        //设备传输数据格式演示 {"valve_status":0,"flow":2.3,"temp":23.5}
+        deviceDataMessage.addProperty("valve_status", map.getInt("valve_status"));
+        deviceDataMessage.addProperty("flow", map.getDouble("flow"));
+        deviceDataMessage.addProperty("temp", map.getDouble("temp"));
         this.sendToDevice("hi!".getBytes());
         return new DefaultDecodeResult(deviceOperator.getDeviceId(), Arrays.asList(deviceDataMessage));
 

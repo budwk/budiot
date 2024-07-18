@@ -51,7 +51,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
 
     @Override
     public void save(DeviceDataDTO dataDTO, Map<String, Object> dataList) {
-        String tableName = String.format("%s_%s", TABLE_PREFIX, dataDTO.getProtocol_code());
+        String tableName = String.format("%s%s", TABLE_PREFIX, dataDTO.getProtocol_code().toLowerCase());
         MongoCollection<Document> collection = getCollection(tableName);
         dataList.put("ts", new Date(dataDTO.getTs()));
         Document meta = Lang.obj2map(dataDTO, Document.class);
@@ -63,7 +63,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
 
     @Override
     public List<NutMap> list(DeviceDataQuery query) {
-        String tableName = String.format("%s_%s", TABLE_PREFIX, query.getProtocolCode());
+        String tableName = String.format("%s%s", TABLE_PREFIX, query.getProtocolCode().toLowerCase());
         MongoCollection<Document> collection = zMongoDatabase.getCollection(tableName);
         if (null == collection) {
             return Collections.emptyList();
@@ -87,7 +87,7 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
 
     @Override
     public long count(DeviceDataQuery query) {
-        String tableName = String.format("%s_%s", TABLE_PREFIX, query.getProtocolCode());
+        String tableName = String.format("%s%s", TABLE_PREFIX, query.getProtocolCode().toLowerCase());
         MongoCollection<Document> collection = zMongoDatabase.getCollection(tableName);
         if (null == collection) {
             return 0L;
