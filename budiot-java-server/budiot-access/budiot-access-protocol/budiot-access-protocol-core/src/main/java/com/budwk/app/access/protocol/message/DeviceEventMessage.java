@@ -22,6 +22,10 @@ public class DeviceEventMessage implements DeviceMessage {
     private String messageId;
     private String deviceId;
     /**
+     * 事件类型 0=设备原生 1=规则引擎
+     */
+    private Integer sourceType;
+    /**
      * 事件类型
      */
     private String eventType;
@@ -45,8 +49,6 @@ public class DeviceEventMessage implements DeviceMessage {
      * 数据上报的时间
      */
     private long timestamp;
-
-    private Type type;
 
     @Override
     public String getMessageType() {

@@ -144,6 +144,9 @@ public class SaveProcessor implements Processor {
                 .map(it -> new ValueItemDTO<>(it.getCode(), it.getName(), it.getValue()))
                 .collect(Collectors.toList()));
         eventDataDTO.setEventType(convertEventType(message.getEventType()).value());
+        eventDataDTO.setEventName(message.getEventName());
+        eventDataDTO.setContent(message.getContent());
+        eventDataDTO.setSourceType(message.getSourceType());
         deviceEventDataStorage.save(eventDataDTO);
     }
 

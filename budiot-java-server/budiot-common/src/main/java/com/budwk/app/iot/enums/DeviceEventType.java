@@ -6,7 +6,8 @@ import org.nutz.json.JsonShape;
 public enum DeviceEventType {
     INFO(0, "信息"),
     ALARM(1, "报警"),
-    FAULT(2, "故障");
+    FAULT(2, "故障"),
+    RECOVER(3, "恢复");
     private int value;
     private String text;
 

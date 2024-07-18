@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @IocBean
 @Slf4j
 public class MongoDeviceEventDataStorageImpl implements DeviceEventDataStorage {
-    public static final String collection_name = "device_event_data";
+    public static final String collection_name = "device_event_data_";
     @Inject
     private ZMongoClient zMongoClient;
     @Inject
@@ -103,10 +103,11 @@ public class MongoDeviceEventDataStorageImpl implements DeviceEventDataStorage {
     private MongoCollection<Document> getCollection(LocalDate queryDate) {
         //按日分表
         queryDate = null == queryDate ? LocalDate.now() : queryDate;
-        String collectionName = String.format("%s_%04d%02d%02d", collection_name, queryDate.getYear(), queryDate.getMonthValue(), queryDate.getDayOfMonth());
+        String collectionName = String.format("%s%04d%02d%02d", collection_name, queryDate.getYear(), queryDate.getMonthValue(), queryDate.getDayOfMonth());
         ZMongoDatabase db = zMongoClient.db();
         MongoCollection<Document> collection;
         if (db.collectionExists(collectionName)) {
+            // collectionExists 方法中存在listCollectionNames方法，会导致查询慢，所以在后面高并发的请求下可以改成定时任务提前创建好表
             collection = db.getNativeDB().getCollection(collectionName);
         } else {
             log.debug("集合 {} 不存在, 重新创建", collectionName);

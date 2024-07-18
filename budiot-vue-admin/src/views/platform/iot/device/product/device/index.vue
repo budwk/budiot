@@ -137,7 +137,7 @@ v-for="(item, index) in props" :key="index" :label="item.name" :prop="item.name"
         </el-dialog>
 
         <el-dialog title="修改设备" v-model="showUpdate" width="45%" :close-on-click-modal="false">
-            <el-form ref="updateRef" :model="formData" :rules="formRules" label-width="100px">
+            <el-form ref="updateRef" :model="formData" :rules="formRules" label-width="160px">
                 <el-form-item label="设备通信号" prop="deviceNo">
                     <el-input v-model="formData.deviceNo" placeholder="请输入设备唯一设备通信号" />
                 </el-form-item>

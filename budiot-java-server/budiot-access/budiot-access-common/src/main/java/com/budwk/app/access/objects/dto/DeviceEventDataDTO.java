@@ -28,12 +28,24 @@ public class DeviceEventDataDTO implements Serializable {
     private Long eventTime;
     /**
      * 事件类型 0 信息，1 警告，2 故障, 3 恢复
+     * INFO(0, "信息"),
+     * ALARM(1, "报警"),
+     * FAULT(2, "故障"),
+     * RECOVER(3, "恢复");
      */
     private Integer eventType;
     /**
      * 0 原生告警，1 规则告警
      */
-    private Integer type;
+    private Integer sourceType;
+    /**
+     * 事件名称
+     */
+    private String eventName;
+    /**
+     * 发生告警时对应的告警值
+     */
+    private String warningValue;
     /**
      * 事件内容
      */
