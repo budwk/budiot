@@ -2,6 +2,8 @@ package com.budwk.app.iot.controllers.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.access.objects.query.DeviceDataQuery;
+import com.budwk.app.access.storage.DeviceDataStorage;
 import com.budwk.app.iot.enums.DeviceType;
 import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
@@ -20,6 +22,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.*;
 
@@ -42,7 +45,11 @@ public class IotDeviceController {
     @Inject
     private IotProductPropService iotProductPropService;
     @Inject
+    private IotProductAttrService iotProductAttrService;
+    @Inject
     private IotDeviceService iotDeviceService;
+    @Inject
+    private DeviceDataStorage deviceDataStorage;
 
     @At("/list")
     @Ok("json")
@@ -148,5 +155,73 @@ public class IotDeviceController {
                         .addv("device", device)
                         .addv("productPropList", iotProductPropService.query(Cnd.where("productId", "=", device.getProductId())))
         );
+    }
+
+    @At("/data/field/{id}")
+    @GET
+    @Ok("json")
+    @SaCheckLogin
+    @ApiOperation(name = "获取设备数据字段")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "id", description = "主键ID", in = ParamIn.PATH, required = true, check = true)
+            }
+    )
+    @ApiResponses
+    public Result<?> getFiled(String id, HttpServletRequest req) {
+        Iot_device device = iotDeviceService.getField("productId", id);
+        if (device == null) {
+            return Result.error("设备不存在");
+        }
+        return Result.success(iotProductAttrService.query(Cnd.where("productId", "=", device.getProductId()).desc("createdAt")));
+    }
+
+    @At("/data/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "设备列表")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
+                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
+                    @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
+                    @ApiFormParam(name = "endTime", example = "", description = "结束时间")
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckLogin
+    public Result<?> list(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Iot_device device = iotDeviceService.getField("protocolCode", deviceId);
+        if (device == null) {
+            return Result.error("设备不存在");
+        }
+        DeviceDataQuery deviceDataQuery = new DeviceDataQuery();
+        deviceDataQuery.setDeviceId(deviceId);
+        deviceDataQuery.setPageNo(pageNo);
+        deviceDataQuery.setPageSize(pageSize);
+        deviceDataQuery.setProtocolCode(device.getProtocolCode());
+        try {
+            if (Strings.isNotBlank(startTime)) {
+                deviceDataQuery.setStartTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 00:00:00").getTime());
+            }
+            if (Strings.isNotBlank(endTime)) {
+                deviceDataQuery.setEndTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 23:59:59").getTime());
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        NutMap map = deviceDataStorage.list(deviceDataQuery);
+        Pagination pagination = new Pagination();
+        pagination.setPageNo(pageNo);
+        pagination.setPageSize(pageSize);
+        pagination.setList(map.getList("list", NutMap.class));
+        pagination.setTotalCount(map.getInt("total"));
+        return Result.data(pagination);
+
     }
 }

@@ -62,13 +62,15 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
     }
 
     @Override
-    public List<NutMap> list(DeviceDataQuery query) {
+    public NutMap list(DeviceDataQuery query) {
         String tableName = String.format("%s%s", TABLE_PREFIX, query.getProtocolCode().toLowerCase());
         MongoCollection<Document> collection = zMongoDatabase.getCollection(tableName);
         if (null == collection) {
-            return Collections.emptyList();
+            return NutMap.NEW().addv("total", 0).addv("list", Collections.emptyList());
         }
+        NutMap nutMap = NutMap.NEW();
         Bson cnd = Filters.and(this.buildConditions(query));
+        nutMap.addv("total", collection.countDocuments(cnd));
         FindIterable<Document> findIterable = collection.find(cnd);
         if (query.getPageNo() != null && query.getPageSize() != null) {
             findIterable.limit(query.getPageSize());
@@ -82,7 +84,8 @@ public class MongoDeviceDataStorageImpl implements DeviceDataStorage {
             map.put("id", map.get("_id"));
             data.add(map);
         }
-        return data;
+        nutMap.addv("list", data);
+        return nutMap;
     }
 
     @Override

@@ -24,9 +24,9 @@ public interface DeviceDataStorage {
      * 查询上报数据
      *
      * @param query 查询条件 handler不可为空
-     * @return
+     * @return NutMap::: total,list
      */
-    List<NutMap> list(DeviceDataQuery query);
+    NutMap list(DeviceDataQuery query);
 
     /**
      * 查询统计

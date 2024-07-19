@@ -3,7 +3,7 @@
     <div class="app-container">
 
         <el-row :gutter="10" class="mb8">
-            <el-col :span="12">
+            <el-col :span="14">
                 <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
                     <el-form-item prop="filedValue">
                         <el-input
@@ -34,7 +34,7 @@ style="width: 100%;" clearable :options="classifyList" placeholder="产品分类
                     </el-form-item>
                 </el-form>
             </el-col>
-            <el-col :span="12" style="text-align: right; ">
+            <el-col :span="10" style="text-align: right; ">
                <div style="display: inline-flex;">
                             <export
                 v-permission="['iot.device.device.export']"
