@@ -45,7 +45,7 @@
         </el-row>
     </div>
 </template>
-<script setup lang="ts" name="cmd">
+<script setup lang="ts" name="data">
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable } from 'element-plus'
@@ -108,6 +108,7 @@ const init = () =>{
                 prop: item.code,
                 label: item.name,
                 show: true,
+                align: 'center'
             })
         })
     })

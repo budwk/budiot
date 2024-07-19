@@ -21,6 +21,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 @IocBean
 @Slf4j
 public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
-    public static final String collection_name = "device_cmd_data";
+    public static final String collection_name = "device_cmd_data_";
     @Inject
     private ZMongoClient zMongoClient;
     @Inject
@@ -51,8 +52,10 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
     }
 
     @Override
-    public List<DeviceCmdDTO> list(DeviceCmdDataQuery query) {
+    public NutMap list(DeviceCmdDataQuery query) {
         Bson cnd = Filters.and(this.buildConditions(query));
+        NutMap nutMap = NutMap.NEW();
+        nutMap.addv("total", count(query));
         LocalDate queryDate = null != query.getStartTime() ?
                 LocalDate.ofInstant(Instant.ofEpochMilli(query.getStartTime()), ZoneId.systemDefault()) : LocalDate.now();
         FindIterable<Document> findIterable = getCollection(queryDate).find(cnd);
@@ -69,7 +72,8 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
             dto.setId(doc.getObjectId("_id").toHexString());
             data.add(dto);
         }
-        return data;
+        nutMap.addv("list",data);
+        return nutMap;
     }
 
     @Override
@@ -104,7 +108,7 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
     private MongoCollection<Document> getCollection(LocalDate queryDate) {
         //按年分表
         queryDate = null == queryDate ? LocalDate.now() : queryDate;
-        String collectionName = String.format("%s_%04d", collection_name, queryDate.getYear());
+        String collectionName = String.format("%s%04d", collection_name, queryDate.getYear());
         ZMongoDatabase db = zMongoClient.db();
         MongoCollection<Document> collection;
         if (db.collectionExists(collectionName)) {

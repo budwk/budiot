@@ -2,8 +2,10 @@ package com.budwk.app.iot.controllers.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.access.objects.query.DeviceCmdDataQuery;
 import com.budwk.app.access.objects.query.DeviceDataQuery;
 import com.budwk.app.access.objects.query.DeviceRawDataQuery;
+import com.budwk.app.access.storage.DeviceCmdDataStorage;
 import com.budwk.app.access.storage.DeviceDataStorage;
 import com.budwk.app.access.storage.DeviceRawDataStorage;
 import com.budwk.app.iot.models.Iot_device;
@@ -50,6 +52,10 @@ public class IotDeviceController {
     private DeviceDataStorage deviceDataStorage;
     @Inject
     private DeviceRawDataStorage deviceRawDataStorage;
+    @Inject
+    private DeviceCmdDataStorage deviceCmdDataStorage;
+    @Inject
+    private IotDeviceCmdService iotDeviceCmdService;
 
     @At("/list")
     @Ok("json")
@@ -268,5 +274,84 @@ public class IotDeviceController {
         pagination.setTotalCount(map.getInt("total"));
         return Result.data(pagination);
 
+    }
+
+    @At("/cmd/wait/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "设备待执行指令")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
+                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
+                    @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
+                    @ApiFormParam(name = "endTime", example = "", description = "结束时间")
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckLogin
+    public Result<?> cmdWaitList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.NEW();
+        cnd.and("deviceId", "=", deviceId);
+        try {
+            if (Strings.isNotBlank(startTime)) {
+                cnd.and("createTime", ">=", Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 00:00:00").getTime());
+            }
+            if (Strings.isNotBlank(endTime)) {
+                cnd.and("createTime", "<=", Times.parse("yyyy-MM-dd HH:mm:ss", endTime + " 00:00:00").getTime());
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return Result.data(iotDeviceCmdService.listPage(pageNo, pageSize, cnd));
+    }
+
+    @At("/cmd/done/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "设备历史指令")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
+                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
+                    @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
+                    @ApiFormParam(name = "endTime", example = "", description = "结束时间")
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckLogin
+    public Result<?> cmdDoneList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+
+        DeviceCmdDataQuery cmdDataQuery = new DeviceCmdDataQuery();
+        cmdDataQuery.setDeviceId(deviceId);
+        cmdDataQuery.setPageNo(pageNo);
+        cmdDataQuery.setPageSize(pageSize);
+        try {
+            if (Strings.isNotBlank(startTime)) {
+                cmdDataQuery.setStartTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 00:00:00").getTime());
+            }
+            if (Strings.isNotBlank(endTime)) {
+                cmdDataQuery.setEndTime(Times.parse("yyyy-MM-dd HH:mm:ss", endTime + " 00:00:00").getTime());
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        NutMap map = deviceCmdDataStorage.list(cmdDataQuery);
+        Pagination pagination = new Pagination();
+        pagination.setPageNo(pageNo);
+        pagination.setPageSize(pageSize);
+        pagination.setList(map.getList("list", NutMap.class));
+        pagination.setTotalCount(map.getInt("total"));
+        return Result.data(pagination);
     }
 }

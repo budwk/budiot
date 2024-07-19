@@ -2,6 +2,7 @@ package com.budwk.app.access.storage;
 
 import com.budwk.app.access.objects.dto.DeviceCmdDTO;
 import com.budwk.app.access.objects.query.DeviceCmdDataQuery;
+import org.nutz.lang.util.NutMap;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface DeviceCmdDataStorage {
      * @param query 查询条件 handler不可为空
      * @return
      */
-    List<DeviceCmdDTO> list(DeviceCmdDataQuery query);
+    NutMap list(DeviceCmdDataQuery query);
 
     /**
      * 查询统计
