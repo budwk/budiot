@@ -22,7 +22,7 @@ import modal from '/@/utils/modal'
 import { useRouter } from "vue-router"
 import { useRoute } from "vue-router"
 import Head from './head.vue'
-import { getInfo } from '/@/api/platform/iot/device'
+import { getName } from '/@/api/platform/iot/device'
 
 const route = useRoute()
 const router = useRouter()
@@ -46,7 +46,7 @@ const handleMenu = (key: string, keyPath: string[]) => {
 }
 
 const getDeviceInfo = async () => {
-    const res = await getInfo(id)
+    const res = await getName(id)
     device.value = res.data
 }
 

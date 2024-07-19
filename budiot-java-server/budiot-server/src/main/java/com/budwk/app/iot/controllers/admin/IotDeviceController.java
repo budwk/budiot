@@ -7,10 +7,7 @@ import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
 import com.budwk.app.iot.models.Iot_device;
 import com.budwk.app.iot.models.Iot_product;
-import com.budwk.app.iot.services.IotClassifyService;
-import com.budwk.app.iot.services.IotDeviceService;
-import com.budwk.app.iot.services.IotProductService;
-import com.budwk.app.iot.services.IotProtocolService;
+import com.budwk.app.iot.services.*;
 import com.budwk.starter.common.openapi.annotation.*;
 import com.budwk.starter.common.openapi.enums.ParamIn;
 import com.budwk.starter.common.page.PageUtil;
@@ -23,6 +20,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +39,8 @@ public class IotDeviceController {
     private IotProtocolService iotProtocolService;
     @Inject
     private IotProductService iotProductService;
+    @Inject
+    private IotProductPropService iotProductPropService;
     @Inject
     private IotDeviceService iotDeviceService;
 
@@ -94,7 +94,7 @@ public class IotDeviceController {
     )
     @ApiResponses
     @SaCheckPermission("iot.device.device.export")
-    public void deviceExport(@Param("ids") String[] ids,@Param("classifyId") String classifyId, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
+    public void deviceExport(@Param("ids") String[] ids, @Param("classifyId") String classifyId, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
         Cnd cnd = Cnd.NEW();
         if (Strings.isNotBlank(classifyId)) {
             cnd.and("classifyId", "=", classifyId);
@@ -114,7 +114,22 @@ public class IotDeviceController {
         }
     }
 
-    @At("/get/{id}")
+    @At("/get/name/{id}")
+    @GET
+    @Ok("json")
+    @SaCheckLogin
+    @ApiOperation(name = "获取设备名称")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "id", description = "主键ID", in = ParamIn.PATH, required = true, check = true)
+            }
+    )
+    @ApiResponses
+    public Result<?> getName(String id, HttpServletRequest req) {
+        return Result.success(iotDeviceService.getField("deviceNo", id));
+    }
+
+    @At("/get/ext/{id}")
     @GET
     @Ok("json")
     @SaCheckLogin
@@ -125,9 +140,13 @@ public class IotDeviceController {
             }
     )
     @ApiResponses
-    public Result<?> get(String id, HttpServletRequest req) {
+    public Result<?> getExt(String id, HttpServletRequest req) {
         Iot_device device = iotDeviceService.fetch(id);
-        iotDeviceService.fetchLinks(device, "^(propList)$");
-        return Result.success(device);
+        iotDeviceService.fetchLinks(device, "^(prop|classify|protocol)$");
+        return Result.success(
+                NutMap.NEW()
+                        .addv("device", device)
+                        .addv("productPropList", iotProductPropService.query(Cnd.where("productId", "=", device.getProductId())))
+        );
     }
 }

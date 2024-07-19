@@ -150,6 +150,12 @@ public class Iot_device extends BaseModel implements Serializable {
     @Excel(name = "数据时间", cellType = Excel.ColumnType.NUMERIC, prompt = "数据时间", dateFormat = "yyyy-MM-dd HH:mm:ss", type = Excel.Type.EXPORT)
     private Long lastDataTime;
 
-    @Many(field = "deviceId")
-    private List<Iot_device_prop> propList;
+    @One(key = "deviceId",field = "id")
+    private Iot_device_prop prop;
+
+    @One
+    private Iot_classify classify;
+
+    @One
+    private Iot_protocol protocol;
 }
