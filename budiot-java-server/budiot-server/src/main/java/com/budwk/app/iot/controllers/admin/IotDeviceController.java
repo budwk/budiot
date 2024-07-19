@@ -56,6 +56,8 @@ public class IotDeviceController {
     private DeviceCmdDataStorage deviceCmdDataStorage;
     @Inject
     private IotDeviceCmdService iotDeviceCmdService;
+    @Inject
+    private IotProductCmdService iotProductCmdService;
 
     @At("/list")
     @Ok("json")
@@ -190,8 +192,6 @@ public class IotDeviceController {
             {
                     @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
                     @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
-                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
-                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
                     @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
                     @ApiFormParam(name = "endTime", example = "", description = "结束时间")
@@ -201,7 +201,7 @@ public class IotDeviceController {
             implementation = Pagination.class
     )
     @SaCheckLogin
-    public Result<?> dataList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+    public Result<?> dataList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
         Iot_device device = iotDeviceService.getField("protocolCode", deviceId);
         if (device == null) {
             return Result.error("设备不存在");
@@ -239,8 +239,6 @@ public class IotDeviceController {
             {
                     @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
                     @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
-                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
-                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
                     @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
                     @ApiFormParam(name = "endTime", example = "", description = "结束时间")
@@ -250,7 +248,7 @@ public class IotDeviceController {
             implementation = Pagination.class
     )
     @SaCheckLogin
-    public Result<?> rawList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+    public Result<?> rawList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
         Iot_device device = iotDeviceService.getField("protocolCode", deviceId);
         if (device == null) {
             return Result.error("设备不存在");
@@ -284,8 +282,6 @@ public class IotDeviceController {
             {
                     @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
                     @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
-                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
-                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
                     @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
                     @ApiFormParam(name = "endTime", example = "", description = "结束时间")
@@ -295,7 +291,7 @@ public class IotDeviceController {
             implementation = Pagination.class
     )
     @SaCheckLogin
-    public Result<?> cmdWaitList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+    public Result<?> cmdWaitList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
         Cnd cnd = Cnd.NEW();
         cnd.and("deviceId", "=", deviceId);
         try {
@@ -308,6 +304,7 @@ public class IotDeviceController {
         } catch (Exception e) {
             e.getMessage();
         }
+        cnd.desc("createTime");
         return Result.data(iotDeviceCmdService.listPage(pageNo, pageSize, cnd));
     }
 
@@ -319,8 +316,6 @@ public class IotDeviceController {
             {
                     @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
                     @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
-                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
-                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
                     @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
                     @ApiFormParam(name = "endTime", example = "", description = "结束时间")
@@ -330,8 +325,7 @@ public class IotDeviceController {
             implementation = Pagination.class
     )
     @SaCheckLogin
-    public Result<?> cmdDoneList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
-
+    public Result<?> cmdDoneList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
         DeviceCmdDataQuery cmdDataQuery = new DeviceCmdDataQuery();
         cmdDataQuery.setDeviceId(deviceId);
         cmdDataQuery.setPageNo(pageNo);
@@ -353,5 +347,28 @@ public class IotDeviceController {
         pagination.setList(map.getList("list", NutMap.class));
         pagination.setTotalCount(map.getInt("total"));
         return Result.data(pagination);
+    }
+
+    @At("/cmd/config/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "设备待执行指令")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckLogin
+    public Result<?> cmdConfigList(@Param("deviceId") String deviceId) {
+        Iot_device device = iotDeviceService.getField("^(productId|deviceNo)$", deviceId);
+        if (device == null) {
+            return Result.error("设备不存在");
+        }
+        Cnd cnd = Cnd.NEW();
+        cnd.and("productId", "=", device.getProductId());
+        return Result.data(NutMap.NEW().addv("device", device).addv("list", iotProductCmdService.query(cnd, "attrList")));
     }
 }

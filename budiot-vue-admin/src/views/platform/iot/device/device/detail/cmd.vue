@@ -17,7 +17,12 @@
             </el-col>
             <el-col :span="6" style="text-align: right">
                 <div style="display: inline-flex">
-                    <right-toolbar :columns="columns" :quickSearchShow="false" @quickSearch="handleSearch" />
+                    <el-button
+    plain type="success" @click="handleCreate"
+                        v-permission="['iot.device.device.cmd']">下发指令
+                    </el-button>
+                    <right-toolbar v-if="listActive=='wait'" :columns="columns" :quickSearchShow="false" @quickSearch="handleSearch" />
+                    <right-toolbar v-if="listActive=='done'" :columns="columnsDone" :quickSearchShow="false" @quickSearch="handleSearch" />
                 </div>
             </el-col>
         </el-row>
@@ -53,7 +58,7 @@
                 </template>
             </pro-table-list>
             <pro-table-list v-if="listActive=='done'" ref="tableRef" :url="API_IOT_DEVICE_DEVICE_CMD_DONE_LIST" :queryParams="queryParams" :pageSize="10" style="width: 100%">
-                <template v-for="(item, idx) in columns" :key="idx">
+                <template v-for="(item, idx) in columnsDone" :key="idx">
                     <el-table-column
                         :prop="item.prop"
                         :label="item.label"
@@ -76,22 +81,34 @@
                 </template>
             </pro-table-list>
         </el-row>
+        <cmd-create v-if="createShow" :showCreate="createShow" :deviceId="id" @update:change="updateChange"/>
     </div>
 </template>
 <script setup lang="ts" name="cmd">
-import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
+import { nextTick, onMounted, reactive, ref, toRefs, watch } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable } from 'element-plus'
-import { API_IOT_DEVICE_DEVICE_CMD_WAIT_LIST, API_IOT_DEVICE_DEVICE_CMD_DONE_LIST } from '/@/api/platform/iot/device'
+import { API_IOT_DEVICE_DEVICE_CMD_WAIT_LIST, API_IOT_DEVICE_DEVICE_CMD_DONE_LIST, getCmdConfigList } from '/@/api/platform/iot/device'
+import CmdCreate from './cmdCreate.vue'
 
 const route = useRoute()
 import { useRoute } from 'vue-router'
 const id = route.params.id as string
 
 const columns = ref([
-    { prop: 'createTime', label: '创建时间', show: true, fixed: 'left',align: 'center' },
     { prop: 'code', label: '指令标识', show: true, fixed: 'left',align: 'center' },
     { prop: 'status', label: '指令状态', show: true, fixed: 'left',align: 'center' },
+    { prop: 'createTime', label: '创建时间', show: true, fixed: 'left',align: 'center' },
+    { prop: 'enabled', label: '是否启用', show: true, fixed: 'left',align: 'center' },
+    { prop: 'sendTime', label: '下发时间', show: true, fixed: 'left',align: 'center' },
+    { prop: 'finishTime', label: '完成时间', show: true, fixed: 'left',align: 'center' },
+    { prop: 'respResult', label: '指令结果', show: true, fixed: 'left' },
+])
+
+const columnsDone = ref([
+    { prop: 'code', label: '指令标识', show: true, fixed: 'left',align: 'center' },
+    { prop: 'status', label: '指令状态', show: true, fixed: 'left',align: 'center' },
+    { prop: 'createTime', label: '创建时间', show: true, fixed: 'left',align: 'center' },
     { prop: 'sendTime', label: '下发时间', show: true, fixed: 'left',align: 'center' },
     { prop: 'finishTime', label: '完成时间', show: true, fixed: 'left',align: 'center' },
     { prop: 'respResult', label: '指令结果', show: true, fixed: 'left' },
@@ -106,6 +123,12 @@ const queryParams = reactive({
 const tableRef = ref(null)
 const queryRef = ref(null)
 const listActive = ref("wait")
+const createShow = ref(false)
+
+const updateChange = (val) => {
+    createShow.value = val
+    tableRef.value?.query()
+}
 
 const handleSearch = () => {
     tableRef.value?.query()
@@ -118,7 +141,9 @@ const resetSearch = () => {
     tableRef.value?.query()
 }
 
-
+const handleCreate = () => {
+    createShow.value = true
+}
 </script>
 <!--定义布局-->
 <route lang="yaml">

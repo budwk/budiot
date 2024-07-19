@@ -7,6 +7,7 @@ export const API_IOT_DEVICE_DEVICE_DATA_FIELD = '/iot/admin/device/device/data/f
 export const API_IOT_DEVICE_DEVICE_RAW_LIST = '/iot/admin/device/device/raw/list'
 export const API_IOT_DEVICE_DEVICE_CMD_WAIT_LIST = '/iot/admin/device/device/cmd/wait/list'
 export const API_IOT_DEVICE_DEVICE_CMD_DONE_LIST = '/iot/admin/device/device/cmd/done/list'
+export const API_IOT_DEVICE_DEVICE_CMD_CONFIG_LIST = '/iot/admin/device/device/cmd/config/list'
 
 import request from '/@/utils/request'
 
@@ -28,6 +29,16 @@ export function getField(id: string) {
     return request({
         url: API_IOT_DEVICE_DEVICE_DATA_FIELD + id,
         method: 'GET'
+    })
+}
+
+export function getCmdConfigList(id: string) {
+    return request({
+        url: API_IOT_DEVICE_DEVICE_CMD_CONFIG_LIST,
+        method: 'POST',
+        data: {
+            deviceId: id
+        }
     })
 }
 
