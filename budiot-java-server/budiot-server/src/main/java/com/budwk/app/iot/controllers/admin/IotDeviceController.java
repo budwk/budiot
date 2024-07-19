@@ -210,7 +210,7 @@ public class IotDeviceController {
                 deviceDataQuery.setStartTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 00:00:00").getTime());
             }
             if (Strings.isNotBlank(endTime)) {
-                deviceDataQuery.setEndTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 23:59:59").getTime());
+                deviceDataQuery.setEndTime(Times.parse("yyyy-MM-dd HH:mm:ss", endTime + " 23:59:59").getTime());
             }
         } catch (Exception e) {
             e.getMessage();
@@ -256,9 +256,6 @@ public class IotDeviceController {
         try {
             if (Strings.isNotBlank(startTime)) {
                 rawDataQuery.setStartTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 00:00:00").getTime());
-            }
-            if (Strings.isNotBlank(endTime)) {
-                rawDataQuery.setEndTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 23:59:59").getTime());
             }
         } catch (Exception e) {
             e.getMessage();

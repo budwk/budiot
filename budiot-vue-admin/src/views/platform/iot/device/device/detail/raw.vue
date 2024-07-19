@@ -3,11 +3,8 @@
         <el-row :gutter="10" class="mb8">
             <el-col :span="18">
                 <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-                    <el-form-item label="开始时间">
+                    <el-form-item label="通信日期">
                         <el-date-picker v-model="queryParams.startTime" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" />
-                    </el-form-item>
-                    <el-form-item label="结束时间">
-                        <el-date-picker v-model="queryParams.endTime" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
@@ -33,11 +30,8 @@
                         :align="item.align"
                         :width="item.width"
                     >
-                        <template v-if="item.prop == 'receive_time'" #default="scope">
-                            <span>{{ formatTime(scope.row.receive_time) }}</span>
-                        </template>
-                        <template v-else #default="scope">
-                            <span>{{ getValue(item.prop,scope.row[item.prop]) }}</span>
+                        <template v-if="item.prop == 'startTime'" #default="scope">
+                            <span>{{ formatTime(scope.row.startTime) }}</span>
                         </template>
                     </el-table-column>
                 </template>
@@ -49,22 +43,24 @@
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable } from 'element-plus'
-import { API_IOT_DEVICE_DEVICE_RAW_LIST, getField } from '/@/api/platform/iot/device'
+import { API_IOT_DEVICE_DEVICE_RAW_LIST } from '/@/api/platform/iot/device'
+import dayjs from 'dayjs'
 
 const route = useRoute()
 import { useRoute } from 'vue-router'
 const id = route.params.id as string
 
 const columns = ref([
-    { prop: 'ts', label: 'TS', show: true, fixed: 'left' },
-    { prop: 'receive_time', label: '通信时间', show: true, fixed: 'left' },
+    { prop: 'ts', label: 'TS', show: true, fixed: 'left',width: 150,align: 'center' },
+    { prop: 'startTime', label: '通信时间', show: true, fixed: 'left',width: 180,align: 'center'},
+    { prop: 'type', label: '通信方向', show: true, fixed: 'left',width: 100,align: 'center' },
+    { prop: 'originData', label: '原始报文', show: true },
+    { prop: 'parsedData', label: '解析结果', show: true },
 ])
-const filedList = ref([])
 
 const queryParams = reactive({
     deviceId: id,
-    startTime: '',
-    endTime: '',
+    startTime: dayjs().format('YYYY-MM-DD'),
 })
 
 const tableRef = ref(null)
@@ -75,47 +71,11 @@ const handleSearch = () => {
 }
 
 const resetSearch = () => {
-    queryParams.startTime = ''
-    queryParams.endTime = ''
+    queryParams.startTime = dayjs().format('YYYY-MM-DD')
     queryRef.value?.resetFields()
     tableRef.value?.query()
 }
 
-const getValue = (prop: string, value: any) => {
-    if (value === null || value === undefined) {
-        return '-'
-    }
-    console.log(prop,value)
-    // 从 filedList 中获取对应的属性，如果是枚举类型，返回对应的 text
-    const item = filedList.value.find(item => item.code === prop)
-    if (item) {
-        if (item.dataType.value === 5) {
-            const ext = item.ext.find(ext => ext.value === '' + value)
-            return ext ? ext.text : value
-        } else {
-            return value + (item.unit || '')  
-        }
-    }
-    return value
-}
-
-const init = () =>{
-    getField(id).then(res => {
-        filedList.value = res.data
-        // 追加到 columns
-        res.data.forEach(item => {
-            columns.value.push({
-                prop: item.code,
-                label: item.name,
-                show: true,
-            })
-        })
-    })
-}
-
-onMounted(() => {
-    init()
-})
 </script>
 <!--定义布局-->
 <route lang="yaml">

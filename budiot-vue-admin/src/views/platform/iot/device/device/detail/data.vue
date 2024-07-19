@@ -56,8 +56,8 @@ import { useRoute } from 'vue-router'
 const id = route.params.id as string
 
 const columns = ref([
-    { prop: 'ts', label: 'TS', show: true, fixed: 'left' },
-    { prop: 'receive_time', label: '通信时间', show: true, fixed: 'left' },
+    { prop: 'ts', label: 'TS', show: true, fixed: 'left',width: 150,align: 'center' },
+    { prop: 'receive_time', label: '通信时间', show: true, fixed: 'left',width: 180,align: 'center' },
 ])
 const filedList = ref([])
 

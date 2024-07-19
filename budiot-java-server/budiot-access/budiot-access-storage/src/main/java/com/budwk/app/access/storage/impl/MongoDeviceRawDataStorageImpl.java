@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @IocBean
 @Slf4j
 public class MongoDeviceRawDataStorageImpl implements DeviceRawDataStorage {
-    public static final String collection_name = "device_raw_data";
+    public static final String collection_name = "device_raw_data_";
     @Inject
     private ZMongoClient zMongoClient;
     @Inject
@@ -107,7 +107,7 @@ public class MongoDeviceRawDataStorageImpl implements DeviceRawDataStorage {
     private MongoCollection<Document> getCollection(LocalDate queryDate) {
         //按日分表
         queryDate = null == queryDate ? LocalDate.now() : queryDate;
-        String collectionName = String.format("%s_%04d%02d%02d", collection_name, queryDate.getYear(), queryDate.getMonthValue(), queryDate.getDayOfMonth());
+        String collectionName = String.format("%s%04d%02d%02d", collection_name, queryDate.getYear(), queryDate.getMonthValue(), queryDate.getDayOfMonth());
         ZMongoDatabase db = zMongoClient.db();
         MongoCollection<Document> collection;
         if (db.collectionExists(collectionName)) {
