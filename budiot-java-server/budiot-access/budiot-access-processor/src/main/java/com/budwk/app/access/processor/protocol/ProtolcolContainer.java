@@ -222,6 +222,7 @@ public class ProtolcolContainer {
             return;
         }
         NutMap nutMap = (NutMap) message.getBody();
+        deviceRegistry.makeCommandFinish(commandId, DeviceCmdStatus.from(nutMap.getInt("result")).value(),  DeviceCmdStatus.from(nutMap.getInt("result")).getText());
 
     }
 

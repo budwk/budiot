@@ -4,6 +4,7 @@ export const API_IOT_DEVICE_DEVICE_GETEXT = '/iot/admin/device/device/get/ext/'
 export const API_IOT_DEVICE_DEVICE_EXPORT = '/iot/admin/device/device/export'
 export const API_IOT_DEVICE_DEVICE_DATA_LIST = '/iot/admin/device/device/data/list'
 export const API_IOT_DEVICE_DEVICE_DATA_FIELD = '/iot/admin/device/device/data/field/'
+export const API_IOT_DEVICE_DEVICE_RAW_LIST = '/iot/admin/device/device/raw/list'
 
 import request from '/@/utils/request'
 

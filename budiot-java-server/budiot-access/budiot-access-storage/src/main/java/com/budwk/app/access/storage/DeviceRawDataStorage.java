@@ -2,6 +2,7 @@ package com.budwk.app.access.storage;
 
 import com.budwk.app.access.objects.dto.DeviceRawDataDTO;
 import com.budwk.app.access.objects.query.DeviceRawDataQuery;
+import org.nutz.lang.util.NutMap;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface DeviceRawDataStorage {
     void save(DeviceRawDataDTO data);
 
-    List<DeviceRawDataDTO> list(DeviceRawDataQuery query);
+    NutMap list(DeviceRawDataQuery query);
 
     long count(DeviceRawDataQuery query);
 }

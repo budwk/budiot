@@ -19,6 +19,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -50,8 +51,10 @@ public class MongoDeviceRawDataStorageImpl implements DeviceRawDataStorage {
     }
 
     @Override
-    public List<DeviceRawDataDTO> list(DeviceRawDataQuery query) {
+    public NutMap list(DeviceRawDataQuery query) {
+        NutMap nutMap = NutMap.NEW();
         Bson cnd = Filters.and(this.buildConditions(query));
+        nutMap.addv("total", count(query));
         LocalDate queryDate = null != query.getStartTime() ?
                 LocalDate.ofInstant(Instant.ofEpochMilli(query.getStartTime()), ZoneId.systemDefault()) : LocalDate.now();
         FindIterable<Document> findIterable = getCollection(queryDate).find(cnd);
@@ -68,7 +71,8 @@ public class MongoDeviceRawDataStorageImpl implements DeviceRawDataStorage {
             dto.setId(doc.getObjectId("_id").toHexString());
             data.add(dto);
         }
-        return data;
+        nutMap.addv("list", data);
+        return nutMap;
     }
 
     @Override
