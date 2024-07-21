@@ -11,6 +11,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 
 @IocBean(args = {"refer:dao"})
 public class IotDeviceCmdServiceImpl extends BaseServiceImpl<Iot_device_cmd> implements IotDeviceCmdService {
@@ -41,6 +42,9 @@ public class IotDeviceCmdServiceImpl extends BaseServiceImpl<Iot_device_cmd> imp
             deviceCmdDTO.setCode(cmd.getCode());
             deviceCmdDTO.setTs(System.currentTimeMillis());
             deviceCmdDTO.setFinishTime(System.currentTimeMillis());
+            if (Lang.isEmpty(deviceCmdDTO.getSendTime())) {
+                deviceCmdDTO.setSendTime(deviceCmdDTO.getFinishTime());
+            }
             deviceCmdDTO.setStatus(status.value());
             deviceCmdDTO.setRespResult(result);
             deviceCmdDTO.setSerialNo(cmd.getSerialNo());

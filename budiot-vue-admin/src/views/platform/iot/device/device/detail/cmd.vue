@@ -264,6 +264,7 @@ const handleConfirm = () => {
                 params.deviceNo = device.value.deviceNo
                 doCmdCreate(params).then(() => {
                     loading.value = false
+                    createShow.value = false
                     modal.msgSuccess('指令保存成功')
                     resetSearch()
                 }).catch(() => {

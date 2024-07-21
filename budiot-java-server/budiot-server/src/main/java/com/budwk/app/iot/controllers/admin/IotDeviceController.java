@@ -441,6 +441,7 @@ public class IotDeviceController {
     public Result<?> cmdCrate(@Param("..") Iot_device_cmd deviceCmd) {
         deviceCmd.setSerialNo(0);
         deviceCmd.setStatus(DeviceCmdStatus.WAIT);
+        deviceCmd.setCreateTime(System.currentTimeMillis());
         iotDeviceCmdService.insert(deviceCmd);
         return Result.success();
     }
