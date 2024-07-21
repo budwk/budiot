@@ -122,7 +122,7 @@
         </div>
         <div id="el-login-footer" class="login-footer">
             <span>
-                <a href="https://budwk.com" target="_blank">BudWk.com</a> ©
+                <a href="https://budiot.com" target="_blank">BudIot.com</a> ©
                 <span>{{year}}</span>
             </span>
         </div>

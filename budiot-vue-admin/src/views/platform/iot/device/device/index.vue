@@ -112,6 +112,9 @@ const deviceType = ref([])
 const multipleSelection = ref([])
 const columns = ref([
     { prop: 'deviceNo', label: '设备通信号', show: true, fixed: 'left' },
+    { prop: 'product.name', label: '所属产品', show: true},
+    { prop: 'product.iotPlatform.text', label: '接入平台', show: true },
+
     { prop: 'meterNo', label: '设备编号/表号', show: true },
     { prop: 'iotPlatformId', label: '第三方平台设备号', show: false },
     { prop: 'imei', label: 'IMEI', show: true },

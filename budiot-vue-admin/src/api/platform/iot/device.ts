@@ -8,6 +8,7 @@ export const API_IOT_DEVICE_DEVICE_RAW_LIST = '/iot/admin/device/device/raw/list
 export const API_IOT_DEVICE_DEVICE_CMD_WAIT_LIST = '/iot/admin/device/device/cmd/wait/list'
 export const API_IOT_DEVICE_DEVICE_CMD_DONE_LIST = '/iot/admin/device/device/cmd/done/list'
 export const API_IOT_DEVICE_DEVICE_CMD_CONFIG_LIST = '/iot/admin/device/device/cmd/config/list'
+export const API_IOT_DEVICE_DEVICE_CMD_CREATE = '/iot/admin/device/device/cmd/create'
 
 import request from '/@/utils/request'
 
@@ -42,3 +43,10 @@ export function getCmdConfigList(id: string) {
     })
 }
 
+export function doCmdCreate(data: any) {
+    return request({
+        url: API_IOT_DEVICE_DEVICE_CMD_CREATE,
+        method: 'POST',
+        data: data
+    })
+}

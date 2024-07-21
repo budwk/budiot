@@ -68,7 +68,7 @@
         </el-card>
     </div>
 </template>
-<script setup lang="ts" name="cmd">
+<script setup lang="ts">
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable } from 'element-plus'

@@ -39,7 +39,7 @@
         </el-row>
     </div>
 </template>
-<script setup lang="ts" name="raw">
+<script setup lang="ts">
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable } from 'element-plus'

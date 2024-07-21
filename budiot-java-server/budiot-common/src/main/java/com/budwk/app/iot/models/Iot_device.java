@@ -158,4 +158,7 @@ public class Iot_device extends BaseModel implements Serializable {
 
     @One
     private Iot_protocol protocol;
+
+    @One
+    private Iot_product product;
 }

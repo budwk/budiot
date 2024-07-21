@@ -8,7 +8,9 @@ import com.budwk.app.access.objects.query.DeviceRawDataQuery;
 import com.budwk.app.access.storage.DeviceCmdDataStorage;
 import com.budwk.app.access.storage.DeviceDataStorage;
 import com.budwk.app.access.storage.DeviceRawDataStorage;
+import com.budwk.app.iot.enums.DeviceCmdStatus;
 import com.budwk.app.iot.models.Iot_device;
+import com.budwk.app.iot.models.Iot_device_cmd;
 import com.budwk.app.iot.services.*;
 import com.budwk.starter.common.openapi.annotation.*;
 import com.budwk.starter.common.openapi.enums.ParamIn;
@@ -93,7 +95,7 @@ public class IotDeviceController {
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
-        return Result.data(iotDeviceService.listPage(pageNo, pageSize, cnd));
+        return Result.data(iotDeviceService.listPageLinks(pageNo, pageSize, cnd, "product"));
     }
 
     @At("/export")
@@ -359,7 +361,10 @@ public class IotDeviceController {
             }
     )
     @ApiResponses(
-            implementation = Pagination.class
+            {
+                    @ApiResponse(name = "device", description = "设备信息"),
+                    @ApiResponse(name = "list", description = "指令配置列表")
+            }
     )
     @SaCheckLogin
     public Result<?> cmdConfigList(@Param("deviceId") String deviceId) {
@@ -370,5 +375,24 @@ public class IotDeviceController {
         Cnd cnd = Cnd.NEW();
         cnd.and("productId", "=", device.getProductId());
         return Result.data(NutMap.NEW().addv("device", device).addv("list", iotProductCmdService.query(cnd, "attrList")));
+    }
+
+    @At("/cmd/create")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "设备待执行指令")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+            },
+            implementation = Iot_device_cmd.class
+    )
+    @ApiResponses
+    @SaCheckLogin
+    public Result<?> cmdCrate(@Param("..") Iot_device_cmd deviceCmd) {
+        deviceCmd.setSerialNo(0);
+        deviceCmd.setStatus(DeviceCmdStatus.WAIT);
+        iotDeviceCmdService.insert(deviceCmd);
+        return Result.success();
     }
 }

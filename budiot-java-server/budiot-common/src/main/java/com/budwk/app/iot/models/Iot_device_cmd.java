@@ -4,7 +4,6 @@ import com.budwk.app.iot.enums.DeviceCmdStatus;
 import com.budwk.starter.common.openapi.annotation.ApiModel;
 import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
 import com.budwk.starter.database.model.BaseModel;
-import com.budwk.starter.excel.annotation.Excel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.nutz.dao.entity.annotation.*;
