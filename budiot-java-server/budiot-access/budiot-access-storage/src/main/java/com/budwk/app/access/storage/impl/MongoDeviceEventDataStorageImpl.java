@@ -17,8 +17,10 @@ import org.bson.types.ObjectId;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -26,6 +28,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -50,10 +53,12 @@ public class MongoDeviceEventDataStorageImpl implements DeviceEventDataStorage {
     }
 
     @Override
-    public List<DeviceEventDataDTO> list(DeviceEventDataQuery query) {
+    public NutMap list(DeviceEventDataQuery query) {
+        NutMap nutMap = NutMap.NEW();
         Bson cnd = Filters.and(this.buildConditions(query));
         LocalDate queryDate = null != query.getStartTime() ?
                 LocalDate.ofInstant(Instant.ofEpochMilli(query.getStartTime()), ZoneId.systemDefault()) : LocalDate.now();
+        nutMap.addv("total", count(query));
         FindIterable<Document> findIterable = getCollection(queryDate).find(cnd);
         if (query.getPageNo() != null && query.getPageSize() != null) {
             findIterable.limit(query.getPageSize());
@@ -61,14 +66,13 @@ public class MongoDeviceEventDataStorageImpl implements DeviceEventDataStorage {
         }
         findIterable.sort(Sorts.descending("startTime"));
         MongoCursor<Document> cursor = findIterable.cursor();
-        List<DeviceEventDataDTO> data = new LinkedList<>();
+        List<Document> data = new LinkedList<>();
         while (cursor.hasNext()) {
             Document doc = cursor.next();
-            DeviceEventDataDTO dto = Lang.map2Object(doc, DeviceEventDataDTO.class);
-            dto.setId(doc.getObjectId("_id").toHexString());
-            data.add(dto);
+            data.add(doc);
         }
-        return data;
+        nutMap.addv("list", data);
+        return nutMap;
     }
 
     @Override

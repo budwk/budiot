@@ -33,6 +33,7 @@ const activeIndex = route.fullPath.split(`/${id}/`)[1]
 const menuList = ref([
     { id: 'base', name: '基本信息', path: '/platform/iot/device/detail/'+id+'/base' },
     { id: 'data', name: '数据上报', path: '/platform/iot/device/detail/'+id+'/data' },
+    { id: 'event', name: '事件上报', path: '/platform/iot/device/detail/'+id+'/event' },
     { id: 'raw', name: '通信报文', path: '/platform/iot/device/detail/'+id+'/raw' },
     { id: 'cmd', name: '指令下发', path: '/platform/iot/device/detail/'+id+'/cmd' },
 ])

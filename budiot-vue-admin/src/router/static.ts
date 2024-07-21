@@ -92,6 +92,16 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 },
             },
             {
+                path: 'event',
+                component: () => import('/@/views/platform/iot/device/device/detail/event.vue'),
+                meta: {
+                    title: '事件上报',
+                    jump: true,
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/device'
+                },
+            },
+            {
                 path: 'raw',
                 component: () => import('/@/views/platform/iot/device/device/detail/raw.vue'),
                 meta: {

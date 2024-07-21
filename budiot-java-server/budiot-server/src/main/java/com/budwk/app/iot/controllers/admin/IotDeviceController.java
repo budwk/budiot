@@ -4,9 +4,11 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.budwk.app.access.objects.query.DeviceCmdDataQuery;
 import com.budwk.app.access.objects.query.DeviceDataQuery;
+import com.budwk.app.access.objects.query.DeviceEventDataQuery;
 import com.budwk.app.access.objects.query.DeviceRawDataQuery;
 import com.budwk.app.access.storage.DeviceCmdDataStorage;
 import com.budwk.app.access.storage.DeviceDataStorage;
+import com.budwk.app.access.storage.DeviceEventDataStorage;
 import com.budwk.app.access.storage.DeviceRawDataStorage;
 import com.budwk.app.iot.enums.DeviceCmdStatus;
 import com.budwk.app.iot.models.Iot_device;
@@ -56,6 +58,8 @@ public class IotDeviceController {
     private DeviceRawDataStorage deviceRawDataStorage;
     @Inject
     private DeviceCmdDataStorage deviceCmdDataStorage;
+    @Inject
+    private DeviceEventDataStorage deviceEventDataStorage;
     @Inject
     private IotDeviceCmdService iotDeviceCmdService;
     @Inject
@@ -274,6 +278,51 @@ public class IotDeviceController {
         pagination.setTotalCount(map.getInt("total"));
         return Result.data(pagination);
 
+    }
+
+    @At("/event/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "设备事件列表")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
+                    @ApiFormParam(name = "endTime", example = "", description = "结束时间")
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckLogin
+    public Result<?> eventList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
+        Iot_device device = iotDeviceService.getField("protocolCode", deviceId);
+        if (device == null) {
+            return Result.error("设备不存在");
+        }
+        DeviceEventDataQuery eventDataQuery = new DeviceEventDataQuery();
+        eventDataQuery.setDeviceId(deviceId);
+        eventDataQuery.setPageNo(pageNo);
+        eventDataQuery.setPageSize(pageSize);
+        try {
+            if (Strings.isNotBlank(startTime)) {
+                eventDataQuery.setStartTime(Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 00:00:00").getTime());
+            }
+            if (Strings.isNotBlank(endTime)) {
+                eventDataQuery.setEndTime(Times.parse("yyyy-MM-dd HH:mm:ss", endTime + " 23:59:59").getTime());
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        NutMap map = deviceEventDataStorage.list(eventDataQuery);
+        Pagination pagination = new Pagination();
+        pagination.setPageNo(pageNo);
+        pagination.setPageSize(pageSize);
+        pagination.setList(map.getList("list", NutMap.class));
+        pagination.setTotalCount(map.getInt("total"));
+        return Result.data(pagination);
     }
 
     @At("/cmd/wait/list")
