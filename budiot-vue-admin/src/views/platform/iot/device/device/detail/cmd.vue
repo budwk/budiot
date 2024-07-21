@@ -86,7 +86,7 @@
                             <span>{{ cmdCongifMap[scope.row.code] }}</span>
                         </template>
                         <template v-if="item.prop == 'status'" #default="scope">
-                            <span>{{  scope.row.status?.text }}</span>
+                            <span>{{  cmdStatus[scope.row.status]?.label }}</span>
                         </template>    
                     </el-table-column>
                 </template>
@@ -183,6 +183,18 @@ const queryParams = reactive({
     startTime: '',
     endTime: '',
 })
+
+const cmdStatus = ref([
+    { label: '待下发', value: 0 },
+    { label: '已下发', value: 1 },
+    { label: '已送达', value: 2 },
+    { label: '已完成', value: 3 },
+    { label: '下发失败', value: 4 },
+    { label: '执行失败', value: 5 },
+    { label: '已取消', value: 6 },
+    { label: '超时', value: 7 },
+    { label: '已过期', value: 8 },
+])
 
 const tableRef = ref(null)
 const queryRef = ref(null)

@@ -61,7 +61,7 @@ public class TcpDeviceGateway implements DeviceGateway {
         // 启动服务
         tcpServer.start()
                 .handleConnection(tcpClient -> {
-                    log.info("客户端 {} 已连接", tcpClient.getId());
+                    log.info("TcpDeviceGateway 客户端 {} 已连接", tcpClient.getId());
                     clientStorage.put(tcpClient.getId(), tcpClient);
                     tcpClient
                             .onMessage(bytes -> {
@@ -169,8 +169,8 @@ public class TcpDeviceGateway implements DeviceGateway {
                     .setv("result", 0)
                     .setv("deviceId", message.getHeader("deviceId"))
                     .setv("commandId", message.getHeader("commandId"));
-            log.debug("发送指令 commandId: {}", message.getHeader("commandId"));
-            log.debug("指令信息 {}", ByteConvertUtil.bytesToHex(bytes));
+            log.debug("TcpDeviceGateway 发送指令 commandId: {}", message.getHeader("commandId"));
+            log.debug("TcpDeviceGateway 指令信息 {}", ByteConvertUtil.bytesToHex(bytes));
             if (null != client && null != bytes) {
                 if ("LuoMeiTe".equals(this.configuration.getId())) {
                     executor.schedule(() -> {

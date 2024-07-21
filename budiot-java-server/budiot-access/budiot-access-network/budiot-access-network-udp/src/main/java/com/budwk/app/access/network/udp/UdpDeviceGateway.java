@@ -75,7 +75,8 @@ public class UdpDeviceGateway implements DeviceGateway {
                     .setv("result", 0)
                     .setv("deviceId", message.getHeader("deviceId"))
                     .setv("commandId", message.getHeader("commandId"));
-            log.debug("发送指令 commandId: {}", message.getHeader("commandId"));
+            log.debug("UdpDeviceGateway 发送指令 commandId: {}", message.getHeader("commandId"));
+            log.debug("TcpDeviceGateway 指令信息 {}", ByteConvertUtil.bytesToHex(bytes));
             if (null != sender && null != bytes) {
                 server.send(sender, bytes).whenComplete((unused, throwable) -> {
                     if (null == throwable) {

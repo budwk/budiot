@@ -63,7 +63,7 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
             findIterable.limit(query.getPageSize());
             findIterable.skip((query.getPageNo() - 1) * query.getPageSize());
         }
-        findIterable.sort(Sorts.descending("startTime"));
+        findIterable.sort(Sorts.descending("ts"));
         MongoCursor<Document> cursor = findIterable.cursor();
         List<DeviceCmdDTO> data = new LinkedList<>();
         while (cursor.hasNext()) {

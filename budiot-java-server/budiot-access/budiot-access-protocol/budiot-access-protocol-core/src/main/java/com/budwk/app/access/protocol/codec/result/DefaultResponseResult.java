@@ -54,6 +54,7 @@ public class DefaultResponseResult implements DecodeResult {
         this.commandCode = responseMessage.getCommandCode();
         this.deviceId = responseMessage.getDeviceId();
         this.messages = Arrays.asList(responseMessage);
+        this.isLastFrame = true;
     }
 
     public DefaultResponseResult(String commandId, String deviceId, String commandCode, boolean success, List<DeviceMessage> messages) {
@@ -62,5 +63,15 @@ public class DefaultResponseResult implements DecodeResult {
         this.commandCode = commandCode;
         this.success = success;
         this.messages = messages;
+        this.isLastFrame = true;
+    }
+
+    public DefaultResponseResult(String commandId, String deviceId, String commandCode, boolean success, List<DeviceMessage> messages,boolean isLastFrame) {
+        this.commandId = commandId;
+        this.deviceId = deviceId;
+        this.commandCode = commandCode;
+        this.success = success;
+        this.messages = messages;
+        this.isLastFrame = isLastFrame;
     }
 }

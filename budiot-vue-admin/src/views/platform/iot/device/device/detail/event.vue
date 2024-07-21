@@ -34,7 +34,7 @@
                         :width="item.width"
                     >
                         <template v-if="item.prop == 'receive_time'" #default="scope">
-                            <span>{{ formatTime(scope.row.receive_time) }}</span>
+                            <span>{{ formatTime(scope.row.ts) }}</span>
                         </template>
                         <template v-if="item.prop == 'eventType'" #default="scope">
                             <span>{{ eventType[scope.row.eventType]?.label }}</span>
@@ -67,7 +67,7 @@ const id = route.params.id as string
 
 const columns = ref([
     { prop: 'ts', label: 'TS', show: true, fixed: 'left',width: 150,align: 'center' },
-    { prop: 'startTime', label: '事件时间', show: true, fixed: 'left',width: 180,align: 'center' },
+    { prop: 'receive_time', label: '事件时间', show: true, fixed: 'left',width: 180,align: 'center' },
     { prop: 'eventType', label: '事件类型', show: true, align: 'center' },
     { prop: 'eventName', label: '事件名称', show: true, align: 'center' },
     { prop: 'content', label: '事件内容', show: true, align: 'center' },

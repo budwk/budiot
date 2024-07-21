@@ -35,5 +35,12 @@ public class DefaultDecodeResult implements DecodeResult {
     public DefaultDecodeResult(String deviceId, List<DeviceMessage> messages) {
         this.deviceId = deviceId;
         this.messages = messages;
+        this.isLastFrame = true;
+    }
+
+    public DefaultDecodeResult(String deviceId, List<DeviceMessage> messages, boolean isLastFrame) {
+        this.deviceId = deviceId;
+        this.messages = messages;
+        this.isLastFrame = isLastFrame;
     }
 }

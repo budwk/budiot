@@ -23,8 +23,6 @@ public class DefaultMessageCodec implements MessageCodec {
 
     @Override
     public EncodeResult encode(EncodeContext context) {
-        byte[] bytes = "hello".getBytes();
-        TcpMessage tcpMessage = new TcpMessage(bytes, protocolCode);
-        return EncodeResult.createDefault(false, Arrays.asList(tcpMessage));
+        return new EncodeProcessor(context).process();
     }
 }

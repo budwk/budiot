@@ -8,6 +8,7 @@ import com.budwk.app.access.enums.TransportType;
 import com.budwk.app.access.network.config.DeviceGatewayConfiguration;
 import com.budwk.app.access.protocol.message.codec.EncodedMessage;
 import com.budwk.app.access.protocol.message.codec.HttpMessage;
+import com.budwk.app.access.protocol.utils.ByteConvertUtil;
 import com.budwk.starter.rocketmq.enums.ConsumeMode;
 import com.budwk.starter.rocketmq.enums.MessageModel;
 import io.netty.util.NetUtil;
@@ -188,7 +189,8 @@ public class HttpDeviceGateway implements DeviceGateway {
                     .setv("result", 0)
                     .setv("deviceId", message.getHeader("deviceId"))
                     .setv("commandId", message.getHeader("commandId"));
-            log.debug("发送指令 commandId: {}", message.getHeader("commandId"));
+            log.debug("HttpDeviceGateway 发送指令 commandId: {}", message.getHeader("commandId"));
+            log.debug("TcpDeviceGateway 指令信息 {}", ByteConvertUtil.bytesToHex(bytes));
             if (null != rtx) {
                 if (rtx.response().closed()) {
                     result.setv("result", -1).setv("msg", "未找到设备会话信息");
