@@ -91,6 +91,11 @@
                     class-name="small-padding fixed-width" width="150">
                     <template #default="scope">
                         <div>
+                            <el-tooltip content="详情" placement="top">
+                                <el-button
+    link type="primary" icon="View" @click="handleDetail(scope.row.id)"
+                                    v-permission="['iot.device.device']"></el-button>
+                            </el-tooltip>
                             <el-tooltip content="修改" placement="top">
                                 <el-button
     link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -169,12 +174,13 @@ v-for="(item, index) in props" :key="index" :label="item.name" :prop="item.name"
 <script setup lang="ts" >
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
+const router = useRouter()
 import { API_IOT_DEVICE_PRODUCT_DEVICE_LIST, getDeviceList, API_IOT_DEVICE_PRODUCT_DEVICE_IMPORT, API_IOT_DEVICE_PRODUCT_DEVICE_EXPORT, getDeviceProp,
     getDeviceInfo, doDeviceCreate, doDeviceUpdate, doDeviceDelete, doDeviceDeletes } from '/@/api/platform/iot/product'
 import { ElForm } from 'element-plus'
 
-const route = useRoute()
 const id = route.params.id as string
 
 const createRef = ref<InstanceType<typeof ElForm>>()
@@ -307,6 +313,10 @@ const handleDeletes = () => {
         tableRef.value?.query()
         modal.msgSuccess('删除成功')
     }).catch(() => { })
+}
+
+const handleDetail = (deviceId: string) => {
+    router.push({ path: `/platform/iot/device/detail/${deviceId}/base`, query: { fpid: id } })
 }
 
 // 提交新增

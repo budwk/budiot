@@ -38,13 +38,11 @@ export function getField(id: string) {
 }
 
 // 获取指令配置
-export function getCmdConfigList(id: string) {
+export function getCmdConfigList(data: any) {
     return request({
         url: API_IOT_DEVICE_DEVICE_CMD_CONFIG_LIST,
         method: 'POST',
-        data: {
-            deviceId: id
-        }
+        data: data
     })
 }
 

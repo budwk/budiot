@@ -146,9 +146,6 @@
                         </tbody>
                     </table>
                 </el-form-item>
-                <el-form-item label="指令说明" prop="note">
-                    <el-input type="textarea" v-model="formData.note" placeholder="下发指令说明" />
-                </el-form-item>
 
             </el-form>
             <template #footer>
@@ -214,7 +211,6 @@ const formData = ref({
     code: '',
     params: '',
     enabled: true,
-    note: '',
 })
 
 const formRules = ref({
@@ -291,7 +287,7 @@ const handleCreate = () => {
 
 
 const init = () => {
-    getCmdConfigList(id).then((res) => {
+    getCmdConfigList({deviceId: id}).then((res) => {
         cmdConfigList.value = res.data.list
         // cmdCongifMap = cmdConfigList 的 code name 映射
         cmdCongifMap.value = res.data.list.reduce((acc, cur) => {

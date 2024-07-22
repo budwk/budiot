@@ -60,7 +60,7 @@
               </el-card>
           </el-col>
         </el-row>
-        <el-row class="field-warp" :gutter="20">
+        <!--el-row class="field-warp" :gutter="20">
             <el-col :span="12">
                <el-row>
                     <el-col :span="24">通信成功率</el-col>
@@ -77,7 +77,7 @@
                     </el-col>
                </el-row>
             </el-col>
-        </el-row>
+        </el-row-->
     </div>
 </template>
 <script setup lang="ts">

@@ -289,6 +289,7 @@ public class IotDeviceController {
                     @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
                     @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
                     @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
                     @ApiFormParam(name = "endTime", example = "", description = "结束时间")
             }
@@ -297,12 +298,12 @@ public class IotDeviceController {
             implementation = Pagination.class
     )
     @SaCheckLogin
-    public Result<?> eventList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
-        Iot_device device = iotDeviceService.getField("protocolCode", deviceId);
-        if (device == null) {
-            return Result.error("设备不存在");
+    public Result<?> eventList(@Param("deviceId") String deviceId, @Param("productId") String productId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
+        if (Strings.isBlank(deviceId) && Strings.isBlank(productId)) {
+            return Result.error("设备ID与产品ID不可同时为空");
         }
         DeviceEventDataQuery eventDataQuery = new DeviceEventDataQuery();
+        eventDataQuery.setProductId(productId);
         eventDataQuery.setDeviceId(deviceId);
         eventDataQuery.setPageNo(pageNo);
         eventDataQuery.setPageSize(pageSize);
@@ -334,6 +335,7 @@ public class IotDeviceController {
                     @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
                     @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
                     @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
                     @ApiFormParam(name = "endTime", example = "", description = "结束时间")
             }
@@ -342,9 +344,17 @@ public class IotDeviceController {
             implementation = Pagination.class
     )
     @SaCheckLogin
-    public Result<?> cmdWaitList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
+    public Result<?> cmdWaitList(@Param("deviceId") String deviceId, @Param("productId") String productId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
+        if (Strings.isBlank(deviceId) && Strings.isBlank(productId)) {
+            return Result.error("设备ID与产品ID不可同时为空");
+        }
         Cnd cnd = Cnd.NEW();
-        cnd.and("deviceId", "=", deviceId);
+        if (Strings.isNotBlank(deviceId)) {
+            cnd.and("deviceId", "=", deviceId);
+        }
+        if (Strings.isNotBlank(productId)) {
+            cnd.and("productId", "=", productId);
+        }
         try {
             if (Strings.isNotBlank(startTime)) {
                 cnd.and("createTime", ">=", Times.parse("yyyy-MM-dd HH:mm:ss", startTime + " 00:00:00").getTime());
@@ -368,6 +378,7 @@ public class IotDeviceController {
                     @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
                     @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
                     @ApiFormParam(name = "startTime", example = "", description = "开始时间"),
                     @ApiFormParam(name = "endTime", example = "", description = "结束时间")
             }
@@ -376,9 +387,13 @@ public class IotDeviceController {
             implementation = Pagination.class
     )
     @SaCheckLogin
-    public Result<?> cmdDoneList(@Param("deviceId") String deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
+    public Result<?> cmdDoneList(@Param("deviceId") String deviceId, @Param("productId") String productId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize) {
+        if (Strings.isBlank(deviceId) && Strings.isBlank(productId)) {
+            return Result.error("设备ID与产品ID不可同时为空");
+        }
         DeviceCmdDataQuery cmdDataQuery = new DeviceCmdDataQuery();
         cmdDataQuery.setDeviceId(deviceId);
+        cmdDataQuery.setProductId(productId);
         cmdDataQuery.setPageNo(pageNo);
         cmdDataQuery.setPageSize(pageSize);
         try {
@@ -403,10 +418,11 @@ public class IotDeviceController {
     @At("/cmd/config/list")
     @Ok("json")
     @POST
-    @ApiOperation(name = "设备待执行指令")
+    @ApiOperation(name = "获取产品指令配置")
     @ApiFormParams(
             {
                     @ApiFormParam(name = "deviceId", example = "", description = "设备ID"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
             }
     )
     @ApiResponses(
@@ -416,15 +432,22 @@ public class IotDeviceController {
             }
     )
     @SaCheckLogin
-    public Result<?> cmdConfigList(@Param("deviceId") String deviceId) {
-        Iot_device device = iotDeviceService.getField("^(productId|deviceNo)$", deviceId);
-        if (device == null) {
-            return Result.error("设备不存在");
+    public Result<?> cmdConfigList(@Param("deviceId") String deviceId, @Param("productId") String productId) {
+        if (Strings.isNotBlank(deviceId)) {
+            Iot_device device = iotDeviceService.getField("^(productId|deviceNo)$", deviceId);
+            if (device == null) {
+                return Result.error("设备不存在");
+            }
+            Cnd cnd = Cnd.NEW();
+            cnd.and("productId", "=", device.getProductId());
+            return Result.data(NutMap.NEW().addv("device", device).addv("list", iotProductCmdService.query(cnd, "attrList")));
+        } else {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("productId", "=", productId);
+            return Result.data(NutMap.NEW().addv("device", null).addv("list", iotProductCmdService.query(cnd, "attrList")));
         }
-        Cnd cnd = Cnd.NEW();
-        cnd.and("productId", "=", device.getProductId());
-        return Result.data(NutMap.NEW().addv("device", device).addv("list", iotProductCmdService.query(cnd, "attrList")));
     }
+
 
     @At("/cmd/create")
     @Ok("json")

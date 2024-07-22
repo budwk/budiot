@@ -27,15 +27,16 @@ import { getName } from '/@/api/platform/iot/device'
 const route = useRoute()
 const router = useRouter()
 const id = route.params.id
+const fpid = route.query.fpid
 const device = ref(null)
-const activeIndex = route.fullPath.split(`/${id}/`)[1]
+const activeIndex = route.fullPath.split(`/${id}/`)[1].split('?')[0]
 
 const menuList = ref([
-    { id: 'base', name: '基本信息', path: '/platform/iot/device/detail/'+id+'/base' },
-    { id: 'data', name: '数据上报', path: '/platform/iot/device/detail/'+id+'/data' },
-    { id: 'event', name: '事件上报', path: '/platform/iot/device/detail/'+id+'/event' },
-    { id: 'raw', name: '通信报文', path: '/platform/iot/device/detail/'+id+'/raw' },
-    { id: 'cmd', name: '指令下发', path: '/platform/iot/device/detail/'+id+'/cmd' },
+    { id: 'base', name: '基本信息', path: '/platform/iot/device/detail/'+id+'/base'+(fpid ? `?fpid=${fpid}` : '') },
+    { id: 'data', name: '数据上报', path: '/platform/iot/device/detail/'+id+'/data'+(fpid ? `?fpid=${fpid}` : '') },
+    { id: 'event', name: '事件上报', path: '/platform/iot/device/detail/'+id+'/event'+(fpid ? `?fpid=${fpid}` : '') },
+    { id: 'raw', name: '通信报文', path: '/platform/iot/device/detail/'+id+'/raw'+(fpid ? `?fpid=${fpid}` : '') },
+    { id: 'cmd', name: '指令下发', path: '/platform/iot/device/detail/'+id+'/cmd'+(fpid ? `?fpid=${fpid}` : '') },
 ])
 
 const handleMenu = (key: string, keyPath: string[]) => {

@@ -85,7 +85,6 @@ const getValue = (prop: string, value: any) => {
     if (value === null || value === undefined) {
         return '-'
     }
-    console.log(prop,value)
     // 从 filedList 中获取对应的属性，如果是枚举类型，返回对应的 text
     const item = filedList.value.find(item => item.code === prop)
     if (item) {

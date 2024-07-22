@@ -41,7 +41,7 @@
                         </template>
                         <template v-if="item.prop == 'eventData'" #default="scope">
                             <el-row>
-                                <el-col v-for="(el, index) in scope.row.eventData" :key="index" :span="6">
+                                <el-col v-for="(el, index) in scope.row.eventData" :key="index" :span="12">
                                     <el-row>
                                         <el-col :span="8">{{ el.name }}：</el-col>
                                         <el-col :span="16">{{ el.value }}</el-col>
