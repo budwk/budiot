@@ -70,7 +70,7 @@ security:
     # Token 风格(默认可取值：uuid,simple-uuid,random-32,random-64,random-128,tik
     tokenStyle: random-64
 mongodb:
-  url: mongodb://127.0.0.1:27017/test
+  url: mongodb://budiot.com:27017/test
 
 redisson:
   # 集群/分片/主从等配置见 https://github.com/nutzam/nutzmore/tree/master/nutz-integration-redisson
