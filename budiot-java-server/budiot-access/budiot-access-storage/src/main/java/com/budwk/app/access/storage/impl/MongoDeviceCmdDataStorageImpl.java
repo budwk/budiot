@@ -93,10 +93,10 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
             conditions.add(Filters.eq("deviceId", query.getDeviceId()));
         }
         if (query.getStartTime() != null) {
-            conditions.add(Filters.gte("startTime", query.getStartTime()));
+            conditions.add(Filters.gte("createTime", query.getStartTime()));
         }
         if (query.getEndTime() != null) {
-            conditions.add(Filters.lte("startTime", query.getEndTime()));
+            conditions.add(Filters.lte("createTime", query.getEndTime()));
         }
         if (Strings.isNotBlank(query.getIds())) {
             List<ObjectId> ids = Arrays.stream(query.getIds().split(",")).map(i -> new ObjectId(i)).collect(Collectors.toList());
@@ -118,7 +118,7 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
             db.getNativeDB().createCollection(collectionName);
             collection = db.getNativeDB().getCollection(collectionName);
             collection.createIndexes(List.of(
-                    new IndexModel(Indexes.descending("startTime", "endTime")),
+                    new IndexModel(Indexes.descending("createTime")),
                     new IndexModel(Indexes.hashed("deviceId")),
                     new IndexModel(Indexes.hashed("productId")),
                     new IndexModel(Indexes.descending("ts"))

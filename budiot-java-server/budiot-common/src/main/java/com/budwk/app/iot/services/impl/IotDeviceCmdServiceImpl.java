@@ -41,9 +41,12 @@ public class IotDeviceCmdServiceImpl extends BaseServiceImpl<Iot_device_cmd> imp
             deviceCmdDTO.setParams(cmd.getParams());
             deviceCmdDTO.setCode(cmd.getCode());
             deviceCmdDTO.setTs(System.currentTimeMillis());
+            deviceCmdDTO.setCreateTime(cmd.getCreateTime());
             deviceCmdDTO.setFinishTime(System.currentTimeMillis());
-            if (Lang.isEmpty(deviceCmdDTO.getSendTime())) {
+            if (Lang.isEmpty(cmd.getSendTime())) {
                 deviceCmdDTO.setSendTime(deviceCmdDTO.getFinishTime());
+            } else {
+                deviceCmdDTO.setSendTime(cmd.getSendTime());
             }
             deviceCmdDTO.setStatus(status.value());
             deviceCmdDTO.setRespResult(result);
