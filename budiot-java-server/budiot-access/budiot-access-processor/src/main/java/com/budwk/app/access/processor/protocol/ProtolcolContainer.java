@@ -95,8 +95,8 @@ public class ProtolcolContainer {
     public void listen() {
         listenEvent();//设备事件(注册/注销)
         listenData();//数据上报
-        listenCmd();//指令发送(手动)
-        listenCmdResp();//指令回复(网关设备)
+        listenCmd();//指令发送
+        listenCmdDown();//指令下发状态更新(含网关设备)
     }
 
     private void listenEvent() {
@@ -201,11 +201,11 @@ public class ProtolcolContainer {
     }
 
     /**
-     * 监听网关设备指令回复
+     * 监听指令下发
      */
-    private void listenCmdResp() {
+    private void listenCmdDown() {
         // 指令回复使用 CLUSTERING模式，只需要一个处理即可
-        messageTransfer.subscribe("CONTAINER", TopicConstant.DEVICE_CMD_RESP,
+        messageTransfer.subscribe("CONTAINER", TopicConstant.DEVICE_CMD_DOWN,
                 "*", MessageModel.CLUSTERING, ConsumeMode.ORDERLY,
                 this::handleCmdResp);
     }
@@ -322,7 +322,7 @@ public class ProtolcolContainer {
                     rawData.setStartTime(System.currentTimeMillis());
                     if (!replyMessage.isSend()) {
                         Message<EncodedMessage> reply = new Message<>(message.getFrom(), replyMessage);
-                        reply.setFrom(TopicConstant.DEVICE_CMD_RESP);
+                        reply.setFrom(TopicConstant.DEVICE_CMD_DOWN);
                         reply.getHeaders().putAll(message.getHeaders());
                         messageTransfer.publish(reply);
                     }
@@ -628,7 +628,7 @@ public class ProtolcolContainer {
                         request.addHeader("sessionId", finalSessionId);
                         request.addHeader("commandId", commandInfo.getCommandId());
                         request.addHeader("deviceId", deviceId);
-                        request.setFrom(TopicConstant.DEVICE_CMD_RESP);
+                        request.setFrom(TopicConstant.DEVICE_CMD_DOWN);
                         messageTransfer.publish(request);
                     } else {
                         deviceRegistry.makeCommandSend(commandInfo.getCommandId());
