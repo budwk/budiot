@@ -17,10 +17,12 @@ import com.budwk.app.access.protocol.demo.enums.Command;
 import com.budwk.app.access.protocol.device.CommandInfo;
 import com.budwk.app.access.protocol.message.codec.TcpMessage;
 import com.budwk.app.access.protocol.utils.ByteConvertUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.nutz.lang.Lang;
 import org.nutz.lang.util.NutMap;
 
 
+@Slf4j
 public class EncodeProcessor {
     private final EncodeContext context;
     private final DeviceOperator deviceOperator;
@@ -43,6 +45,7 @@ public class EncodeProcessor {
         String code = commandInfo.getCommandCode();
         // 没有END指令则跳过
         if("END".equals(code)){
+            log.info("END");
             return null;
         }
         Command command = Command.from(code);

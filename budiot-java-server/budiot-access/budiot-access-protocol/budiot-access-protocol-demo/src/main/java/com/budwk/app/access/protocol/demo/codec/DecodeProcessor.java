@@ -74,9 +74,9 @@ public class DecodeProcessor {
                 List<DeviceMessage> messageList = new ArrayList<>();
                 messageList.add(deviceDataMessage);
                 messageList.add(deviceEventMessage);
+                this.sendToDevice("hi==>1".getBytes());
 
                 //回复消息（指令）=》发送给设备
-                this.sendToDevice("hi!".getBytes());
                 return new DefaultDecodeResult(deviceOperator.getDeviceId(), messageList);
             case "resp_cmd"://指令回复
                 String cmd = "VALVE_CONTROL";
@@ -92,6 +92,9 @@ public class DecodeProcessor {
                 String commandId = cacheStore.get(DemoProtocol.PROTOCOL_CODE + ":CMD_SEND_ID:" + cmd, String.class);
                 DefaultResponseResult cmdRespResult = new DefaultResponseResult(commandId, responseMessage);
                 cmdRespResult.setCommandCode(cmd);
+
+                this.sendToDevice("hi==>2".getBytes());
+
                 return cmdRespResult;
         }
         return null;

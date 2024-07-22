@@ -221,9 +221,8 @@ public class ProtolcolContainer {
         if (Strings.isBlank(deviceId) || Strings.isBlank(commandId)) {
             return;
         }
-        NutMap nutMap = (NutMap) message.getBody();
-        deviceRegistry.makeCommandFinish(commandId, DeviceCmdStatus.from(nutMap.getInt("result")).value(),  DeviceCmdStatus.from(nutMap.getInt("result")).getText());
-
+        // NutMap nutMap = (NutMap) message.getBody();
+        deviceRegistry.makeCommandSend(commandId);
     }
 
     /**
