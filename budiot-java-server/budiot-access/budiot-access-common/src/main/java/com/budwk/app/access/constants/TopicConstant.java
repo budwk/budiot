@@ -5,9 +5,9 @@ public class TopicConstant {
     public static final String DEVICE_DATA_UP = "device_data_up";
     // 指令下行队列topic
     public static final String DEVICE_CMD_DOWN = "device_cmd_down";
-    // 指令下行队列topic
+    // 设备事件topic
     public static final String DEVICE_EVENT = "device_event";
-    // 指令触发
+    // 指令发送topic
     public static final String DEVICE_CMD_TRIGGER = "device_cmd_trigger";
     // 业务处理器topic
     public static final String DEVICE_DATA_PROCESSOR = "device_data_processor";
