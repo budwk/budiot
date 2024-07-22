@@ -41,7 +41,7 @@ web:
 
 rocketmq:
   # 集群环境多个nameserver用;分割
-  nameserver-address: 127.0.0.1:9876
+  nameserver-address: 127.0.0.1:9999
   # 生产者组
   producer-group: web_producer
   producer-timeout: 1

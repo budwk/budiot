@@ -4,7 +4,7 @@ module.exports = {
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title
    */
-  title: 'BudIot',
+  title: 'BudIoT',
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#description
    */
@@ -60,7 +60,7 @@ module.exports = {
           collapsable: false,
           children: [
             '',
-            'using-vue',
+            'more',
           ]
         }
       ],

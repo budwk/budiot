@@ -1,6 +1,6 @@
 ---
 home: true
-tagline: BudIot 物联网设备接入平台
+tagline: BudIoT 物联网设备接入平台
 actionText: 快速上手 →
 actionLink: /guide/
 features:

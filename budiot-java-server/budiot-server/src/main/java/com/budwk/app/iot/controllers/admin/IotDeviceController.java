@@ -460,7 +460,7 @@ public class IotDeviceController {
             implementation = Iot_device_cmd.class
     )
     @ApiResponses
-    @SaCheckLogin
+    @SaCheckPermission("iot.device.device.cmd")
     public Result<?> cmdCrate(@Param("..") Iot_device_cmd deviceCmd) {
         deviceCmd.setSerialNo(0);
         deviceCmd.setStatus(DeviceCmdStatus.WAIT);
