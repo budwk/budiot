@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +43,27 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
     private ZMongoClient zMongoClient;
     @Inject
     private PropertiesProxy conf;
+
+    public void create(int next) {
+        LocalDate currentDate = LocalDate.now();
+        ZMongoDatabase db = zMongoClient.db();
+        for (int i = 0; i <= next; i++) {
+            LocalDate futureDate = currentDate.plusYears(i);
+            String collectionName = String.format("%s%04d", collection_name, futureDate.getYear());
+            MongoCollection<Document> collection;
+            if (!db.collectionExists(collectionName)) {
+                log.debug("集合 {} 不存在, 重新创建", collectionName);
+                db.getNativeDB().createCollection(collectionName);
+                collection = db.getNativeDB().getCollection(collectionName);
+                collection.createIndexes(List.of(
+                        new IndexModel(Indexes.descending("createTime")),
+                        new IndexModel(Indexes.hashed("deviceId")),
+                        new IndexModel(Indexes.hashed("productId")),
+                        new IndexModel(Indexes.descending("ts"))
+                ));
+            }
+        }
+    }
 
     @Override
     public void save(DeviceCmdDTO data) {
@@ -72,7 +94,7 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
             dto.setId(doc.getObjectId("_id").toHexString());
             data.add(dto);
         }
-        nutMap.addv("list",data);
+        nutMap.addv("list", data);
         return nutMap;
     }
 
@@ -110,20 +132,7 @@ public class MongoDeviceCmdDataStorageImpl implements DeviceCmdDataStorage {
         queryDate = null == queryDate ? LocalDate.now() : queryDate;
         String collectionName = String.format("%s%04d", collection_name, queryDate.getYear());
         ZMongoDatabase db = zMongoClient.db();
-        MongoCollection<Document> collection;
-        if (db.collectionExists(collectionName)) {
-            collection = db.getNativeDB().getCollection(collectionName);
-        } else {
-            log.debug("集合 {} 不存在, 重新创建", collectionName);
-            db.getNativeDB().createCollection(collectionName);
-            collection = db.getNativeDB().getCollection(collectionName);
-            collection.createIndexes(List.of(
-                    new IndexModel(Indexes.descending("createTime")),
-                    new IndexModel(Indexes.hashed("deviceId")),
-                    new IndexModel(Indexes.hashed("productId")),
-                    new IndexModel(Indexes.descending("ts"))
-            ));
-        }
+        MongoCollection<Document> collection = db.getNativeDB().getCollection(collectionName);
         return collection;
     }
 }

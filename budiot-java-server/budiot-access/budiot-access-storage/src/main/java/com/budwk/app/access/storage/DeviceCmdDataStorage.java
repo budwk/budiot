@@ -11,6 +11,11 @@ import java.util.List;
  */
 public interface DeviceCmdDataStorage {
     /**
+     * 提前创建集合
+     * @param next 未来N年
+     */
+    void create(int next);
+    /**
      * 存储上报数据
      *
      * @param deviceCmdDTO 设备基本信息

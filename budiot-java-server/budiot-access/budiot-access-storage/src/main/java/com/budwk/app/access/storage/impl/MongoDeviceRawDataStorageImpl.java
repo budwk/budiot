@@ -43,6 +43,35 @@ public class MongoDeviceRawDataStorageImpl implements DeviceRawDataStorage {
     private PropertiesProxy conf;
 
     @Override
+    public void create(int next) {
+        LocalDate currentDate = LocalDate.now();
+        ZMongoDatabase db = zMongoClient.db();
+        for (int i = 0; i <= next; i++) {
+            LocalDate futureDate = currentDate.plusDays(i);
+            // 获取年、月、日
+            int year = futureDate.getYear();
+            int month = futureDate.getMonthValue();
+            int day = futureDate.getDayOfMonth();
+            String collectionName = String.format("%s%04d%02d%02d", collection_name, year, month, day);
+            MongoCollection<Document> collection;
+            if (!db.collectionExists(collectionName)) {
+                log.debug("集合 {} 不存在, 重新创建", collectionName);
+                db.getNativeDB().createCollection(collectionName);
+                collection = db.getNativeDB().getCollection(collectionName);
+                collection.createIndexes(List.of(
+                        new IndexModel(Indexes.descending("startTime", "endTime")),
+                        new IndexModel(Indexes.hashed("deviceId")),
+                        new IndexModel(Indexes.hashed("productId")),
+                        new IndexModel(Indexes.descending("ts"),
+                                new IndexOptions()
+                                        .expireAfter(3600 * 24 * conf.getLong(StorageConstant.RAW_DATA_TTL_CONFIG_KEY,
+                                                StorageConstant.RAW_DATA_TTL_CONFIG_DEFAULT), TimeUnit.SECONDS))
+                ));
+            }
+        }
+    }
+
+    @Override
     public void save(DeviceRawDataDTO data) {
         Document document = new Document();
         data.setTs(System.currentTimeMillis());
@@ -109,23 +138,7 @@ public class MongoDeviceRawDataStorageImpl implements DeviceRawDataStorage {
         queryDate = null == queryDate ? LocalDate.now() : queryDate;
         String collectionName = String.format("%s%04d%02d%02d", collection_name, queryDate.getYear(), queryDate.getMonthValue(), queryDate.getDayOfMonth());
         ZMongoDatabase db = zMongoClient.db();
-        MongoCollection<Document> collection;
-        if (db.collectionExists(collectionName)) {
-            collection = db.getNativeDB().getCollection(collectionName);
-        } else {
-            log.debug("集合 {} 不存在, 重新创建", collectionName);
-            db.getNativeDB().createCollection(collectionName);
-            collection = db.getNativeDB().getCollection(collectionName);
-            collection.createIndexes(List.of(
-                    new IndexModel(Indexes.descending("startTime", "endTime")),
-                    new IndexModel(Indexes.hashed("deviceId")),
-                    new IndexModel(Indexes.hashed("productId")),
-                    new IndexModel(Indexes.descending("ts"),
-                            new IndexOptions()
-                                    .expireAfter(3600 * 24 * conf.getLong(StorageConstant.RAW_DATA_TTL_CONFIG_KEY,
-                                            StorageConstant.RAW_DATA_TTL_CONFIG_DEFAULT), TimeUnit.SECONDS))
-            ));
-        }
+        MongoCollection<Document> collection = db.getNativeDB().getCollection(collectionName);
         return collection;
     }
 }

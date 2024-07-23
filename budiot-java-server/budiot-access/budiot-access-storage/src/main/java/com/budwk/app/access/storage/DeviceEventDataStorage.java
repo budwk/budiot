@@ -10,6 +10,9 @@ import java.util.List;
  * 设备事件存储
  */
 public interface DeviceEventDataStorage {
+
+    void create(int next);
+
     void save(DeviceEventDataDTO data);
 
     NutMap list(DeviceEventDataQuery query);

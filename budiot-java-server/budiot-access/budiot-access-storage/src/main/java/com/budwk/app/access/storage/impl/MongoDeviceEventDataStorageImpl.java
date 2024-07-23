@@ -17,7 +17,6 @@ import org.bson.types.ObjectId;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
@@ -28,7 +27,6 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -43,6 +41,35 @@ public class MongoDeviceEventDataStorageImpl implements DeviceEventDataStorage {
     private ZMongoClient zMongoClient;
     @Inject
     private PropertiesProxy conf;
+
+    @Override
+    public void create(int next) {
+        LocalDate currentDate = LocalDate.now();
+        ZMongoDatabase db = zMongoClient.db();
+        for (int i = 0; i <= next; i++) {
+            LocalDate futureDate = currentDate.plusDays(i);
+            // 获取年、月、日
+            int year = futureDate.getYear();
+            int month = futureDate.getMonthValue();
+            int day = futureDate.getDayOfMonth();
+            String collectionName = String.format("%s%04d%02d%02d", collection_name, year, month, day);
+            MongoCollection<Document> collection;
+            if (!db.collectionExists(collectionName)) {
+                log.debug("集合 {} 不存在, 重新创建", collectionName);
+                db.getNativeDB().createCollection(collectionName);
+                collection = db.getNativeDB().getCollection(collectionName);
+                collection.createIndexes(List.of(
+                        new IndexModel(Indexes.descending("startTime", "endTime")),
+                        new IndexModel(Indexes.hashed("deviceId")),
+                        new IndexModel(Indexes.hashed("productId")),
+                        new IndexModel(Indexes.descending("ts"),
+                                new IndexOptions()
+                                        .expireAfter(3600 * 24 * conf.getLong(StorageConstant.EVENT_DATA_TTL_CONFIG_KEY,
+                                                StorageConstant.EVENT_DATA_TTL_CONFIG_DEFAULT), TimeUnit.SECONDS))
+                ));
+            }
+        }
+    }
 
     @Override
     public void save(DeviceEventDataDTO data) {
@@ -109,24 +136,6 @@ public class MongoDeviceEventDataStorageImpl implements DeviceEventDataStorage {
         queryDate = null == queryDate ? LocalDate.now() : queryDate;
         String collectionName = String.format("%s%04d%02d%02d", collection_name, queryDate.getYear(), queryDate.getMonthValue(), queryDate.getDayOfMonth());
         ZMongoDatabase db = zMongoClient.db();
-        MongoCollection<Document> collection;
-        if (db.collectionExists(collectionName)) {
-            // collectionExists 方法中存在listCollectionNames方法，会导致查询慢，所以在后面高并发的请求下可以改成定时任务提前创建好表
-            collection = db.getNativeDB().getCollection(collectionName);
-        } else {
-            log.debug("集合 {} 不存在, 重新创建", collectionName);
-            db.getNativeDB().createCollection(collectionName);
-            collection = db.getNativeDB().getCollection(collectionName);
-            collection.createIndexes(List.of(
-                    new IndexModel(Indexes.descending("startTime", "endTime")),
-                    new IndexModel(Indexes.hashed("deviceId")),
-                    new IndexModel(Indexes.hashed("productId")),
-                    new IndexModel(Indexes.descending("ts"),
-                            new IndexOptions()
-                                    .expireAfter(3600 * 24 * conf.getLong(StorageConstant.EVENT_DATA_TTL_CONFIG_KEY,
-                                            StorageConstant.EVENT_DATA_TTL_CONFIG_DEFAULT), TimeUnit.SECONDS))
-            ));
-        }
-        return collection;
+        return db.getNativeDB().getCollection(collectionName);
     }
 }

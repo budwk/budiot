@@ -70,7 +70,17 @@ security:
     # Token 风格(默认可取值：uuid,simple-uuid,random-32,random-64,random-128,tik
     tokenStyle: random-64
 mongodb:
-  url: mongodb://budiot.com:27017/test
+  url: mongodb://127.0.0.1:27017/test
+
+
+device:
+  # 设备事件表、原始报文表自动删除时间配置，单位天
+  storage:
+    ttl:
+      # 原始报文，默认30天
+      raw: 30
+      # 事件上报，默认90天
+      event: 30
 
 redisson:
   # 集群/分片/主从等配置见 https://github.com/nutzam/nutzmore/tree/master/nutz-integration-redisson

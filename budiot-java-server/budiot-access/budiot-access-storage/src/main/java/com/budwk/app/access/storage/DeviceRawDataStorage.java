@@ -10,6 +10,8 @@ import java.util.List;
  * 原始报文存储
  */
 public interface DeviceRawDataStorage {
+    void create(int next);
+
     void save(DeviceRawDataDTO data);
 
     NutMap list(DeviceRawDataQuery query);

@@ -12,6 +12,7 @@ import java.util.Map;
  * 设备数据存储
  */
 public interface DeviceDataStorage {
+
     /**
      * 存储上报数据
      *
