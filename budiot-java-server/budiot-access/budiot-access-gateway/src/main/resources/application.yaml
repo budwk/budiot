@@ -9,6 +9,13 @@ gateway:
       port: 9003 # 端口号
       host: '0.0.0.0' # 绑定的host，默认 0.0.0.0
       payloadType: string # 数据类型，可选 hex 和 string 默认 hex
+  MODBUSDEMO: # 和设备协议标识一致
+    transport: modbusSlave # 固定 modbusSlave
+    protocolCode: MODBUSDEMO  # 设备协议标识
+    properties: # 网关的配置参数
+      port: 9008 # 端口号
+      host: '0.0.0.0' # 绑定的host，默认 0.0.0.0
+      payloadType: hex # 数据类型，可选 hex 和 string 默认 hex
 
 rocketmq:
   # 集群环境多个nameserver用;分割

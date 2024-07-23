@@ -25,7 +25,7 @@ rocketmq:
   consumer-thread-min: 5
 
 mongodb:
-  url: mongodb://127.0.0.1:27017/test
+  url: mongodb://budiot.com:27017/test
 
 redisson:
   # 集群/分片/主从等配置见 https://github.com/nutzam/nutzmore/tree/master/nutz-integration-redisson

@@ -61,6 +61,7 @@ public class DecodeProcessor {
                 deviceDataMessage.addProperty("temp", map.getDouble("temp"));
                 // 模拟事件告警
                 DeviceEventMessage deviceEventMessage = new DeviceEventMessage();
+                deviceEventMessage.setSourceType(0);
                 deviceEventMessage.setDeviceId(deviceOperator.getDeviceId());
                 deviceEventMessage.setTimestamp(System.currentTimeMillis());
                 deviceEventMessage.setEventType(DeviceEventMessage.Type.ALARM.name());

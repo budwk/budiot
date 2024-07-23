@@ -42,6 +42,18 @@
             <artifactId>budiot-access-network-mqtt</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- modbus master 网关 -->
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-network-modbus-master</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- modbus slave 网关 -->
+        <dependency>
+            <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-network-modbus-slave</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.budwk.app</groupId>
             <artifactId>budiot-access-network-common</artifactId>

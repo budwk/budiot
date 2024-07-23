@@ -17,6 +17,8 @@
         <module>budiot-access-network-http</module>
         <module>budiot-access-network-common</module>
         <module>budiot-access-network-mqtt</module>
+        <module>budiot-access-network-modbus-master</module>
+        <module>budiot-access-network-modbus-slave</module>
     </modules>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

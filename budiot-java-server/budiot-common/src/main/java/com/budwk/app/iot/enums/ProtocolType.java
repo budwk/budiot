@@ -14,7 +14,8 @@ public enum ProtocolType {
     MQTT("MQTT", "MQTT"),
     LWM2M("LWM2M", "LWM2M"),
     COAP("COAP", "COAP"),
-    HTTP("HTTP", "HTTP");
+    HTTP("HTTP", "HTTP"),
+    MODBUS("MODBUS", "MODBUS");
 
     private String value;
     private String text;
