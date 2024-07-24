@@ -11,11 +11,13 @@ import com.budwk.app.access.protocol.message.codec.EncodedMessage;
 public interface DecodeContext {
     /**
      * 获取资源装载对象
+     *
      * @return
      */
     default DeviceRegistry getDeviceRegistry() {
         return null;
     }
+
     /**
      * 获取上报的消息
      *
@@ -24,12 +26,21 @@ public interface DecodeContext {
     EncodedMessage getMessage();
 
     /**
-     * 根据指定字段获取设备信息
+     * 根据设备通信号取设备信息
      *
      * @param deviceNo 设备通信号
      * @return 设备信息
      */
     DeviceOperator getDeviceByNo(String deviceNo);
+
+    /**
+     * 根据指定字段获取设备信息
+     *
+     * @param fieldName  字段名称
+     * @param fieldValue 字段值
+     * @return
+     */
+    DeviceOperator getDeviceByField(String fieldName, String fieldValue);
 
     /**
      * 根据指定字段获取设备信息

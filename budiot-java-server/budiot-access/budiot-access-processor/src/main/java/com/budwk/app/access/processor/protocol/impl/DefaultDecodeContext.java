@@ -43,6 +43,7 @@ public abstract class DefaultDecodeContext implements DecodeContext {
 
     /**
      * 通过设备通信号获取对象
+     *
      * @param deviceNo 设备通信号
      * @return
      */
@@ -56,7 +57,24 @@ public abstract class DefaultDecodeContext implements DecodeContext {
     }
 
     /**
+     * 通过设备imei获取对象
+     *
+     * @param fieldName  字段名称
+     * @param fieldValue 字段值
+     * @return
+     */
+    @Override
+    public DeviceOperator getDeviceByField(String fieldName, String fieldValue) {
+        if (null != deviceOperator && Strings.sBlank(deviceOperator.getProperty("protocolCode")).equals(protocolCode) && Strings.sBlank(deviceOperator.getProperty(fieldName)).equals(fieldValue)) {
+            return deviceOperator;
+        }
+        this.deviceOperator = deviceRegistry.getDeviceOperator(protocolCode, fieldName, fieldValue);
+        return this.deviceOperator;
+    }
+
+    /**
      * 通过设备ID获取对象
+     *
      * @param deviceId 设备ID
      * @return
      */

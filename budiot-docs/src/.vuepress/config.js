@@ -56,11 +56,20 @@ module.exports = {
     sidebar: {
       '/guide/': [
         {
-          title: '指南',
-          collapsable: false,
+          title: '介绍',
+          collapsable: true,
           children: [
             '',
-            'more',
+          ]
+        },
+        {
+          title: '开发指南',
+          collapsable: true,
+          children: [
+            'develop',
+            'deploy',
+            'network',
+            'device',
           ]
         }
       ],

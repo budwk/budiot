@@ -55,6 +55,18 @@ public class DefaultDeviceRegistry implements DeviceRegistry {
     }
 
     @Override
+    public DeviceOperator getDeviceOperator(String protocolCode, String fieldName, String fieldValue) {
+        Iot_device device = iotDeviceService.fetch(Cnd.where("protocolCode", "=", protocolCode).and(fieldName, "=", fieldValue));
+        if (device == null) {
+            return null;
+        }
+        Iot_product product = iotProductService.fetch(device.getProductId());
+        // 设置设备缓存,后续 processor 从缓存获取设备及产品数据
+        iotDeviceService.setCache(device, product);
+        return this.buildDefaultOperator(device, product);
+    }
+
+    @Override
     public DeviceOperator getDeviceOperator(String deviceId) {
         Iot_device device = iotDeviceService.fetch(Cnd.where("id", "=", deviceId));
         if (device == null) {

@@ -15,19 +15,29 @@ public interface DeviceRegistry {
      * 如果是网关设备，调用这个接口获取
      *
      * @param protocolCode 协议标识
-     * @param deviceNo 设备通信号
+     * @param deviceNo     设备通信号
      * @return
      */
     DeviceOperator getGatewayDevice(String protocolCode, String deviceNo);
 
     /**
-     * 通过指定字段获取设备
+     * 通过设备通信号获取设备
      *
      * @param protocolCode 协议标识
-     * @param deviceNo 设备通信号
+     * @param deviceNo     设备通信号
      * @return
      */
     DeviceOperator getDeviceOperator(String protocolCode, String deviceNo);
+
+    /**
+     * 通过指定字段获取设备
+     *
+     * @param protocolCode 协议标识
+     * @param fieldName    字段名称
+     * @param fieldValue   字段值
+     * @return
+     */
+    DeviceOperator getDeviceOperator(String protocolCode, String fieldName, String fieldValue);
 
     /**
      * 通过设备id获取设备
@@ -46,6 +56,7 @@ public interface DeviceRegistry {
     CommandInfo getDeviceCommand(String deviceId);
 
     ProductInfo getProductInfo(String productId);
+
     /**
      * 设置设备在线状态
      *
@@ -55,5 +66,5 @@ public interface DeviceRegistry {
 
     void makeCommandSend(String cmdId);
 
-    void makeCommandFinish(String cmdId,int status,String result);
+    void makeCommandFinish(String cmdId, int status, String result);
 }

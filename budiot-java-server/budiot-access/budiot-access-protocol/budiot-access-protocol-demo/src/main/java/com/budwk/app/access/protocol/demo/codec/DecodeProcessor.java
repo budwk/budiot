@@ -45,7 +45,7 @@ public class DecodeProcessor {
         String functionCode = map.getString("functionCode"); //功能码
         String deviceNo = map.getString("deviceNo"); //设备通信号
         DeviceOperator deviceOperator = context.getDeviceByNo(deviceNo);
-
+        // 通过 imei 获取设备 context.getDeviceByField("imei","");
         switch (functionCode) {
             case "up_data"://数据上报
 
