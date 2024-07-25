@@ -119,10 +119,10 @@ public class MongoDeviceEventDataStorageImpl implements DeviceEventDataStorage {
             conditions.add(Filters.eq("deviceId", query.getDeviceId()));
         }
         if (query.getStartTime() != null) {
-            conditions.add(Filters.gte("startTime", query.getStartTime()));
+            conditions.add(Filters.gte("ts", query.getStartTime()));
         }
         if (query.getEndTime() != null) {
-            conditions.add(Filters.lte("startTime", query.getEndTime()));
+            conditions.add(Filters.lte("ts", query.getEndTime()));
         }
         if (Strings.isNotBlank(query.getIds())) {
             List<ObjectId> ids = Arrays.stream(query.getIds().split(",")).map(i -> new ObjectId(i)).collect(Collectors.toList());
