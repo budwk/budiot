@@ -183,6 +183,26 @@ const staticRoutes: Array<RouteRecordRaw> = [
                 },
             },
             {
+                path: 'dtuparam',
+                component: () => import('/@/views/platform/iot/device/product/dtuparam/index.vue'),
+                meta: {
+                    title: 'DTU参数管理',
+                    jump: true,
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
+                },
+            },
+            {
+                path: 'firmware',
+                component: () => import('/@/views/platform/iot/device/product/firmware/index.vue'),
+                meta: {
+                    title: '固件管理',
+                    jump: true,
+                    layout: "platform/index",
+                    activeMenu: '/platform/iot/device/product'
+                },
+            },
+            {
                 path: 'config',
                 component: () => import('/@/views/platform/iot/device/product/config/index.vue'),
                 meta: {

@@ -11,6 +11,7 @@ public enum IotPlatform {
     DIRECT("DIRECT", "设备直连"),
     AEP("AEP", "电信AEP平台"),
     ONENET("ONENET", "移动OneNet平台"),
+    OPENLUATDTU("OPENLUATDTU","合宙DTU平台"),
     OTHER("OTHER", "其他");
 
     private String value;

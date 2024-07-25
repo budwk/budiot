@@ -8,6 +8,7 @@ public enum DeviceType {
     ALARM("ALARM", "报警器"),
     GATEWAY("GATEWAY", "网关"),
     COLLECTOR("COLLECTOR", "采集器"),
+    DTU("COLLECTOR", "DTU"),
     VALVE("VALVE", "阀控"),
     ONOFF("ONOFF", "开关"),
     CAMARA("CAMARA", "摄像头"),

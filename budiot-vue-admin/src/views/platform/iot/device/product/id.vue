@@ -30,12 +30,15 @@ const id = route.params.id
 const product = ref(null)
 const activeIndex = route.fullPath.split(`/${id}/`)[1]
 
-const menuList = ref([
+const menuList = ref([])
+const menuListSys = ref([
     { id: 'detail', name: '基本信息', path: '/platform/iot/device/product/'+id+'/detail' },
     { id: 'device', name: '设备列表', path: '/platform/iot/device/product/'+id+'/device' },
     { id: 'event', name: '事件列表', path: '/platform/iot/device/product/'+id+'/event' },
     { id: 'command', name: '指令列表', path: '/platform/iot/device/product/'+id+'/command' },
     { id: 'subscribe', name: '订阅管理', path: '/platform/iot/device/product/'+id+'/subscribe' },
+    { id: 'dtuparam', name: 'DTU参数管理', path: '/platform/iot/device/product/'+id+'/dtuparam' },
+    { id: 'firmware', name: '固件管理', path: '/platform/iot/device/product/'+id+'/firmware' },
     { id: 'config', name: '产品配置', path: '/platform/iot/device/product/'+id+'/config' }
 ])
 
@@ -50,6 +53,12 @@ const handleMenu = (key: string, keyPath: string[]) => {
 const getProduct = async () => {
     const res = await getInfo(id)
     product.value = res.data
+    const menus = product.value?.menus
+    // 遍历 menus，如果 display 为false，则从menuList中删除
+    menuList.value = menuListSys.value.filter((el) => {
+        return menus.find((menu) => menu.code === el.id && menu.display)
+    })
+
 }
 
 onMounted(() => {

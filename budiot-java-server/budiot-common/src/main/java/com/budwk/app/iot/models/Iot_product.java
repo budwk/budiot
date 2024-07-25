@@ -12,6 +12,7 @@ import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.interceptor.annotation.PrevInsert;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -59,7 +60,7 @@ public class Iot_product extends BaseModel implements Serializable {
     private String protocolId;
 
     @Column
-    @ColDefine(type = ColType.VARCHAR, width = 10)
+    @ColDefine(type = ColType.VARCHAR, width = 20)
     @Comment("接入平台")
     @ApiModelProperty(name = "iotPlatform", description = "接入平台")
     private IotPlatform iotPlatform;
@@ -92,4 +93,7 @@ public class Iot_product extends BaseModel implements Serializable {
 
     @One(field = "classifyId")
     private Iot_classify classify;
+
+    @Many(field = "productId")
+    private List<Iot_product_menu> menus;
 }

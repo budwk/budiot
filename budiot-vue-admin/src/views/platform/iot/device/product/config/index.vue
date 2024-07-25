@@ -24,6 +24,7 @@ import deviceAttr from "./deviceAttr.vue"
 import deviceProp from "./deviceProp.vue"
 import deviceEvent from "./deviceEvent.vue"
 import deviceCmd from "./deviceCmd.vue"
+import productMenu from "./productMenu.vue"
 
 const activeTab = ref('deviceAttr')
 const activeBlock = shallowRef(deviceAttr)
@@ -32,7 +33,8 @@ const tabList = ref([
     { name: 'deviceAttr', text: '参数配置' },
     { name: 'deviceProp', text: '属性配置' },
     { name: 'deviceEvent', text: '事件配置' },
-    { name: 'deviceCmd', text: '指令配置' }
+    { name: 'deviceCmd', text: '指令配置' },
+    { name: 'productMenu', text: '产品菜单' }
 ])
 
 const tabChange = (val: any) => {
@@ -52,6 +54,10 @@ const tabChange = (val: any) => {
         case 'deviceCmd':
             activeTab.value = 'deviceCmd'
             activeBlock.value = deviceCmd
+            break
+        case 'productMenu':
+            activeTab.value = 'productMenu'
+            activeBlock.value = productMenu
             break
     }
 }

@@ -110,7 +110,7 @@ public class IotProductController {
     public Result<?> create(@Param("..") Iot_product product, HttpServletRequest req) {
         product.setCreatedBy(SecurityUtil.getUserId());
         product.setUpdatedBy(SecurityUtil.getUserId());
-        iotProductService.insert(product);
+        iotProductService.create(product);
         return Result.success();
     }
 
@@ -162,7 +162,7 @@ public class IotProductController {
     @ApiResponses
     public Result<?> get(String id, HttpServletRequest req) {
         Iot_product product = iotProductService.fetch(id);
-        iotProductService.fetchLinks(product, "^(protocol|classify)$");
+        iotProductService.fetchLinks(product, "^(protocol|classify|menus)$");
         return Result.success(product);
     }
 
