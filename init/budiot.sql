@@ -11,7 +11,7 @@
  Target Server Version : 100602 (10.6.2-MariaDB-1:10.6.2+maria~focal)
  File Encoding         : 65001
 
- Date: 26/07/2024 10:37:39
+ Date: 26/07/2024 10:47:11
 */
 
 SET NAMES utf8mb4;
@@ -246,6 +246,7 @@ CREATE TABLE `iot_device` (
   `imei` varchar(32) DEFAULT NULL COMMENT 'IMEI',
   `iccid` varchar(32) DEFAULT NULL COMMENT 'ICCID',
   `iotPlatformId` varchar(255) DEFAULT NULL COMMENT '第三方IOT平台设备id',
+  `version` varchar(50) DEFAULT NULL COMMENT '固件版本号',
   `abnormal` tinyint(8) DEFAULT 0 COMMENT '设备状态',
   `online` tinyint(1) DEFAULT 0 COMMENT '在线状态',
   `lastConnectionTime` bigint(64) DEFAULT NULL COMMENT '最新通讯连接时间',
@@ -267,7 +268,7 @@ CREATE TABLE `iot_device` (
 -- Records of iot_device
 -- ----------------------------
 BEGIN;
-INSERT INTO `iot_device` (`id`, `deviceType`, `classifyId`, `productId`, `parentId`, `protocolId`, `protocolCode`, `deviceNo`, `meterNo`, `lat`, `lng`, `imei`, `iccid`, `iotPlatformId`, `abnormal`, `online`, `lastConnectionTime`, `createdBy`, `createdAt`, `updatedBy`, `updatedAt`, `delFlag`, `valveState`, `abnormalTime`, `lastDataTime`) VALUES ('8609635251631621', 'METER', '8434577462264773', '8434693078451461', NULL, '8434586829587461', 'DEMO', 'demo2', '', NULL, NULL, '', '', NULL, 0, 1, 1721876987724, 'aa25ffba4cc84cb4bc95105de955f075', 1713509010209, 'aa25ffba4cc84cb4bc95105de955f075', 1713509010209, 0, -1, NULL, NULL);
+INSERT INTO `iot_device` (`id`, `deviceType`, `classifyId`, `productId`, `parentId`, `protocolId`, `protocolCode`, `deviceNo`, `meterNo`, `lat`, `lng`, `imei`, `iccid`, `iotPlatformId`, `version`, `abnormal`, `online`, `lastConnectionTime`, `createdBy`, `createdAt`, `updatedBy`, `updatedAt`, `delFlag`, `valveState`, `abnormalTime`, `lastDataTime`) VALUES ('8609635251631621', 'METER', '8434577462264773', '8434693078451461', NULL, '8434586829587461', 'DEMO', 'demo2', '', NULL, NULL, '', '', NULL, NULL, 0, 1, 1721876987724, 'aa25ffba4cc84cb4bc95105de955f075', 1713509010209, 'aa25ffba4cc84cb4bc95105de955f075', 1713509010209, 0, -1, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -4503,7 +4504,7 @@ CREATE TABLE `sys_qrtz_scheduler_state` (
 -- Records of sys_qrtz_scheduler_state
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_qrtz_scheduler_state` (`SCHED_NAME`, `INSTANCE_NAME`, `LAST_CHECKIN_TIME`, `CHECKIN_INTERVAL`) VALUES ('defaultScheduler', 'WIZZER-M1.local1721960771013', 1721961444025, 20000);
+INSERT INTO `sys_qrtz_scheduler_state` (`SCHED_NAME`, `INSTANCE_NAME`, `LAST_CHECKIN_TIME`, `CHECKIN_INTERVAL`) VALUES ('defaultScheduler', 'WIZZER-M1.local1721960771013', 1721962024748, 20000);
 COMMIT;
 
 -- ----------------------------

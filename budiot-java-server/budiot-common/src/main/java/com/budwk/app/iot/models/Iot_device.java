@@ -98,29 +98,34 @@ public class Iot_device extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("IMEI")
     @Excel(name = "IMEI", cellType = Excel.ColumnType.STRING, prompt = "IMEI")
+    @ApiModelProperty(description = "IMEI")
     private String imei;
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Comment("ICCID")
     @Excel(name = "ICCID", cellType = Excel.ColumnType.STRING, prompt = "ICCID")
+    @ApiModelProperty(description = "ICCID")
     private String iccid;
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 255)
     @Comment("第三方IOT平台设备id")
     @Excel(name = "第三方设备编号", cellType = Excel.ColumnType.STRING, prompt = "第三方设备编号", type = Excel.Type.EXPORT)
+    @ApiModelProperty(description = "第三方设备编号")
     private String iotPlatformId;
 
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 50)
     @Comment("固件版本号")
     @Excel(name = "固件版本号", cellType = Excel.ColumnType.STRING, prompt = "固件版本号")
+    @ApiModelProperty(description = "固件版本号")
     private String version;
 
     @Column
     @ColDefine(type = ColType.INT)
     @Comment("阀门/开关状态")
+    @ApiModelProperty(description = "阀门状态")
     private DeviceValveState valveState;
 
     @Column

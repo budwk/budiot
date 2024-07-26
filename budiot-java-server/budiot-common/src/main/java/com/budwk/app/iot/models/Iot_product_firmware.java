@@ -12,12 +12,12 @@ import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table("iot_product_menu")
+@Table("iot_product_firmware")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
-@Comment("产品菜单表")
-@ApiModel(description = "产品菜单配置")
-@TableIndexes({@Index(name = "IDX_PRO_MENU", fields = {"productId", "code"}, unique = true)})
-public class Iot_product_menu extends BaseModel implements Serializable {
+@Comment("产品固件表")
+@ApiModel(description = "产品固件")
+@TableIndexes({@Index(name = "IDX_PRO_FIRMWARE", fields = {"productId", "code"}, unique = true)})
+public class Iot_product_firmware extends BaseModel implements Serializable {
     @Column
     @Name
     @ColDefine(type = ColType.VARCHAR, width = 32)
@@ -33,28 +33,34 @@ public class Iot_product_menu extends BaseModel implements Serializable {
     private String productId;
 
     @Column
-    @Comment("菜单名称")
+    @Comment("固件名称")
     @ColDefine(type = ColType.VARCHAR, width = 50)
-    @ApiModelProperty(description = "菜单名称")
+    @ApiModelProperty(description = "固件名称")
     private String name;
 
     @Column
-    @Comment("菜单标识")
     @ColDefine(type = ColType.VARCHAR, width = 50)
-    @ApiModelProperty(name = "code", description = "菜单标识(两个字符以上，并以字母开头，字母、数字、_、-组合，结尾为字母或数字)", required = true, check = true, regex = "^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$")
-    private String code;
+    @Comment("固件版本号")
+    @ApiModelProperty(description = "固件版本号")
+    private String version;
 
     @Column
-    @Comment("是否显示")
+    @Comment("是否启用")
     @ColDefine(type = ColType.BOOLEAN)
     @Default("1")
-    @ApiModelProperty(description = "是否显示")
-    private Boolean display;
+    @ApiModelProperty(description = "是否启用")
+    private Boolean enabled;
 
     @Column
-    @Comment("是否系统内置")
+    @Comment("升级所有")
     @ColDefine(type = ColType.BOOLEAN)
     @Default("0")
-    @ApiModelProperty(description = "是否系统内置")
-    private Boolean sys;
+    @ApiModelProperty(description = "是否所有设备都需要升级")
+    private Boolean allUpgrade;
+
+    @Column
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    @Comment("固件文件路径")
+    @ApiModelProperty(description = "固件文件路径")
+    private String path;
 }
