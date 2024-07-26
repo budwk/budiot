@@ -16,7 +16,7 @@ import java.io.Serializable;
 @TableMeta("{'mysql-charset':'utf8mb4'}")
 @Comment("产品固件表")
 @ApiModel(description = "产品固件")
-@TableIndexes({@Index(name = "IDX_PRO_FIRMWARE", fields = {"productId", "code"}, unique = true)})
+@TableIndexes({@Index(name = "IDX_PRO_FIRMWARE", fields = {"productId"}, unique = false)})
 public class Iot_product_firmware extends BaseModel implements Serializable {
     @Column
     @Name
@@ -63,4 +63,10 @@ public class Iot_product_firmware extends BaseModel implements Serializable {
     @Comment("固件文件路径")
     @ApiModelProperty(description = "固件文件路径")
     private String path;
+
+    @Column
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    @Comment("固件说明")
+    @ApiModelProperty(description = "固件说明")
+    private String note;
 }

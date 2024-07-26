@@ -56,6 +56,16 @@ export const API_IOT_DEVICE_PRODUCT_SUB_ENABLED = '/iot/admin/device/product/sub
 // 产品菜单
 export const API_IOT_DEVICE_PRODUCT_MENU_LIST = '/iot/admin/device/product/menu/list'
 export const API_IOT_DEVICE_PRODUCT_MENU_CHANGE = '/iot/admin/device/product/menu/change'
+// 固件管理
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_LIST = '/iot/admin/device/product/firmware/list'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_GET = '/iot/admin/device/product/firmware/get/'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_CREATE = '/iot/admin/device/product/firmware/create'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DELETE = '/iot/admin/device/product/firmware/delete'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_UPDATE = '/iot/admin/device/product/firmware/update'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_LIST = '/iot/admin/device/product/firmware/device/list'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_IMPORT = '/iot/admin/device/product/firmware/device/import'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_INSERT = '/iot/admin/device/product/firmware/device/insert'
+export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_DELETE = '/iot/admin/device/product/firmware/device/delete'
 
 
 import request from '/@/utils/request'
@@ -415,6 +425,61 @@ export function getMenuList(data: object = {}) {
 export function doMenuChange(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_MENU_CHANGE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getFirmwareList(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_FIRMWARE_LIST,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getFirmwareInfo(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_FIRMWARE_GET + id + '?t=' + new Date().getTime(),
+        method: 'GET'
+    })
+}
+
+export function doFirmwareCreate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_FIRMWARE_CREATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doFirmwareUpdate(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_FIRMWARE_UPDATE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doFirmwareDelete(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_FIRMWARE_DELETE,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doFirmwareDeviceInsert(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_INSERT,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doFirmwareDeviceDelete(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_DELETE,
         method: 'POST',
         data: data
     })

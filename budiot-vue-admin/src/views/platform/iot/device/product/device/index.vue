@@ -225,8 +225,8 @@ const data = reactive({
         productId: id,
         filedName: 'deviceNo',
         filedValue: '',
-        pageOrderName: '',
-        pageOrderBy: '',
+        pageOrderName: 'createdAt',
+        pageOrderBy: 'desc',
     },
     formRules: {
         deviceNo: [{ required: true, message: "设备通信号不能为空", trigger: ["blur", "change"] }],

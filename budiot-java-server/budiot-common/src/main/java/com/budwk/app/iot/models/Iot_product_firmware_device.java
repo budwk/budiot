@@ -2,6 +2,7 @@ package com.budwk.app.iot.models;
 
 import com.budwk.starter.common.openapi.annotation.ApiModelProperty;
 import com.budwk.starter.database.model.BaseModel;
+import com.budwk.starter.excel.annotation.Excel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.nutz.dao.entity.annotation.*;
@@ -29,6 +30,11 @@ public class Iot_product_firmware_device extends BaseModel implements Serializab
     private String productId;
 
     @Column
+    @Comment("固件ID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String firmwareId;
+
+    @Column
     @Comment("设备ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String deviceId;
@@ -36,10 +42,12 @@ public class Iot_product_firmware_device extends BaseModel implements Serializab
     @Column
     @Comment("设备通信号")
     @ColDefine(type = ColType.VARCHAR, width = 32)
+    @Excel(name = "设备通信号", cellType = Excel.ColumnType.STRING, prompt = "设备通信号")
     private String deviceNo;
 
     @Column
     @Comment("设备IMEI")
     @ColDefine(type = ColType.VARCHAR, width = 32)
+    @Excel(name = "IMEI", cellType = Excel.ColumnType.STRING, prompt = "IMEI")
     private String imei;
 }
