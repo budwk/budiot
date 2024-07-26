@@ -113,6 +113,12 @@ public class Iot_device extends BaseModel implements Serializable {
     private String iotPlatformId;
 
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    @Comment("固件版本号")
+    @Excel(name = "固件版本号", cellType = Excel.ColumnType.STRING, prompt = "固件版本号")
+    private String version;
+
+    @Column
     @ColDefine(type = ColType.INT)
     @Comment("阀门/开关状态")
     private DeviceValveState valveState;

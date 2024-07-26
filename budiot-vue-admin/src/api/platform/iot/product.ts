@@ -53,6 +53,10 @@ export const API_IOT_DEVICE_PRODUCT_SUB_CREATE = '/iot/admin/device/product/sub/
 export const API_IOT_DEVICE_PRODUCT_SUB_DELETE = '/iot/admin/device/product/sub/delete'
 export const API_IOT_DEVICE_PRODUCT_SUB_UPDATE = '/iot/admin/device/product/sub/update'
 export const API_IOT_DEVICE_PRODUCT_SUB_ENABLED = '/iot/admin/device/product/sub/enabled'
+// 产品菜单
+export const API_IOT_DEVICE_PRODUCT_MENU_LIST = '/iot/admin/device/product/menu/list'
+export const API_IOT_DEVICE_PRODUCT_MENU_CHANGE = '/iot/admin/device/product/menu/change'
+
 
 import request from '/@/utils/request'
 
@@ -395,6 +399,22 @@ export function doSubDelete(data: object = {}) {
 export function doSubEnabled(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_SUB_ENABLED,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function getMenuList(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_MENU_LIST,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doMenuChange(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_MENU_CHANGE,
         method: 'POST',
         data: data
     })

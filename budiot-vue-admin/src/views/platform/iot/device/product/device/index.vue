@@ -205,6 +205,7 @@ const columns = ref([
     { prop: 'deviceNo', label: '设备通信号', show: true, fixed: 'left' },
     { prop: 'meterNo', label: '设备编号/表号', show: true },
     { prop: 'iotPlatformId', label: '第三方平台设备号', show: false },
+    { prop: 'version', label: '固件版本号', show: false },
     { prop: 'imei', label: 'IMEI', show: true },
     { prop: 'iccid', label: 'ICCID', show: true },
     { prop: 'lastConnectionTime', label: '最后通信时间', show: true },

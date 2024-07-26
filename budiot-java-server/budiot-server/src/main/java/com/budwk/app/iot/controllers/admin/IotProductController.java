@@ -2,9 +2,6 @@ package com.budwk.app.iot.controllers.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.budwk.app.iot.enums.DeviceType;
-import com.budwk.app.iot.enums.IotPlatform;
-import com.budwk.app.iot.enums.ProtocolType;
 import com.budwk.app.iot.models.*;
 import com.budwk.app.iot.services.*;
 import com.budwk.starter.common.exception.BaseException;
@@ -25,7 +22,6 @@ import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
-import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.impl.AdaptorErrorContext;
 import org.nutz.mvc.upload.TempFile;
@@ -64,6 +60,8 @@ public class IotProductController {
     private IotProductEventService iotProductEventService;
     @Inject
     private IotProductCmdAttrService iotProductCmdAttrService;
+    @Inject
+    private IotProductMenuService iotProductMenuService;
 
     @At
     @Ok("json")
@@ -752,5 +750,49 @@ public class IotProductController {
                 throw new BaseException("文件处理失败");
             }
         }
+    }
+
+    @At("/menu/list")
+    @Ok("json")
+    @POST
+    @ApiOperation(name = "产品菜单列表")
+    @ApiFormParams(
+            {
+                    @ApiFormParam(name = "pageNo", example = "1", description = "页码", type = "integer"),
+                    @ApiFormParam(name = "pageSize", example = "10", description = "页大小", type = "integer"),
+                    @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
+                    @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
+                    @ApiFormParam(name = "productId", example = "", description = "产品ID"),
+            }
+    )
+    @ApiResponses(
+            implementation = Pagination.class
+    )
+    @SaCheckPermission("iot.device.product")
+    public Result<?> menuList(@Param("productId") String productId, @Param("name") String name, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isNotBlank(productId)) {
+            cnd.and("productId", "=", productId);
+        }
+        cnd.asc("createdAt");
+        return Result.data(iotProductMenuService.listPage(pageNo, pageSize, cnd));
+    }
+
+    @At("/menu/change")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.config")
+    @ApiOperation(name = "产品菜单变更状态")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "productId", description = "产品ID"),
+                    @ApiFormParam(name = "menuId", description = "菜单ID"),
+                    @ApiFormParam(name = "display", description = "是否显示"),
+            }
+    )
+    @ApiResponses
+    public Result<?> menuChange(@Param("productId") String productId, @Param("menuId") String menuId, @Param("display") boolean display, HttpServletRequest req) {
+        iotProductMenuService.update(Chain.make("display", display), Cnd.where("id", "=", menuId).and("productId", "=", productId));
+        return Result.success();
     }
 }
