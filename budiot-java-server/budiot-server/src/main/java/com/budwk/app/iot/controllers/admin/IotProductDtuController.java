@@ -1,6 +1,7 @@
 package com.budwk.app.iot.controllers.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.budwk.app.iot.models.Iot_product_dtu;
 import com.budwk.app.iot.services.IotProductDtuService;
 import com.budwk.starter.common.openapi.annotation.*;
@@ -8,13 +9,12 @@ import com.budwk.starter.common.openapi.enums.ParamIn;
 import com.budwk.starter.common.result.Result;
 import com.budwk.starter.log.annotation.SLog;
 import lombok.extern.slf4j.Slf4j;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
-import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.GET;
-import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,5 +44,25 @@ public class IotProductDtuController {
             return Result.data(NutMap.NEW().addv("enabled", false).addv("version", 0));
         }
         return Result.data(productDtu);
+    }
+
+    @At("/enabled")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.dtuparam")
+    @ApiOperation(name = "启用禁用DTU参数")
+    @ApiFormParams(
+            value = {
+                    @ApiFormParam(name = "productId", description = "产品ID"),
+                    @ApiFormParam(name = "enabled", description = "是否启用")
+            }
+    )
+    @ApiResponses
+    public Result<?> dtuEnabled(@Param("productId") String productId, @Param("enabled") boolean enabled, HttpServletRequest req) {
+        if (iotProductDtuService.count(Cnd.where("productId", "=", productId)) < 1) {
+            return Result.error("DTU参数配置未保存");
+        }
+        iotProductDtuService.update(Chain.make("enabled", enabled), Cnd.where("productId", "=", productId));
+        return Result.success();
     }
 }

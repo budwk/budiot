@@ -10,7 +10,7 @@
                             </el-tag>
                         </el-form-item>
                         <el-form-item label="是否启用">
-                            <el-switch v-model="tableData.enabled" inline-prompt active-text="启用" inactive-text="未启用" />
+                            <el-switch v-permission="['iot.device.product.dtuparam']" v-model="tableData.enabled" inline-prompt active-text="启用" inactive-text="未启用" @change="enabledChange"/>
                         </el-form-item>
                     </el-form>
                     <el-button plain type="success" @click="save" v-permission="['iot.device.product.dtuparam']">保存配置 </el-button>
@@ -135,7 +135,7 @@ import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { useRoute } from 'vue-router'
-import { getDtuInfo } from '/@/api/platform/iot/product'
+import { getDtuInfo, doDtuEnabled } from '/@/api/platform/iot/product'
 
 const route = useRoute()
 const id = route.params.id as string
@@ -196,6 +196,22 @@ const save = () => {
             console.log('error submit!!')
             return false
         }
+    })
+}
+
+const enabledChange = (val: boolean) => {
+    doDtuEnabled({
+        productId: id,
+        enabled: val,
+    }).then((res) => {
+        if (res.code === 0) {
+            tableData.value.enabled = val
+            modal.msgSuccess('操作成功')
+        }
+    }).catch(() => {
+        setTimeout(() => {
+            tableData.value.enabled = !val
+        }, 500)
     })
 }
 
