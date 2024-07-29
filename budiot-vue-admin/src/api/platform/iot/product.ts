@@ -69,6 +69,7 @@ export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_DELETE = '/iot/admin/device/
 // DTU参数管理
 export const API_IOT_DEVICE_PRODUCT_DTU_GET = '/iot/admin/device/product/dtu/get/'
 export const API_IOT_DEVICE_PRODUCT_DTU_ENABLED = '/iot/admin/device/product/dtu/enabled'
+export const API_IOT_DEVICE_PRODUCT_DTU_SAVE = '/iot/admin/device/product/dtu/save'
 
 
 import request from '/@/utils/request'
@@ -498,6 +499,14 @@ export function getDtuInfo(id: string) {
 export function doDtuEnabled(data: object = {}) {
     return request({
         url: API_IOT_DEVICE_PRODUCT_DTU_ENABLED,
+        method: 'POST',
+        data: data
+    })
+}
+
+export function doDtuSave(data: object = {}) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_DTU_SAVE,
         method: 'POST',
         data: data
     })

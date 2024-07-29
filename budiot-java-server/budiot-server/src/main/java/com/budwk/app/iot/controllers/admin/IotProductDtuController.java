@@ -3,11 +3,13 @@ package com.budwk.app.iot.controllers.admin;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.budwk.app.iot.models.Iot_product_dtu;
+import com.budwk.app.iot.models.Iot_product_firmware;
 import com.budwk.app.iot.services.IotProductDtuService;
 import com.budwk.starter.common.openapi.annotation.*;
 import com.budwk.starter.common.openapi.enums.ParamIn;
 import com.budwk.starter.common.result.Result;
 import com.budwk.starter.log.annotation.SLog;
+import com.budwk.starter.security.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -63,6 +65,23 @@ public class IotProductDtuController {
             return Result.error("DTU参数配置未保存");
         }
         iotProductDtuService.update(Chain.make("enabled", enabled), Cnd.where("productId", "=", productId));
+        return Result.success();
+    }
+
+    @At("/save")
+    @POST
+    @Ok("json")
+    @SaCheckPermission("iot.device.product.dtuparam")
+    @SLog(value = "保存配置:${productId}")
+    @ApiOperation(name = "保存配置")
+    @ApiFormParams(
+            implementation = Iot_product_dtu.class
+    )
+    @ApiResponses
+    public Result<?> firmwareCreate(@Param("..") Iot_product_dtu productDtu, HttpServletRequest req) {
+        productDtu.setCreatedBy(SecurityUtil.getUserId());
+        productDtu.setUpdatedBy(SecurityUtil.getUserId());
+        iotProductDtuService.save(productDtu);
         return Result.success();
     }
 }

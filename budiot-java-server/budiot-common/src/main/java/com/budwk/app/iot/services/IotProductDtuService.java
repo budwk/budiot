@@ -8,4 +8,5 @@ import com.budwk.starter.database.service.BaseService;
  */
 public interface IotProductDtuService extends BaseService<Iot_product_dtu> {
 
+    void save(Iot_product_dtu productDtu);
 }

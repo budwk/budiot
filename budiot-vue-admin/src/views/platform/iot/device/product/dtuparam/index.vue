@@ -10,7 +10,14 @@
                             </el-tag>
                         </el-form-item>
                         <el-form-item label="是否启用">
-                            <el-switch v-permission="['iot.device.product.dtuparam']" v-model="tableData.enabled" inline-prompt active-text="启用" inactive-text="未启用" @change="enabledChange"/>
+                            <el-switch
+                                v-permission="['iot.device.product.dtuparam']"
+                                v-model="tableData.enabled"
+                                inline-prompt
+                                active-text="启用"
+                                inactive-text="未启用"
+                                @change="enabledChange"
+                            />
                         </el-form-item>
                     </el-form>
                     <el-button plain type="success" @click="save" v-permission="['iot.device.product.dtuparam']">保存配置 </el-button>
@@ -19,7 +26,7 @@
                 </div>
             </el-col>
         </el-row>
-        <el-row >
+        <el-row>
             <el-form
                 ref="createRef"
                 :model="formData"
@@ -57,10 +64,6 @@
                                 <el-radio :value="3">自定义</el-radio>
                                 <el-radio :value="4">顺序生成</el-radio>
                             </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="参数版本号：" prop="fota">
-                            <el-input-number v-model="formData.param_ver" :min="1" />
-                            <span class="tip">提示: 范围 1~n</span>
                         </el-form-item>
                         <el-form-item label="每分钟最大串口流量(Byte)：" prop="fota">
                             <el-input v-model="formData.flow" style="width: 150px" />
@@ -135,7 +138,7 @@ import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { useRoute } from 'vue-router'
-import { getDtuInfo, doDtuEnabled } from '/@/api/platform/iot/product'
+import { getDtuInfo, doDtuEnabled, doDtuSave } from '/@/api/platform/iot/product'
 
 const route = useRoute()
 const id = route.params.id as string
@@ -153,7 +156,6 @@ const data = reactive({
         fota: 0,
         uartReadTime: 25,
         flow: '',
-        param_ver: 1,
         pwrmod: 'normal',
         password: '',
         netReadTime: 0,
@@ -185,34 +187,54 @@ const data = reactive({
 const { formData, formRules } = toRefs(data)
 
 const save = () => {
-    // 将 formData.value param_ver 转化为字符串类型
-    let data = JSON.parse(JSON.stringify(formData.value))
-    data.param_ver = data.param_ver.toString()
-    console.log(data)
+    console.log(formData.value)
     createRef.value.validate((valid) => {
         if (valid) {
-            console.log('submit!')
-        } else {
-            console.log('error submit!!')
-            return false
+            doDtuSave({
+                productId: id,
+                config: JSON.stringify(formData.value),
+            }).then((res) => {
+                if (res.code === 0) {
+                    modal.msgSuccess('保存成功')
+                    init()
+                }
+            })
         }
     })
 }
 
 const enabledChange = (val: boolean) => {
-    doDtuEnabled({
-        productId: id,
-        enabled: val,
-    }).then((res) => {
-        if (res.code === 0) {
-            tableData.value.enabled = val
-            modal.msgSuccess('操作成功')
-        }
-    }).catch(() => {
-        setTimeout(() => {
-            tableData.value.enabled = !val
-        }, 500)
-    })
+    if(val){
+        modal
+            .confirm('启用后产品下所有设备将请求最新版本参数')
+            .then(() => {
+                return doDtuEnabled({
+                    productId: id,
+                    enabled: val,
+                })
+            })
+            .then((res) => {
+                if (res.code === 0) {
+                    tableData.value.enabled = val
+                    modal.msgSuccess('操作成功')
+                }
+            })
+            .catch(() => {
+                setTimeout(() => {
+                    tableData.value.enabled = !val
+                }, 500)
+            })
+    }else{
+        doDtuEnabled({
+            productId: id,
+            enabled: val,
+        }).then((res) => {
+            if (res.code === 0) {
+                tableData.value.enabled = val
+                modal.msgSuccess('操作成功')
+            }
+        })
+    }
 }
 
 const init = () => {
