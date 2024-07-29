@@ -116,11 +116,16 @@ public class Iot_device extends BaseModel implements Serializable {
     private String iotPlatformId;
 
     @Column
-    @ColDefine(type = ColType.VARCHAR, width = 50)
+    @ColDefine(type = ColType.VARCHAR, width = 20)
     @Comment("固件版本号")
-    @Excel(name = "固件版本号", cellType = Excel.ColumnType.STRING, prompt = "固件版本号")
     @ApiModelProperty(description = "固件版本号")
-    private String version;
+    private String firmwareVersion;
+
+    @Column
+    @ColDefine(type = ColType.INT)
+    @Comment("参数版本号")
+    @ApiModelProperty(description = "参数版本号")
+    private Integer paramVersion;
 
     @Column
     @ColDefine(type = ColType.INT)

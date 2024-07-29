@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 
 @IocBean
 @At("/iot/admin/device/product/sub")
-@SLog(tag = "订阅-订阅列表")
-@ApiDefinition(tag = "订阅-订阅列表")
+@SLog(tag = "产品-订阅管理")
+@ApiDefinition(tag = "订阅-订阅管理")
 @Slf4j
 public class IotProductSubController {
     @Inject

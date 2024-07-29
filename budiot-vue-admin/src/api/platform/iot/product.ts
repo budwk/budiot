@@ -66,6 +66,8 @@ export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_LIST = '/iot/admin/device/pr
 export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_IMPORT = '/iot/admin/device/product/firmware/device/import'
 export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_INSERT = '/iot/admin/device/product/firmware/device/insert'
 export const API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_DELETE = '/iot/admin/device/product/firmware/device/delete'
+// DTU参数管理
+export const API_IOT_DEVICE_PRODUCT_DTU_GET = '/iot/admin/device/product/dtu/get/'
 
 
 import request from '/@/utils/request'
@@ -482,5 +484,12 @@ export function doFirmwareDeviceDelete(data: object = {}) {
         url: API_IOT_DEVICE_PRODUCT_FIRMWARE_DEVICE_DELETE,
         method: 'POST',
         data: data
+    })
+}
+
+export function getDtuInfo(id: string) {
+    return request({
+        url: API_IOT_DEVICE_PRODUCT_DTU_GET + id + '?t=' + new Date().getTime(),
+        method: 'GET'
     })
 }
