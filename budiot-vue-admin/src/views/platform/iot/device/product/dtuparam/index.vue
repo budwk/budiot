@@ -21,7 +21,7 @@
                         </el-form-item>
                     </el-form>
                     <el-button plain type="success" @click="save" v-permission="['iot.device.product.dtuparam']">保存配置 </el-button>
-                    <el-button plain type="primary" v-permission="['iot.device.product.dtuparam']">导出配置 </el-button>
+                    <el-button plain type="primary" @click="exportTxt" v-permission="['iot.device.product.dtuparam']">导出配置 </el-button>
                     <el-button plain type="primary" v-permission="['iot.device.product.dtuparam']">导入配置 </el-button>
                 </div>
             </el-col>
@@ -131,6 +131,19 @@
                 </el-tabs>
             </el-form>
         </el-row>
+
+        <el-dialog title="导出参数" v-model="showExport" width="45%" :close-on-click-modal="false">
+            <el-form>
+                <el-form-item>
+                    <el-input type="textarea" rows="10" v-model="config" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="showExport = false">关 闭</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 <script setup lang="ts">
@@ -144,16 +157,19 @@ const route = useRoute()
 const id = route.params.id as string
 
 const createRef = ref<InstanceType<typeof ElForm>>()
-
+const showExport = ref(false)
 const activeName = ref('0')
 const tableData = ref({
     version: 0,
     enabled: false,
+    config: ''
 })
+const config = ref('')
 
 const data = reactive({
     formData: {
         fota: 0,
+        param_ver: '',
         uartReadTime: 25,
         flow: '',
         pwrmod: 'normal',
@@ -235,6 +251,11 @@ const enabledChange = (val: boolean) => {
             }
         })
     }
+}
+
+const exportTxt = () => {
+    config.value = JSON.parse(tableData.value.config)
+    showExport.value = true
 }
 
 const init = () => {
