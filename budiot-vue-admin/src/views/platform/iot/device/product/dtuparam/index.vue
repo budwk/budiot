@@ -5,7 +5,7 @@
                 <div style="display: inline-flex">
                     <el-form :model="tableData" ref="queryRef" :inline="true" label-width="100px">
                         <el-form-item label="平台版本号：" class="label-font-weight">
-                            <el-tag type="info" size="medium">
+                            <el-tag type="info">
                                 {{ tableData.version }}
                             </el-tag>
                         </el-form-item>
@@ -36,7 +36,7 @@
                 style="width: 100%; padding: 0 5px"
             >
                 <el-tabs v-model="activeName" tabPosition="left" style="width: 100%">
-                    <el-tab-pane label="基本信息" name="0">
+                    <el-tab-pane label="基本信息" name="0" style="padding: 0 20px;">
                         <el-form-item label="模式：" prop="fota">
                             <el-radio-group v-model="formData.fota">
                                 <el-radio :value="0">透传</el-radio>
@@ -120,14 +120,23 @@
                             <span class="tip">提示: 服务器连接断开时5分钟会重启，守护全部通道有一个断开就重启，守护个别通道在个别通道断开会重启</span>
                         </el-form-item>
                     </el-tab-pane>
-                    <el-tab-pane label="串口参数" name="1">串口参数</el-tab-pane>
-                    <el-tab-pane label="网络通道" name="2">网络通道</el-tab-pane>
-                    <el-tab-pane label="预置信息" name="3">预置信息</el-tab-pane>
-                    <el-tab-pane label="GPIO" name="4">GPIO</el-tab-pane>
-                    <el-tab-pane label="GPS" name="5">GPS</el-tab-pane>
-                    <el-tab-pane label="数据流" name="6">数据流</el-tab-pane>
-                    <el-tab-pane label="预警" name="7">预警</el-tab-pane>
-                    <el-tab-pane label="任务" name="8">任务</el-tab-pane>
+                    <el-tab-pane label="串口参数" name="1" style="padding: 0 20px;">
+                        <el-tabs v-model="activeComm" style="width: 100%;">
+                            <el-tab-pane v-for="(obj,ind) in formData.uconf" :label="'串口'+(ind+1)" :name="ind" :key="'comm_'+ind">
+                                <el-radio-group v-model="commValues[ind]" @change="commChange">
+                                    <el-radio :value="true">启用</el-radio>
+                                    <el-radio :value="false">不启用</el-radio>
+                                </el-radio-group>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </el-tab-pane>
+                    <el-tab-pane label="网络通道" name="2" style="padding: 0 20px;">网络通道</el-tab-pane>
+                    <el-tab-pane label="预置信息" name="3" style="padding: 0 20px;">预置信息</el-tab-pane>
+                    <el-tab-pane label="GPIO" name="4" style="padding: 0 20px;">GPIO</el-tab-pane>
+                    <el-tab-pane label="GPS" name="5" style="padding: 0 20px;">GPS</el-tab-pane>
+                    <el-tab-pane label="数据流" name="6" style="padding: 0 20px;">数据流</el-tab-pane>
+                    <el-tab-pane label="预警" name="7" style="padding: 0 20px;">预警</el-tab-pane>
+                    <el-tab-pane label="任务" name="8" style="padding: 0 20px;">任务</el-tab-pane>
                 </el-tabs>
             </el-form>
         </el-row>
@@ -159,6 +168,13 @@ const id = route.params.id as string
 const createRef = ref<InstanceType<typeof ElForm>>()
 const showExport = ref(false)
 const activeName = ref('0')
+const activeComm = ref(0)
+const commValues = ref({
+    0: false,
+    1: false,
+    2: false,
+})
+
 const tableData = ref({
     version: 0,
     enabled: false,
@@ -201,6 +217,10 @@ const data = reactive({
 })
 
 const { formData, formRules } = toRefs(data)
+
+const commChange = (val: boolean) => {
+    console.log(val)
+}
 
 const save = () => {
     console.log(formData.value)
@@ -261,6 +281,18 @@ const exportTxt = () => {
 const init = () => {
     getDtuInfo(id).then((res) => {
         tableData.value = res.data
+        if(res.data.config){
+            // JSON.parse(res.data.config) 值赋值给formData.value
+            formData.value = JSON.parse(res.data.config) as any
+
+            console.log(formData.value)
+            // 根据uconf的数组是否为空，初始化commValues
+            formData.value.uconf.forEach((item, index) => {
+                if (item.length > 0) {
+                    commValues.value[index] = true
+                }
+            })
+        }
     })
 }
 
