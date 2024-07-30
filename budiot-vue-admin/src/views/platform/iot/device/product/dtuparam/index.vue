@@ -36,31 +36,31 @@
                 style="width: 100%; padding: 0 5px"
             >
                 <el-tabs v-model="activeName" tabPosition="left" style="width: 100%">
-                    <el-tab-pane label="基本信息" name="0" style="padding: 0 20px;">
-                        <el-form-item label="模式：" prop="fota">
-                            <el-radio-group v-model="formData.fota">
-                                <el-radio :value="0">透传</el-radio>
-                                <el-radio :value="1">单片机控制</el-radio>
+                    <el-tab-pane label="基本信息" name="0" style="padding: 0 20px">
+                        <el-form-item label="模式：" prop="passon">
+                            <el-radio-group v-model="formData.passon">
+                                <el-radio :value="1">透传</el-radio>
+                                <el-radio :value="0">单片机控制</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        <el-form-item label="是否加设备识别码IMEI：" prop="fota">
-                            <el-radio-group v-model="formData.fota">
+                        <el-form-item label="是否加设备识别码IMEI：" prop="plate" v-if="formData.passon == 1">
+                            <el-radio-group v-model="formData.plate">
                                 <el-radio :value="0">不加</el-radio>
                                 <el-radio :value="1">加</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        <el-form-item label="报文转换（bin -- hex）：" prop="fota">
-                            <el-radio-group v-model="formData.fota">
-                                <el-radio :value="0">转换</el-radio>
-                                <el-radio :value="1">不换</el-radio>
+                        <el-form-item label="报文转换（bin -- hex）：" prop="convert">
+                            <el-radio-group v-model="formData.convert">
+                                <el-radio :value="1">转换</el-radio>
+                                <el-radio :value="0">不换</el-radio>
                             </el-radio-group>
                             <span class="tip">提示: 如果启用数据流模板，这里选择“不换”</span>
                         </el-form-item>
-                        <el-form-item label="首次登陆服务器发送注册信息：" prop="fota">
-                            <el-radio-group v-model="formData.fota">
-                                <el-radio :value="0">发送{csq:rssi,imei:imei,iccid:iccid,ver:Version}</el-radio>
-                                <el-radio :value="1">发送HEX报文"13,12345,12345"</el-radio>
-                                <el-radio :value="2">不发</el-radio>
+                        <el-form-item label="首次登陆服务器发送注册信息：" prop="register">
+                            <el-radio-group v-model="formData.register">
+                                <el-radio :value="1">发送{csq:rssi,imei:imei,iccid:iccid,ver:Version}</el-radio>
+                                <el-radio :value="2">发送HEX报文"13,12345,12345"</el-radio>
+                                <el-radio :value="0">不发</el-radio>
                                 <el-radio :value="3">自定义</el-radio>
                                 <el-radio :value="4">顺序生成</el-radio>
                             </el-radio-group>
@@ -79,10 +79,10 @@
                             <el-input-number v-model="formData.uartReadTime" :min="10" :max="2000" />
                             <span class="tip">提示:（单位：ms 默认25ms，范围10-2000）</span>
                         </el-form-item>
-                        <el-form-item label="电源模式：" prop="fota">
-                            <el-radio-group v-model="formData.fota">
-                                <el-radio :value="0">正常</el-radio>
-                                <el-radio :value="1">节能</el-radio>
+                        <el-form-item label="电源模式：" prop="pwrmod">
+                            <el-radio-group v-model="formData.pwrmod">
+                                <el-radio value="normal">正常</el-radio>
+                                <el-radio value="energy">节能</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item label="配置密码：" prop="password">
@@ -120,9 +120,9 @@
                             <span class="tip">提示: 服务器连接断开时5分钟会重启，守护全部通道有一个断开就重启，守护个别通道在个别通道断开会重启</span>
                         </el-form-item>
                     </el-tab-pane>
-                    <el-tab-pane label="串口参数" name="1" style="padding: 0 20px;">
-                        <el-tabs v-model="activeComm" style="width: 100%;">
-                            <el-tab-pane v-for="(obj,ind) in formData.uconf" :label="'串口'+(ind+1)" :name="ind" :key="'comm_'+ind">
+                    <el-tab-pane label="串口参数" name="1" style="padding: 0 20px">
+                        <el-tabs v-model="activeComm" style="width: 100%">
+                            <el-tab-pane v-for="(obj, ind) in formData.uconf" :label="'串口' + (ind + 1)" :name="ind" :key="'comm_' + ind">
                                 <el-radio-group v-model="commValues[ind]" @change="commChange">
                                     <el-radio :value="true">启用</el-radio>
                                     <el-radio :value="false">不启用</el-radio>
@@ -130,13 +130,13 @@
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
-                    <el-tab-pane label="网络通道" name="2" style="padding: 0 20px;">网络通道</el-tab-pane>
-                    <el-tab-pane label="预置信息" name="3" style="padding: 0 20px;">预置信息</el-tab-pane>
-                    <el-tab-pane label="GPIO" name="4" style="padding: 0 20px;">GPIO</el-tab-pane>
-                    <el-tab-pane label="GPS" name="5" style="padding: 0 20px;">GPS</el-tab-pane>
-                    <el-tab-pane label="数据流" name="6" style="padding: 0 20px;">数据流</el-tab-pane>
-                    <el-tab-pane label="预警" name="7" style="padding: 0 20px;">预警</el-tab-pane>
-                    <el-tab-pane label="任务" name="8" style="padding: 0 20px;">任务</el-tab-pane>
+                    <el-tab-pane label="网络通道" name="2" style="padding: 0 20px">网络通道</el-tab-pane>
+                    <el-tab-pane label="预置信息" name="3" style="padding: 0 20px">预置信息</el-tab-pane>
+                    <el-tab-pane label="GPIO" name="4" style="padding: 0 20px">GPIO</el-tab-pane>
+                    <el-tab-pane label="GPS" name="5" style="padding: 0 20px">GPS</el-tab-pane>
+                    <el-tab-pane label="数据流" name="6" style="padding: 0 20px">数据流</el-tab-pane>
+                    <el-tab-pane label="预警" name="7" style="padding: 0 20px">预警</el-tab-pane>
+                    <el-tab-pane label="任务" name="8" style="padding: 0 20px">任务</el-tab-pane>
                 </el-tabs>
             </el-form>
         </el-row>
@@ -178,16 +178,16 @@ const commValues = ref({
 const tableData = ref({
     version: 0,
     enabled: false,
-    config: ''
+    config: '',
 })
 const config = ref('')
 
 const data = reactive({
     formData: {
         fota: 0,
-        param_ver: '',
         uartReadTime: 25,
         flow: '',
+        param_ver: '',
         pwrmod: 'normal',
         password: '',
         netReadTime: 0,
@@ -198,8 +198,8 @@ const data = reactive({
         webProtect: '1',
         plate: 0,
         protectContent: [0, 0, 0, 0, 0, 0, 0],
-        reg: '940802',
-        convert: 1,
+        reg: 0,
+        convert: 0,
         uconf: [[], [], []],
         conf: [[], [], [], [], [], [], []],
         preset: { number: '', delay: '', smsword: '' },
@@ -240,7 +240,7 @@ const save = () => {
 }
 
 const enabledChange = (val: boolean) => {
-    if(val){
+    if (val) {
         modal
             .confirm('启用后产品下所有设备将请求最新版本参数')
             .then(() => {
@@ -260,7 +260,7 @@ const enabledChange = (val: boolean) => {
                     tableData.value.enabled = !val
                 }, 500)
             })
-    }else{
+    } else {
         doDtuEnabled({
             productId: id,
             enabled: val,
@@ -281,7 +281,8 @@ const exportTxt = () => {
 const init = () => {
     getDtuInfo(id).then((res) => {
         tableData.value = res.data
-        if(res.data.config){
+        return
+        if (res.data.config) {
             // JSON.parse(res.data.config) 值赋值给formData.value
             formData.value = JSON.parse(res.data.config) as any
 
