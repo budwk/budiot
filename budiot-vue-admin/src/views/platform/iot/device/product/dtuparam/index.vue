@@ -21,6 +21,7 @@
                         </el-form-item>
                     </el-form>
                     <el-button plain type="success" @click="save" v-permission="['iot.device.product.dtuparam']">保存配置 </el-button>
+                    <el-button plain type="info" @click="resetFrom" v-permission="['iot.device.product.dtuparam']">重置表单 </el-button>
                     <el-button plain type="primary" @click="exportTxt" v-permission="['iot.device.product.dtuparam']">导出配置 </el-button>
                     <el-button plain type="primary" v-permission="['iot.device.product.dtuparam']">导入配置 </el-button>
                 </div>
@@ -38,7 +39,7 @@
                 <el-tabs v-model="activeName" tabPosition="left" style="width: 100%">
                     <el-tab-pane label="基本信息" name="0" style="padding: 0 20px">
                         <el-form-item label="模式：" prop="passon">
-                            <el-radio-group v-model="formData.passon">
+                            <el-radio-group v-model="formData.passon" @change="passonChange">
                                 <el-radio :value="1">透传</el-radio>
                                 <el-radio :value="0">单片机控制</el-radio>
                             </el-radio-group>
@@ -56,18 +57,28 @@
                             </el-radio-group>
                             <span class="tip">提示: 如果启用数据流模板，这里选择“不换”</span>
                         </el-form-item>
-                        <el-form-item label="首次登陆服务器发送注册信息：" prop="register">
-                            <el-radio-group v-model="formData.register">
+                        <el-form-item label="首次登陆服务器发送注册信息：" prop="reg" class="label-font-weight">
+                            <el-radio-group v-model="register.type" @change="registerChange">
                                 <el-radio :value="1">发送{csq:rssi,imei:imei,iccid:iccid,ver:Version}</el-radio>
                                 <el-radio :value="2">发送HEX报文"13,12345,12345"</el-radio>
                                 <el-radio :value="0">不发</el-radio>
                                 <el-radio :value="3">自定义</el-radio>
                                 <el-radio :value="4">顺序生成</el-radio>
                             </el-radio-group>
+                            <div v-if="register.type == 3" >
+                                自定义：
+                                <el-input v-model="register.data" style="width: 150px" />
+                            </div>
+                            <div v-if="register.type == 4" >
+                                前缀：
+                                <el-input v-model="register.prefix" style="width: 150px" />
+                                后缀：
+                                <el-input v-model="register.postfix" style="width: 150px" />
+                            </div>
                         </el-form-item>
-                        <el-form-item label="每分钟最大串口流量(Byte)：" prop="fota">
+                        <el-form-item label="每分钟最大串口流量(Byte)：" prop="flow">
                             <el-input v-model="formData.flow" style="width: 150px" />
-                            <span class="tip">提示: 0为不启用</span>
+                            <span class="tip">提示: 空为不启用</span>
                         </el-form-item>
                         <el-form-item label="是否启用自动更新：" prop="fota">
                             <el-radio-group v-model="formData.fota">
@@ -89,7 +100,7 @@
                             <el-input v-model="formData.password" style="width: 150px" />
                             <span class="tip">提示: 只允许包含字母数字_</span>
                         </el-form-item>
-                        <el-form-item label="网络分帧超时：" prop="netReadTime">
+                        <el-form-item label="网络分帧超时：" prop="netReadTimes">
                             <el-input-number v-model="formData.netReadTime" :min="10" :max="2000" />
                             <span class="tip">提示:（单位：ms 默认0ms，范围10-2000）</span>
                         </el-form-item>
@@ -124,13 +135,197 @@
                         <el-tabs v-model="activeComm" style="width: 100%">
                             <el-tab-pane v-for="(obj, ind) in formData.uconf" :label="'串口' + (ind + 1)" :name="ind" :key="'comm_' + ind">
                                 <el-radio-group v-model="commValues[ind]" @change="commChange">
-                                    <el-radio :value="true">启用</el-radio>
-                                    <el-radio :value="false">不启用</el-radio>
+                                    <el-radio :value="1">启用</el-radio>
+                                    <el-radio :value="0">不启用</el-radio>
                                 </el-radio-group>
+                                <div  v-if="commValues[ind] == 1" style="margin-top: 10px;">
+                                    <el-form-item label="波特率：">
+                                        <el-select v-model="formData.uconf[ind][1]" placeholder="请选择" style="width: 150px">
+                                            <el-option label="300" value="300" />
+                                            <el-option label="600" value="600" />
+                                            <el-option label="1200" value="1200" />
+                                            <el-option label="2400" value="2400" />
+                                            <el-option label="4800" value="4800" />
+                                            <el-option label="9600" value="9600" />
+                                            <el-option label="14400" value="14400" />
+                                            <el-option label="19200" value="19200" />
+                                            <el-option label="28800" value="28800" />
+                                            <el-option label="38400" value="38400" />
+                                            <el-option label="57600" value="57600" />
+                                            <el-option label="115200" value="115200" />
+                                            <el-option label="230400" value="230400" />
+                                            <el-option label="460800" value="460800" />
+                                            <el-option label="921600" value="921600" />
+                                        </el-select>
+                                        <span class="tip">提示: (单位bps)</span>
+                                    
+                                    </el-form-item>
+                                    <el-form-item label="数据位：">
+                                        <el-radio-group v-model="formData.uconf[ind][2]">
+                                            <el-radio :value="8">8</el-radio>
+                                            <el-radio :value="7">7</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="校验位：">
+                                        <el-radio-group v-model="formData.uconf[ind][3]">
+                                            <el-radio :value="0">uart.PAR_EVEN</el-radio>
+                                            <el-radio :value="1">uart.PAR_ODD</el-radio>
+                                            <el-radio :value="2">uart.PAR_NONE</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="停止位：">
+                                        <el-radio-group v-model="formData.uconf[ind][4]">
+                                            <el-radio :value="0">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="485DIR：">
+                                        <el-select v-model="formData.uconf[ind][5]" placeholder="请选择" style="width: 150px">
+                                            <el-option v-for="(n,i) in numberArr" :label="n" :value="n" :key="i"/>
+                                        </el-select>
+                                        <span class="tip">提示: 485方向控制GPIO</span>
+                                    </el-form-item>
+                                    <el-form-item label="485oe转向延迟时间：">
+                                        <el-input v-model="formData.uconf[ind][6]" style="width: 150px" />
+                                        <span class="tip">提示: 单位US</span>
+                                    </el-form-item>
+                                </div>
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
-                    <el-tab-pane label="网络通道" name="2" style="padding: 0 20px">网络通道</el-tab-pane>
+                    <el-tab-pane label="网络通道" name="2" style="padding: 0 20px">
+                        <el-tabs v-model="activeNet" style="width: 100%">
+                            <el-tab-pane v-for="(obj, ind) in formData.conf" :label="'通道' + (ind + 1)" :name="ind" :key="'net_' + ind">
+                                <el-radio-group v-model="netValues[ind].enabled" @change="netChange">
+                                    <el-radio :value="1">启用</el-radio>
+                                    <el-radio :value="0">不启用</el-radio>
+                                </el-radio-group>
+                                <div v-if="netValues[ind].enabled == 1" style="margin-top: 10px;">
+                                    <el-form-item label="通道类型：">
+                                        <el-radio-group v-model="netValues[ind].type" @change="netTypeChange(ind)">
+                                            <el-radio value="http">HTTP</el-radio>
+                                            <el-radio value="socket">SOCKET</el-radio>
+                                            <el-radio value="mqtt">MQTT</el-radio>
+                                            <el-radio value="onenet">OneNET</el-radio>
+                                            <el-radio value="aliyun">阿里云</el-radio>
+                                            <el-radio value="bduyun">百度云</el-radio>
+                                            <el-radio value="txuny">腾讯云</el-radio>
+                                            <el-radio value="txyunnew">腾讯云(新)</el-radio>
+                                            <el-radio value="onenetnew">OneNET(新)</el-radio>
+                                            <el-radio value="thingscloud">LuatCloud</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </div>
+                                <div v-if="netValues[ind].type == 'http'" style="margin-top: 10px;">
+                                    <el-form-item label="HTTP绑定串口ID：">
+                                        <el-radio-group v-model="formData.conf[ind][1]">
+                                            <el-radio value="1">1</el-radio>
+                                            <el-radio value="2">2</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="method：">
+                                        <el-radio-group v-model="formData.conf[ind][2]">
+                                            <el-radio value="get">get</el-radio>
+                                            <el-radio value="post">post</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="url：">
+                                        <el-input v-model="formData.conf[ind][3]" style="width: 380px" />
+                                        <span class="tip">提示: HTTP请求的地址和参数，参数需要自己urllencode处理</span>
+                                    </el-form-item>
+                                    <el-form-item label="timeout：">
+                                        <el-input v-model="formData.conf[ind][4]" style="width: 150px" />
+                                        <span class="tip">提示: HTTP请求最长等待时间，超过这个时间，HTTP将返回</span>
+                                    </el-form-item>
+                                    <el-form-item label="请求类型：">
+                                        <el-radio-group v-model="formData.conf[ind][5]">
+                                            <el-radio value="1">body</el-radio>
+                                            <el-radio value="0">param</el-radio>
+                                        </el-radio-group>
+                                        <span class="tip">提示: 串口数据类型，默认body</span>
+                                    </el-form-item>
+                                    <el-form-item label="type：">
+                                        <el-radio-group v-model="formData.conf[ind][6]">
+                                            <el-radio value="1">urlencode</el-radio>
+                                            <el-radio value="2">json</el-radio>
+                                            <el-radio value="3">stream</el-radio>
+                                        </el-radio-group>
+                                        <span class="tip">提示: body的提交类型</span>
+                                    </el-form-item>
+                                    <el-form-item label="basic：">
+                                        <el-input v-model="formData.conf[ind][7]" style="width: 150px" />
+                                        <span class="tip">提示: HTTP的BASIC验证，注意账号密码之间用 : 连接</span>
+                                    </el-form-item>
+                                    <el-form-item label="head：">
+                                        <el-input v-model="formData.conf[ind][8]" style="width: 150px" />
+                                        <span class="tip">提示: HTTP请求报文头部字符串</span>
+                                    </el-form-item>
+                                    <el-form-item label="返回数据过滤：" class="label-font-weight">
+                                        <el-checkbox v-model="formData.conf[ind][9]" :true-value="1" :false-value="0">code</el-checkbox>
+                                        <el-checkbox v-model="formData.conf[ind][10]" :true-value="1" :false-value="0">head</el-checkbox>
+                                        <el-checkbox v-model="formData.conf[ind][11]" :true-value="1" :false-value="0">body</el-checkbox>
+                                    </el-form-item>
+                                </div>
+                                <div v-if="netValues[ind].type == 'socket'" style="margin-top: 10px;">
+                                    <el-form-item label="协议：">
+                                        <el-radio-group v-model="formData.conf[ind][0]">
+                                            <el-radio value="tcp">TCP协议</el-radio>
+                                            <el-radio value="udp">UDP协议</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="心跳包：" class="label-font-weight">
+                                        <el-radio-group v-model="netValues[ind].socket.heartbeat">
+                                            <el-radio :value="0">自定义</el-radio>
+                                            <el-radio :value="1">顺序生成</el-radio>
+                                        </el-radio-group>
+                                        <div v-if="netValues[ind].socket.heartbeat == 0" style="margin-left: 20px;">
+                                            <el-input v-model="netValues[ind].socket.data" style="width: 150px" />
+                                        </div>
+                                        <div v-if="netValues[ind].socket.heartbeat == 1" style="margin-left: 20px;">
+                                            前缀： <el-input v-model="netValues[ind].socket.prefix" style="width: 150px" />
+                                            后缀： <el-input v-model="netValues[ind].socket.postfix" style="width: 150px" />
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="心跳间隔时间：">
+                                        <el-input-number v-model="formData.conf[ind][2]" :min="0"></el-input-number>
+                                        <span class="tip">提示: 单位秒，0为关闭心跳包，建议60-300</span>
+                                    </el-form-item>
+                                    <el-form-item label="socket的地址或域名：">
+                                        <el-input v-model="formData.conf[ind][3]" style="width: 280px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="socket服务器的端口号：">
+                                        <el-input-number v-model="formData.conf[ind][4]" :min="1" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 端口号范围：1~65536</span>
+                                    </el-form-item>
+                                    <el-form-item label="通道捆绑的串口ID：">
+                                        <el-radio-group v-model="formData.conf[ind][5]">
+                                            <el-radio :value="1">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                            <el-radio :value="3">3</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="被动上报间隔：">
+                                        <el-input v-model="formData.conf[ind][6]" style="width: 150px"></el-input>
+                                        <span class="tip">提示: 单位秒，非被动模式留空 范围：1~65535</span>
+                                    </el-form-item>
+                                    <el-form-item label="被动采集间隔：">
+                                        <el-input v-model="formData.conf[ind][7]" style="width: 150px"></el-input>
+                                        <span class="tip">提示: 单位秒，非被动模式留空 范围：1~15</span>
+                                    </el-form-item>
+                                    <el-form-item label="被动采集间隔：">
+                                        <el-input v-model="formData.conf[ind][8]" :min="1" style="width: 150px"></el-input>
+                                        <span class="tip">提示: 单位秒，主动采集任务间隔时间，配合自动采集任务使用</span>
+                                    </el-form-item>
+                                    <el-form-item label="SSL：">
+                                        <el-radio-group v-model="formData.conf[ind][9]">
+                                            <el-radio value="ssl">启用</el-radio>
+                                            <el-radio value="">不启用</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </el-tab-pane>
                     <el-tab-pane label="预置信息" name="3" style="padding: 0 20px">预置信息</el-tab-pane>
                     <el-tab-pane label="GPIO" name="4" style="padding: 0 20px">GPIO</el-tab-pane>
                     <el-tab-pane label="GPS" name="5" style="padding: 0 20px">GPS</el-tab-pane>
@@ -170,10 +365,33 @@ const showExport = ref(false)
 const activeName = ref('0')
 const activeComm = ref(0)
 const commValues = ref({
-    0: false,
-    1: false,
-    2: false,
+    0: 0,
+    1: 0,
+    2: 0,
 })
+const activeNet = ref(0)
+// 通道中间temp数据
+const netValues = ref({
+    0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+})
+const register = ref({
+    type: 0,
+    data: '',
+    prefix: '',
+    postfix: '',
+})
+const numberArr = ref(['','disable'])
+const gpioArr = ref([])
+for (var i=0;i<=128;i++){
+    numberArr.value.push('pio'+i)
+    gpioArr.value.push('pio'+i)
+}
 
 const tableData = ref({
     version: 0,
@@ -198,6 +416,7 @@ const data = reactive({
         webProtect: '1',
         plate: 0,
         protectContent: [0, 0, 0, 0, 0, 0, 0],
+        register: {type:0,data:'',prefix:'',postfix:''},
         reg: 0,
         convert: 0,
         uconf: [[], [], []],
@@ -218,14 +437,168 @@ const data = reactive({
 
 const { formData, formRules } = toRefs(data)
 
-const commChange = (val: boolean) => {
-    console.log(val)
+// 重置表单
+const resetFrom = () => {
+    commValues.value = {
+        0: 0,
+        1: 0,
+        2: 0,
+    }
+    netValues.value = {
+        0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+        1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+        2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+        3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+        4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+        5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+        6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    }
+    formData.value = {
+        fota: 0,
+        uartReadTime: 25,
+        flow: '',
+        param_ver: '',
+        pwrmod: 'normal',
+        password: '',
+        netReadTime: 0,
+        passon: 1,
+        nolog: '1',
+        isRndis: '0',
+        isipv6: '0',
+        webProtect: '1',
+        plate: 0,
+        protectContent: [0, 0, 0, 0, 0, 0, 0],
+        register: {type:0,data:'',prefix:'',postfix:''},
+        reg: 0,
+        convert: 0,
+        uconf: [[], [], []],
+        conf: [[], [], [], [], [], [], []],
+        preset: { number: '', delay: '', smsword: '' },
+        apn: ['', '', ''],
+        cmds: [[], [], []],
+        pins: [],
+        gps: { pio: [], fun: [] },
+        upprot: ['', '', '', '', '', '', ''],
+        dwprot: ['', '', '', '', '', '', ''],
+        warn: { adc0: [], adc1: [], vbatt: [], gpio: [] },
+    }
+    createRef?.value?.resetFields()
+}
+
+// 透传模式
+const passonChange = (val: number) => {
+    formData.value.plate = 0
+}
+
+// 串口启用
+const commChange = (val: number) => {
+    if (val == 1) {
+        formData.value.uconf[activeComm.value] = [activeComm.value+1,"115200",8,2,0,"",0]
+    } else {
+        formData.value.uconf[activeComm.value] = []
+    }
+}
+
+// 注册信息
+const registerChange = (val: number) => {
+    register.value.data = ''
+    register.value.prefix = ''
+    register.value.postfix = ''
+}
+
+// 网络通道启用
+const netChange = (val: number) => {
+    if(val == 1){
+        netValues.value[activeNet.value].type = 'socket'
+        netTypeChange(activeNet.value)
+    }
+}
+
+// 网络通道类型
+const netTypeChange = (ind: number) => {
+    if (netValues.value[ind].type == 'http') {
+        formData.value.conf[ind] = ["http","1","post","",30,"1","1","","",0,0,0]
+    }else{
+        formData.value.conf[ind] = ["tcp","0x00",300,"",2345,1,"","","",""]
+    }
+}
+
+// 处理表单数据
+const processFormData = () => {
+    // 注册信息转换
+    if(register.value.type == 0||register.value.type==1||register.value.type==2){
+        formData.value.reg = register.value.type
+    }else if(register.value.type == 3){
+        formData.value.reg = register.value.data
+    }else if(register.value.type == 4){
+        formData.value.reg =  register.value.prefix + '940802' +register.value.postfix
+    }
+    // 网络通道转换，socket的heartbeat转换
+    formData.value.conf.forEach((item, index) => {
+        if (item.length > 0) {
+            if(netValues.value[index].type == 'socket'){
+                if(netValues.value[index].socket.heartbeat == 0){
+                    formData.value.conf[index][1] = netValues.value[index].socket.data
+                }else if(netValues.value[index].socket.heartbeat == 1){
+                    formData.value.conf[index][1] = netValues.value[index].socket.prefix + '940802' + netValues.value[index].socket.postfix
+                }
+            }
+        }
+    })
+    console.log(JSON.stringify(formData.value))
+}
+
+// 解析表单数据
+const parseFormData = () => {
+    // 注册信息转换
+    if(formData.value.reg == 0||formData.value.reg==1||formData.value.reg==2){
+        register.value.type = formData.value.reg
+        register.value.data = ''
+        register.value.prefix = ''
+        register.value.postfix = ''
+    }else if(typeof formData.value.reg == 'string' && formData.value.reg.indexOf('940802') > 0){
+        register.value.type = 4
+        let str = formData.value.reg || ''
+        register.value.prefix = str.substring(0, str.indexOf('940802'))
+        register.value.postfix = str.substring(str.indexOf('940802')+6)
+        register.value.data = ''
+    }else if(typeof formData.value.reg == 'string'){
+        register.value.type = 3
+        register.value.data = formData.value.reg
+        register.value.prefix = ''
+        register.value.postfix = ''
+    }
+    // 串口转换，根据uconf的数组是否为空，初始化commValues
+    formData.value.uconf.forEach((item, index) => {
+        if (item.length > 0) {
+            commValues.value[index] = 1
+        }
+    })
+    // 网络通道转换，根据conf的数组是否为空，初始化netValues
+    formData.value.conf.forEach((item, index) => {
+        if (item.length > 0) {
+            netValues.value[index].enabled = 1
+            if(item[0] == 'tcp' || item[0] == 'udp'){
+                netValues.value[index].type = 'socket'
+                if(item[1].indexOf('940802') > 0){
+                    netValues.value[index].socket.heartbeat = 1
+                    netValues.value[index].socket.prefix = item[1].substring(0, item[1].indexOf('940802'))
+                    netValues.value[index].socket.postfix = item[1].substring(item[1].indexOf('940802')+6)
+                }else{
+                    netValues.value[index].socket.heartbeat = 0
+                    netValues.value[index].socket.data = item[1]
+                }
+            }
+        }
+    })
 }
 
 const save = () => {
-    console.log(formData.value)
+    processFormData()
+    return
     createRef.value.validate((valid) => {
         if (valid) {
+            parseData();
             doDtuSave({
                 productId: id,
                 config: JSON.stringify(formData.value),

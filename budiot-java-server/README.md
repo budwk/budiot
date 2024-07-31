@@ -4,6 +4,8 @@
 
 * `mvn package nutzboot:shade`
 
+* `mvn package nutzboot:shade -Dmaven.test.skip=true `
+
 ## 部署运行
 
 * 默认配置 
