@@ -88,7 +88,7 @@
                         </el-form-item>
                         <el-form-item label="串口分帧超时：" prop="uartReadTime">
                             <el-input-number v-model="formData.uartReadTime" :min="10" :max="2000" />
-                            <span class="tip">提示:（单位：ms 默认25ms，范围10-2000）</span>
+                            <span class="tip">提示: 单位ms 默认25ms，范围10-2000</span>
                         </el-form-item>
                         <el-form-item label="电源模式：" prop="pwrmod">
                             <el-radio-group v-model="formData.pwrmod">
@@ -102,7 +102,7 @@
                         </el-form-item>
                         <el-form-item label="网络分帧超时：" prop="netReadTimes">
                             <el-input-number v-model="formData.netReadTime" :min="10" :max="2000" />
-                            <span class="tip">提示:（单位：ms 默认0ms，范围10-2000）</span>
+                            <span class="tip">提示: 单位ms 默认0ms，范围10-2000</span>
                         </el-form-item>
                         <el-form-item label="日志输出：" prop="nolog">
                             <el-radio-group v-model="formData.nolog">
@@ -157,7 +157,7 @@
                                             <el-option label="460800" value="460800" />
                                             <el-option label="921600" value="921600" />
                                         </el-select>
-                                        <span class="tip">提示: (单位bps)</span>
+                                        <span class="tip">提示: 单位bps</span>
                                     
                                     </el-form-item>
                                     <el-form-item label="数据位：">
@@ -413,6 +413,62 @@
                                         <span class="tip">提示: 可不填</span>
                                     </el-form-item>
                                 </div>
+                                <div v-if="netValues[ind].type == 'onenet'" style="margin-top: 10px;">
+                                    <el-form-item label="协议：">
+                                        <el-radio-group v-model="netValues[ind].onenet.type" @change="netTypeChange(ind)">
+                                            <el-radio value="DTU">DTU协议</el-radio>
+                                            <el-radio value="MQTT">MQTT协议</el-radio>
+                                            <el-radio value="MODBUS">MODBUS协议</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <div v-if="formData.conf[ind][1]=='DTU'">
+                                        <el-form-item label="心跳包：" class="label-font-weight">
+                                            <el-radio-group v-model="netValues[ind].onenet.heartbeat">
+                                                <el-radio :value="0">自定义</el-radio>
+                                                <el-radio :value="1">顺序生成</el-radio>
+                                            </el-radio-group>
+                                            <div v-if="netValues[ind].onenet.heartbeat == 0" style="margin-left: 20px;">
+                                                <el-input v-model="netValues[ind].onenet.data" style="width: 150px" />
+                                            </div>
+                                            <div v-if="netValues[ind].onenet.heartbeat == 1" style="margin-left: 20px;">
+                                                前缀： <el-input v-model="netValues[ind].onenet.prefix" style="width: 150px" />
+                                                后缀： <el-input v-model="netValues[ind].onenet.postfix" style="width: 150px" />
+                                            </div>
+                                        </el-form-item>
+                                        <el-form-item label="链接保活时间：">
+                                            <el-input-number v-model="formData.conf[ind][3]" :min="60" :max="1800" style="width: 150px"></el-input-number>
+                                            <span class="tip">提示: 单位秒，范围60~1800</span>
+                                        </el-form-item>
+                                        <el-form-item label="onenet的地址或域名：">
+                                            <el-input v-model="formData.conf[ind][4]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="onenet服务器的端口号：">
+                                            <el-input v-model="formData.conf[ind][5]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 端口号范围：1~65536</span>
+                                        </el-form-item>
+                                        <el-form-item label="正式生产环境注册码：">
+                                            <el-input v-model="formData.conf[ind][6]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="产品ID：">
+                                            <el-input v-model="formData.conf[ind][7]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="解析脚本名称：">
+                                            <el-input v-model="formData.conf[ind][8]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="通道捆绑的串口ID：">
+                                            <el-radio-group v-model="formData.conf[ind][9]">
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                    </div>
+                                    <div v-if="formData.conf[ind][1]=='MQTT'">
+
+                                    </div>
+                                    <div v-if="formData.conf[ind][1]=='MODBUS'">
+
+                                    </div>
+                                </div>
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
@@ -462,13 +518,13 @@ const commValues = ref({
 const activeNet = ref(0)
 // 通道中间temp数据
 const netValues = ref({
-    0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-    1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-    2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-    3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-    4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-    5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-    6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+    0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+    1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+    2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+    3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+    4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+    5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+    6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
 })
 const register = ref({
     type: 0,
@@ -535,13 +591,13 @@ const resetFrom = () => {
         2: 0,
     }
     netValues.value = {
-        0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-        1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-        2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-        3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-        4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-        5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
-        6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''}},
+        0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+        1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+        2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+        3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+        4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+        5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
+        6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''}},
     }
     formData.value = {
         fota: 0,
@@ -601,6 +657,9 @@ const netChange = (val: number) => {
     if(val == 1){
         netValues.value[activeNet.value].type = 'socket'
         netTypeChange(activeNet.value)
+    } else {
+        netValues.value[activeNet.value].type = ''
+        formData.value.conf[activeNet.value] = []
     }
 }
 
@@ -608,8 +667,16 @@ const netChange = (val: number) => {
 const netTypeChange = (ind: number) => {
     if (netValues.value[ind].type == 'http') {
         formData.value.conf[ind] = ["http","1","post","",30,"1","1","","",0,0,0]
-    }else if(netValues.value[ind].type == 'mqtt'){
+    } else if(netValues.value[ind].type == 'mqtt'){
         formData.value.conf[ind] = ["mqtt",300,1800,"",1883,"","",1,"","",0,0,1,"","","tcp","","",""]
+    } else if(netValues.value[ind].type == 'onenet'){
+        if(netValues.value[ind].onenet.type == 'DTU'){
+            formData.value.conf[ind] = ["onenet","DTU","",300,"183.230.40.40","1811","","","",1]
+        }else if(netValues.value[ind].onenet.type == 'MQTT'){
+            formData.value.conf[ind] = ["onenet","MQTT","300","600","mqtt.heclouds.com","6002","","",1,1,0,0,1]
+        }else if(netValues.value[ind].onenet.type == 'MODBUS'){
+            formData.value.conf[ind] = ["onenet","MODBUS","120","","",1]
+        }
     }
     else
     {
@@ -635,6 +702,12 @@ const processFormData = () => {
                     formData.value.conf[index][1] = netValues.value[index].socket.data
                 }else if(netValues.value[index].socket.heartbeat == 1){
                     formData.value.conf[index][1] = netValues.value[index].socket.prefix + '940802' + netValues.value[index].socket.postfix
+                }
+            } else if(netValues.value[index].type == 'onenet'){
+                if(netValues.value[index].onenet.heartbeat == 0){
+                    formData.value.conf[index][2] = netValues.value[index].onenet.data
+                }else if(netValues.value[index].onenet.heartbeat == 1){
+                    formData.value.conf[index][2] = netValues.value[index].onenet.prefix + '940802' + netValues.value[index].onenet.postfix
                 }
             }
         }
@@ -681,6 +754,27 @@ const parseFormData = () => {
                 }else{
                     netValues.value[index].socket.heartbeat = 0
                     netValues.value[index].socket.data = item[1]
+                }
+            } else if(item[0] == 'http'){
+                netValues.value[index].type = 'http'
+            } else if(item[0] == 'mqtt'){
+                netValues.value[index].type = 'mqtt'
+            } else if(item[0] == 'onenet'){
+                netValues.value[index].type = 'onenet'
+                if(item[1] == 'DTU'){
+                    netValues.value[index].onenet.type = 'DTU'
+                    if(item[2].indexOf('940802') > 0){
+                        netValues.value[index].onenet.heartbeat = 1
+                        netValues.value[index].onenet.prefix = item[2].substring(0, item[2].indexOf('940802'))
+                        netValues.value[index].onenet.postfix = item[2].substring(item[2].indexOf('940802')+6)
+                    }else{
+                        netValues.value[index].onenet.heartbeat = 0
+                        netValues.value[index].onenet.data = item[2]
+                    }
+                }else if(item[1] == 'MQTT'){
+                    netValues.value[index].onenet.type = 'MQTT'
+                }else if(item[1] == 'MODBUS'){
+                    netValues.value[index].onenet.type = 'MODBUS'
                 }
             }
         }
