@@ -455,7 +455,7 @@
                                         <el-form-item label="解析脚本名称：">
                                             <el-input v-model="formData.conf[ind][8]" style="width: 150px"></el-input>
                                         </el-form-item>
-                                        <el-form-item label="通道捆绑的串口ID：">
+                                        <el-form-item label="DTU通道捆绑的串口ID：">
                                             <el-radio-group v-model="formData.conf[ind][9]">
                                                 <el-radio :value="1">1</el-radio>
                                                 <el-radio :value="2">2</el-radio>
@@ -463,10 +463,79 @@
                                         </el-form-item>
                                     </div>
                                     <div v-if="formData.conf[ind][1]=='MQTT'">
-
+                                        <el-form-item label="链接保活时间：">
+                                            <el-input v-model="formData.conf[ind][2]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 60–1800 只接受数字</span>
+                                        </el-form-item>
+                                        <el-form-item label="自动采集任务间隔：">
+                                            <el-input v-model="formData.conf[ind][3]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 单位秒，MQTT接收超时时间，配合自动采集任务使用</span>
+                                        </el-form-item>
+                                        <el-form-item label="onenet的地址或域名：">
+                                            <el-input v-model="formData.conf[ind][4]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="onenet服务器的端口号：">
+                                            <el-input v-model="formData.conf[ind][5]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 端口号范围：1~65536</span>
+                                        </el-form-item>
+                                        <el-form-item label="正式生产环境注册码：">
+                                            <el-input v-model="formData.conf[ind][6]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="产品ID：">
+                                            <el-input v-model="formData.conf[ind][7]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="数据格式：">
+                                            <el-radio-group v-model="formData.conf[ind][8]">
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="3">3</el-radio>
+                                                <el-radio :value="4">4</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT保存会话标志位：">
+                                            <el-radio-group v-model="formData.conf[ind][9]">
+                                                <el-radio :value="0">持久会话</el-radio>
+                                                <el-radio :value="1">离线自动销毁</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT的QOS级别：">
+                                            <el-radio-group v-model="formData.conf[ind][10]">
+                                                <el-radio :value="0">0</el-radio>
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT的publish参数retain：">
+                                            <el-radio-group v-model="formData.conf[ind][11]">
+                                                <el-radio :value="0">0</el-radio>
+                                                <el-radio :value="1">1</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT通道捆绑的串口ID：">
+                                            <el-radio-group v-model="formData.conf[ind][12]">
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                                <el-radio :value="3">3</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
                                     </div>
                                     <div v-if="formData.conf[ind][1]=='MODBUS'">
-
+                                        <el-form-item label="链接保活时间：">
+                                            <el-input v-model="formData.conf[ind][2]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 60–300 只接受数字</span>
+                                        </el-form-item>
+                                        <el-form-item label="Master-APIkey：">
+                                            <el-input v-model="formData.conf[ind][3]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 产品的Master-APIkey</span>
+                                        </el-form-item>
+                                        <el-form-item label="产品ID：">
+                                            <el-input v-model="formData.conf[ind][4]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="串口通道：">
+                                            <el-radio-group v-model="formData.conf[ind][5]">
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
                                     </div>
                                 </div>
                             </el-tab-pane>
@@ -704,10 +773,12 @@ const processFormData = () => {
                     formData.value.conf[index][1] = netValues.value[index].socket.prefix + '940802' + netValues.value[index].socket.postfix
                 }
             } else if(netValues.value[index].type == 'onenet'){
-                if(netValues.value[index].onenet.heartbeat == 0){
-                    formData.value.conf[index][2] = netValues.value[index].onenet.data
-                }else if(netValues.value[index].onenet.heartbeat == 1){
-                    formData.value.conf[index][2] = netValues.value[index].onenet.prefix + '940802' + netValues.value[index].onenet.postfix
+                if(netValues.value[index].onenet.type == 'DTU'){
+                    if(netValues.value[index].onenet.heartbeat == 0){
+                        formData.value.conf[index][2] = netValues.value[index].onenet.data
+                    }else if(netValues.value[index].onenet.heartbeat == 1){
+                        formData.value.conf[index][2] = netValues.value[index].onenet.prefix + '940802' + netValues.value[index].onenet.postfix
+                    }
                 }
             }
         }
