@@ -323,6 +323,96 @@
                                         </el-radio-group>
                                     </el-form-item>
                                 </div>
+                                <div v-if="netValues[ind].type == 'mqtt'" style="margin-top: 10px;">
+                                    <el-form-item label="MQTT心跳包的间隔：">
+                                        <el-input-number v-model="formData.conf[ind][1]" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 单位秒，默认300</span>
+                                    </el-form-item>
+                                    <el-form-item label="自动采集任务间隔时间：">
+                                        <el-input-number v-model="formData.conf[ind][2]" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 单位秒，MQTT接收超时时间,配合自动采集任务使用</span>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的地址或域名：">
+                                        <el-input v-model="formData.conf[ind][3]" style="width: 280px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT服务器的端口号：">
+                                        <el-input-number v-model="formData.conf[ind][4]" :min="1" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 端口号范围：1~65536</span>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的登陆账号：">
+                                        <el-input v-model="formData.conf[ind][5]" style="width: 280px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的登陆密码：">
+                                        <el-input v-model="formData.conf[ind][6]" style="width: 280px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT保存会话标志位：">
+                                        <el-radio-group v-model="formData.conf[ind][7]">
+                                            <el-radio :value="0">持久会话</el-radio>
+                                            <el-radio :value="1">离线自动销毁</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="订阅消息主题：">
+                                        <el-input v-model="formData.conf[ind][8]" style="width: 280px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="发布消息主题：">
+                                        <el-input v-model="formData.conf[ind][9]" style="width: 280px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的QOS级别：">
+                                        <el-radio-group v-model="formData.conf[ind][10]">
+                                            <el-radio :value="0">0</el-radio>
+                                            <el-radio :value="1">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的publish参数retain：">
+                                        <el-radio-group v-model="formData.conf[ind][11]">
+                                            <el-radio :value="0">0</el-radio>
+                                            <el-radio :value="1">1</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT通道捆绑的串口ID：">
+                                        <el-radio-group v-model="formData.conf[ind][12]">
+                                            <el-radio :value="1">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                            <el-radio :value="3">3</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="ID是否添加默认IMEI：">
+                                        <el-radio-group v-model="formData.conf[ind][17]">
+                                            <el-radio value="">是</el-radio>
+                                            <el-radio value="1">否</el-radio>
+                                        </el-radio-group>
+                                        <span class="tip">提示: 默认添加IMEI，选是的格式是IMEI+内容，选否则自定义内容，不填则默认IMEI</span>
+                                    </el-form-item>
+                                    <el-form-item label="接收mqtt信息是否显示主题 ：">
+                                        <el-radio-group v-model="formData.conf[ind][18]">
+                                            <el-radio value="">是</el-radio>
+                                            <el-radio value="1">否</el-radio>
+                                        </el-radio-group>
+                                        <span class="tip">提示: 默认不显示主题,显示格式为[+MSUB: topic,len,message]</span>
+                                    </el-form-item>
+                                    <el-form-item label="客户端ID：">
+                                        <el-input v-model="formData.conf[ind][13]" style="width: 280px"></el-input>
+                                        <span class="tip">提示: 不填系统用IMEI做客户端ID</span>
+                                    </el-form-item>
+                                    <el-form-item label="主题添加IMEI：">
+                                        <el-radio-group v-model="formData.conf[ind][14]">
+                                            <el-radio value="">是</el-radio>
+                                            <el-radio value="1">否</el-radio>
+                                        </el-radio-group>
+                                        <span class="tip">提示: 默认添加（/自定义主题/IMEI）</span>
+                                    </el-form-item>
+                                    <el-form-item label="transport：">
+                                        <el-radio-group v-model="formData.conf[ind][15]">
+                                            <el-radio value="tcp">tcp</el-radio>
+                                            <el-radio value="tcp_ssl">tcp_ssl</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的遗嘱：">
+                                        <el-input v-model="formData.conf[ind][16]" style="width: 280px"></el-input>
+                                        <span class="tip">提示: 可不填</span>
+                                    </el-form-item>
+                                </div>
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
@@ -518,7 +608,11 @@ const netChange = (val: number) => {
 const netTypeChange = (ind: number) => {
     if (netValues.value[ind].type == 'http') {
         formData.value.conf[ind] = ["http","1","post","",30,"1","1","","",0,0,0]
-    }else{
+    }else if(netValues.value[ind].type == 'mqtt'){
+        formData.value.conf[ind] = ["mqtt",300,1800,"",1883,"","",1,"","",0,0,1,"","","tcp","","",""]
+    }
+    else
+    {
         formData.value.conf[ind] = ["tcp","0x00",300,"",2345,1,"","","",""]
     }
 }
