@@ -27,13 +27,9 @@ public class IotProductServiceImpl extends BaseServiceImpl<Iot_product> implemen
             throw new BaseException("产品接入平台未设置");
         }
         this.insert(product);
-        this.createProductMenu(product.getId());
+        this.createProductMenu(product.getId(), product.getIotPlatform());
         if (product.getIotPlatform() == IotPlatform.OPENLUATDTU) {
             // 合宙DTU 打开DTU配置产品菜单
-            iotProductMenuService.update(
-                    Chain.make("display", true),
-                    Cnd.where("productId", "=", product.getId()).
-                            and("code", "=", "dtuparam"));
             iotProductMenuService.update(
                     Chain.make("display", false),
                     Cnd.where("productId", "=", product.getId()).
@@ -47,7 +43,7 @@ public class IotProductServiceImpl extends BaseServiceImpl<Iot_product> implemen
      *
      * @param productId
      */
-    private void createProductMenu(String productId) {
+    private void createProductMenu(String productId, IotPlatform iotPlatform) {
         Iot_product_menu menu = new Iot_product_menu();
         menu.setProductId(productId);
         menu.setName("基本信息");
@@ -83,13 +79,15 @@ public class IotProductServiceImpl extends BaseServiceImpl<Iot_product> implemen
         menu.setSys(false);
         menu.setDisplay(true);
         iotProductMenuService.insert(menu);
-        menu = new Iot_product_menu();
-        menu.setProductId(productId);
-        menu.setName("DTU参数管理");
-        menu.setCode("dtuparam");
-        menu.setSys(false);
-        menu.setDisplay(false);
-        iotProductMenuService.insert(menu);
+        if (iotPlatform == IotPlatform.OPENLUATDTU) {
+            menu = new Iot_product_menu();
+            menu.setProductId(productId);
+            menu.setName("DTU参数管理");
+            menu.setCode("dtuparam");
+            menu.setSys(false);
+            menu.setDisplay(true);
+            iotProductMenuService.insert(menu);
+        }
         menu = new Iot_product_menu();
         menu.setProductId(productId);
         menu.setName("固件管理");
