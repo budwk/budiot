@@ -3,23 +3,22 @@
 ## 后端打包
 
 ### 安装依赖
-* `budiot-java-server/budiot-access` 目录下执行 `mvn install`
-* `budiot-java-server/budiot-common` 目录下执行 `mvn install`
+* `budiot-java-server` 目录下执行 `mvn install`
 
 ### 项目打包
 
 * `budiot-java-server/budiot-access/budiot-access-gateway` 
 
-目录下执行 `mvn package nutzboot:shade`
+目录下执行 `mvn package nutzboot:shade -Dmaven.test.skip=true`
 
 * `budiot-java-server/budiot-access/budiot-access-processor` 
 
-目录下执行 `mvn package nutzboot:shade`
+目录下执行 `mvn package nutzboot:shade -Dmaven.test.skip=true`
 
 
 * `budiot-java-server/budiot-server` 
 
-目录下执行 `mvn package nutzboot:shade`
+目录下执行 `mvn package nutzboot:shade -Dmaven.test.skip=true`
 
 ### 项目运行
 
