@@ -1283,6 +1283,120 @@
                                 <el-button plain type="primary" @click="addGpioWarn" style="margin-top: 10px;">添加</el-button> 
                             </div>
                         </div>
+                        <span>ADC0触发上报</span>
+                        <div style="padding: 10px 20px;">
+                            <el-radio-group v-model="adc0WarnEnabled" @change="adc0WarnEnabledChange">
+                                <el-radio :value="1">启用</el-radio>
+                                <el-radio :value="0">不启用</el-radio>
+                            </el-radio-group>
+                            <div v-if="adc0WarnEnabled" style="padding: 10px 0;">
+                                <el-form-item label="触发模式：" class="label-font-weight">
+                                    <el-checkbox v-model="formData.warn.adc0[0]" :true-value="1" :false-value="0">低于</el-checkbox>
+                                    <el-input type="input" v-model="formData.warn.adc0[1]" style="width: 80px"></el-input>mv
+                                    <el-checkbox v-model="formData.warn.adc0[2]" :true-value="1" :false-value="0" style="padding-left: 20px">高于</el-checkbox>
+                                    <el-input type="input" v-model="formData.warn.adc0[3]" style="width: 80px"></el-input>mv
+                                    <span style="padding-left: 25px">回差电压</span>
+                                    <el-input type="input" v-model="formData.warn.adc0[4]" style="width: 80px;padding-left: 5px"></el-input>mv
+                                </el-form-item>
+                                <el-form-item label="上报消息：">
+                                    <el-input type="input" v-model="formData.warn.adc0[5]" style="width: 280px"></el-input>
+                                </el-form-item> 
+                                <el-form-item label="上报通道：">
+                                    <el-select v-model="formData.warn.adc0[6]" style="width: 150px" placeholder="" >
+                                        <el-option v-for="(item,ix) in 7" :key="ix" :label="''+item" :value="''+item" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="检测频率：">
+                                    <el-input type="input" v-model="formData.warn.adc0[7]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 单位秒</span>
+                                </el-form-item>
+                                <el-form-item label="警报间隔：">
+                                    <el-input type="input" v-model="formData.warn.adc0[8]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 单位秒</span>
+                                </el-form-item>
+                                <el-form-item label="上报方式：" class="label-font-weight">
+                                    <el-checkbox v-model="formData.warn.adc0[9]" :true-value="1" :false-value="0">互联网</el-checkbox>
+                                    <el-checkbox v-model="formData.warn.adc0[10]" :true-value="1" :false-value="0">短信</el-checkbox>
+                                    <el-checkbox v-model="formData.warn.adc0[11]" :true-value="1" :false-value="0">电话</el-checkbox>
+                                </el-form-item> 
+                            </div>
+                        </div>
+                        <span>ADC1触发上报</span>
+                        <div style="padding: 10px 20px;">
+                            <el-radio-group v-model="adc1WarnEnabled" @change="adc1WarnEnabledChange">
+                                <el-radio :value="1">启用</el-radio>
+                                <el-radio :value="0">不启用</el-radio>
+                            </el-radio-group>
+                            <div v-if="adc1WarnEnabled" style="padding: 10px 0;">
+                                <el-form-item label="触发模式：" class="label-font-weight">
+                                    <el-checkbox v-model="formData.warn.adc1[0]" :true-value="1" :false-value="0">低于</el-checkbox>
+                                    <el-input type="input" v-model="formData.warn.adc1[1]" style="width: 80px"></el-input>mv
+                                    <el-checkbox v-model="formData.warn.adc1[2]" :true-value="1" :false-value="0" style="padding-left: 20px">高于</el-checkbox>
+                                    <el-input type="input" v-model="formData.warn.adc1[3]" style="width: 80px"></el-input>mv
+                                    <span style="padding-left: 25px">回差电压</span>
+                                    <el-input type="input" v-model="formData.warn.adc1[4]" style="width: 80px;padding-left: 5px"></el-input>mv
+                                </el-form-item>
+                                <el-form-item label="上报消息：">
+                                    <el-input type="input" v-model="formData.warn.adc1[5]" style="width: 280px"></el-input>
+                                </el-form-item> 
+                                <el-form-item label="上报通道：">
+                                    <el-select v-model="formData.warn.adc1[6]" style="width: 150px" placeholder="" >
+                                        <el-option v-for="(item,ix) in 7" :key="ix" :label="''+item" :value="''+item" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="检测频率：">
+                                    <el-input type="input" v-model="formData.warn.adc1[7]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 单位秒</span>
+                                </el-form-item>
+                                <el-form-item label="警报间隔：">
+                                    <el-input type="input" v-model="formData.warn.adc1[8]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 单位秒</span>
+                                </el-form-item>
+                                <el-form-item label="上报方式：" class="label-font-weight">
+                                    <el-checkbox v-model="formData.warn.adc1[9]" :true-value="1" :false-value="0">互联网</el-checkbox>
+                                    <el-checkbox v-model="formData.warn.adc1[10]" :true-value="1" :false-value="0">短信</el-checkbox>
+                                    <el-checkbox v-model="formData.warn.adc1[11]" :true-value="1" :false-value="0">电话</el-checkbox>
+                                </el-form-item> 
+                            </div>
+                        </div>
+                        <span>VBATT触发上报</span>
+                        <div style="padding: 10px 20px;">
+                            <el-radio-group v-model="vbattWarnEnabled" @change="vbattWarnEnabledChange">
+                                <el-radio :value="1">启用</el-radio>
+                                <el-radio :value="0">不启用</el-radio>
+                            </el-radio-group>
+                            <div v-if="vbattWarnEnabled" style="padding: 10px 0;">
+                                <el-form-item label="触发模式：" class="label-font-weight">
+                                    <el-checkbox v-model="formData.warn.vbatt[0]" :true-value="1" :false-value="0">低于</el-checkbox>
+                                    <el-input type="input" v-model="formData.warn.vbatt[1]" style="width: 80px"></el-input>mv
+                                    <el-checkbox v-model="formData.warn.vbatt[2]" :true-value="1" :false-value="0" style="padding-left: 20px">高于</el-checkbox>
+                                    <el-input type="input" v-model="formData.warn.vbatt[3]" style="width: 80px"></el-input>mv
+                                    <span style="padding-left: 25px">回差电压</span>
+                                    <el-input type="input" v-model="formData.warn.vbatt[4]" style="width: 80px;padding-left: 5px"></el-input>mv
+                                </el-form-item>
+                                <el-form-item label="上报消息：">
+                                    <el-input type="input" v-model="formData.warn.vbatt[5]" style="width: 280px"></el-input>
+                                </el-form-item> 
+                                <el-form-item label="上报通道：">
+                                    <el-select v-model="formData.warn.vbatt[6]" style="width: 150px" placeholder="" >
+                                        <el-option v-for="(item,ix) in 7" :key="ix" :label="''+item" :value="''+item" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="检测频率：">
+                                    <el-input type="input" v-model="formData.warn.vbatt[7]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 单位秒</span>
+                                </el-form-item>
+                                <el-form-item label="警报间隔：">
+                                    <el-input type="input" v-model="formData.warn.vbatt[8]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 单位秒</span>
+                                </el-form-item>
+                                <el-form-item label="上报方式：" class="label-font-weight">
+                                    <el-checkbox v-model="formData.warn.vbatt[9]" :true-value="1" :false-value="0">互联网</el-checkbox>
+                                    <el-checkbox v-model="formData.warn.vbatt[10]" :true-value="1" :false-value="0">短信</el-checkbox>
+                                    <el-checkbox v-model="formData.warn.vbatt[11]" :true-value="1" :false-value="0">电话</el-checkbox>
+                                </el-form-item> 
+                            </div>
+                        </div>
                     </el-tab-pane>
                     <el-tab-pane label="任务" name="8" style="padding: 0 20px">任务</el-tab-pane>
                 </el-tabs>
@@ -1365,6 +1479,9 @@ const autoTaskCommValues = ref({
 const pinsEnabled = ref(0)
 const gpsEnabled = ref(0)
 const gpioWarnEnabled = ref(0)
+const adc0WarnEnabled = ref(0)
+const adc1WarnEnabled = ref(0)
+const vbattWarnEnabled = ref(0)
 const tableData = ref({
     version: 0,
     enabled: false,
@@ -1528,6 +1645,33 @@ const addGpioWarn = () => {
 // 删除GPIO预警
 const delGpioWarn = (ind: number) => {
     formData.value.warn.gpio.splice(ind, 1)
+}
+
+// ADC0预警启用
+const adc0WarnEnabledChange = (val: number) => {
+    if (val == 1) {
+        formData.value.warn.adc0 = [0,"",0,"","","","","","",0,0,0]
+    } else {
+        formData.value.warn.adc0 = []
+    }
+}
+
+// ADC1预警启用
+const adc1WarnEnabledChange = (val: number) => {
+    if (val == 1) {
+        formData.value.warn.adc1 = [0,"",0,"","","","","","",0,0,0]
+    } else {
+        formData.value.warn.adc1 = []
+    }
+}
+
+// VBATT预警启用
+const vbattWarnEnabledChange = (val: number) => {
+    if (val == 1) {
+        formData.value.warn.vbatt = [0,"",0,"","","","","","",0,0,0]
+    } else {
+        formData.value.warn.vbatt = []
+    }
 }
 
 // 注册信息
@@ -1729,6 +1873,19 @@ const parseFormData = () => {
             dataValues.value[index] = 1
         }
     })
+    // 预警转换
+    if(formData.value.warn.gpio.length > 0){
+        gpioWarnEnabled.value = 1
+    }
+    if(formData.value.warn.adc0.length > 0){
+        adc0WarnEnabled.value = 1
+    }
+    if(formData.value.warn.adc1.length > 0){
+        adc1WarnEnabled.value = 1
+    }
+    if(formData.value.warn.vbatt.length > 0){
+        vbattWarnEnabled.value = 1
+    }
 }
 
 const save = () => {
