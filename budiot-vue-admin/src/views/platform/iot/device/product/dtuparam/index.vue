@@ -1073,7 +1073,15 @@
                                         <el-radio :value="0">不启用</el-radio>
                                     </el-radio-group>
                                     <div  v-if="autoTaskCommValues[ind] == 1" style="margin-top: 10px;">
-
+                                        <el-form-item label="采集等待：">
+                                            <el-input v-model="formData.cmds[ind][0]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 1-10000 单位：ms</span>
+                                        </el-form-item>
+                                        <el-form-item v-for="(cmd,ci) in getCmds(ind)" :label="'cmd'+(ci+1)">
+                                            <el-input v-model="formData.cmds[ind][ci+1]" style="width: 280px"></el-input>
+                                            <el-button link icon="Delete" type="danger" @click="delCmd(ind,ci)"></el-button>
+                                        </el-form-item>
+                                        <el-button type="primary" @click="addCmd(ind)">添加执行指令</el-button>
                                     </div>
                                 </el-tab-pane>
                             </el-tabs>
@@ -1257,10 +1265,26 @@ const commChange = (val: number) => {
 // 预置信息 - 自动采集任务 - 串口变化
 const autoTaskCommChange = (val: number) => {
     if (val == 1) {
-        formData.value.cmds[activeAutoTaskComm.value] = [activeAutoTaskComm.value+1]
+        formData.value.cmds[activeAutoTaskComm.value] = ['']
     } else {
         formData.value.cmds[activeAutoTaskComm.value] = []
     }
+}
+
+// 获取指令
+const getCmds = (ind: number) => {
+    // 排除formData.value.cmds[ind] 第一个元素
+    return formData.value.cmds[ind].slice(1) 
+}
+
+// 添加指令
+const addCmd = (ind: number) => {
+    formData.value.cmds[ind].push('')
+}
+
+// 删除指令
+const delCmd = (ind: number, ci: number) => {
+    formData.value.cmds[ind].splice(ci+1, 1)
 }
 
 // 注册信息
