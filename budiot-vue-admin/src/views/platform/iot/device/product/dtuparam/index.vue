@@ -208,7 +208,7 @@
                                             <el-radio value="mqtt">MQTT</el-radio>
                                             <el-radio value="onenet">OneNET</el-radio>
                                             <el-radio value="aliyun">阿里云</el-radio>
-                                            <el-radio value="bduyun">百度云</el-radio>
+                                            <el-radio value="bdiot">百度云</el-radio>
                                             <el-radio value="txuny">腾讯云</el-radio>
                                             <el-radio value="txyunnew">腾讯云(新)</el-radio>
                                             <el-radio value="onenetnew">OneNET(新)</el-radio>
@@ -686,6 +686,115 @@
                                         </el-form-item>
                                     </div>
                                 </div>
+                                <div v-if="netValues[ind].type == 'bdiot'" style="margin-top: 10px;">
+                                    <el-form-item label="注册类型：">
+                                        <el-radio-group v-model="netValues[ind].bdiot.type" @change="netTypeChange(ind)">
+                                            <el-radio value="datatype">数据型</el-radio>
+                                            <el-radio value="devicetype">设备型</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="链接保活时间：">
+                                        <el-input-number v-model="formData.conf[ind][2]" :min="60" :max="1800" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 60–1800 只接受数字</span>
+                                    </el-form-item>
+                                    <el-form-item label="自动采集任务间隔：">
+                                        <el-input-number v-model="formData.conf[ind][3]" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 单位秒，配合自动采集任务使用</span>
+                                    </el-form-item>
+                                    <el-form-item label="地域代码(RegionID)：">
+                                        <el-input v-model="formData.conf[ind][4]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <div v-if="formData.conf[ind][1]=='datatype'">
+                                        <el-form-item label="Endpoint：">
+                                            <el-input v-model="formData.conf[ind][5]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="AccessKey ID：">
+                                            <el-input v-model="formData.conf[ind][6]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="Access Key Secret：">
+                                            <el-input v-model="formData.conf[ind][7]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="身份名称：">
+                                            <el-input v-model="formData.conf[ind][8]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="身份密码：">
+                                            <el-input v-model="formData.conf[ind][9]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="订阅主题：">
+                                            <el-input v-model="formData.conf[ind][10]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="发布主题：">
+                                            <el-input v-model="formData.conf[ind][11]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT保存会话标志位：">
+                                            <el-radio-group v-model="formData.conf[ind][12]">
+                                                <el-radio :value="0">持久会话</el-radio>
+                                                <el-radio :value="1">离线自动销毁</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT的QOS级别：">
+                                            <el-radio-group v-model="formData.conf[ind][13]">
+                                                <el-radio :value="0">0</el-radio>
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT通道捆绑的串口ID：">
+                                            <el-radio-group v-model="formData.conf[ind][14]">
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                                <el-radio :value="3">3</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="transport：">
+                                            <el-radio-group v-model="formData.conf[ind][15]">
+                                                <el-radio value="tcp">tcp</el-radio>
+                                                <el-radio value="tcp_ssl">tcp_ssl</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT的遗嘱主题：">
+                                            <el-input v-model="formData.conf[ind][16]" style="width: 150px"></el-input>
+                                            <span class="tip">提示: 可不填</span>
+                                        </el-form-item>
+                                    </div>
+                                    <div v-if="formData.conf[ind][1]=='devicetype'">
+                                        <el-form-item label="schemaID：">
+                                            <el-input v-model="formData.conf[ind][5]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="AccessKey ID：">
+                                            <el-input v-model="formData.conf[ind][6]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="Access Key Secret：">
+                                            <el-input v-model="formData.conf[ind][7]" style="width: 150px"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT保存会话标志位：">
+                                            <el-radio-group v-model="formData.conf[ind][8]">
+                                                <el-radio :value="0">持久会话</el-radio>
+                                                <el-radio :value="1">离线自动销毁</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT的QOS级别：">
+                                            <el-radio-group v-model="formData.conf[ind][9]">
+                                                <el-radio :value="0">0</el-radio>
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="MQTT通道捆绑的串口ID：">
+                                            <el-radio-group v-model="formData.conf[ind][10]">
+                                                <el-radio :value="1">1</el-radio>
+                                                <el-radio :value="2">2</el-radio>
+                                                <el-radio :value="3">3</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                        <el-form-item label="transport：">
+                                            <el-radio-group v-model="formData.conf[ind][11]">
+                                                <el-radio value="tcp">tcp</el-radio>
+                                                <el-radio value="tcp_ssl">tcp_ssl</el-radio>
+                                            </el-radio-group>
+                                        </el-form-item>
+                                    </div>
+                                </div>
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
@@ -735,13 +844,13 @@ const commValues = ref({
 const activeNet = ref(0)
 // 通道中间temp数据
 const netValues = ref({
-    0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-    1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-    2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-    3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-    4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-    5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-    6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
+    0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+    1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+    2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+    3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+    4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+    5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+    6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
 })
 const register = ref({
     type: 0,
@@ -808,13 +917,13 @@ const resetFrom = () => {
         2: 0,
     }
     netValues.value = {
-        0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-        1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-        2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-        3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-        4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-        5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
-        6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'}},
+        0: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+        1: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+        2: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+        3: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+        4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+        5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
+        6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'}},
     }
     formData.value = {
         fota: 0,
@@ -901,6 +1010,12 @@ const netTypeChange = (ind: number) => {
             formData.value.conf[ind] = ["aliyun","otok",300,1800,"cn-shanghai","","","basic",1,0,1,"","",""]
         }else if(netValues.value[ind].aliyun.type == 'omok'){
             formData.value.conf[ind] = ["aliyun","omok",300,1800,"cn-shanghai","","","","basic",1,0,1,"","",""]
+        }
+    } else if(netValues.value[ind].type == 'bdiot'){
+        if(netValues.value[ind].bdiot.type == 'datatype'){
+            formData.value.conf[ind] = ["bdiot","datatype",300,1800,"gz","","","","","","","",1,0,1,"tcp",""]
+        }else if(netValues.value[ind].bdiot.type == 'devicetype'){
+            formData.value.conf[ind] = ["bdiot","devicetype",300,1800,"gz","","","",1,0,1,"tcp"]
         }
     }
     else
@@ -1006,6 +1121,9 @@ const parseFormData = () => {
             } else if(item[0] == 'aliyun'){
                 netValues.value[index].type = 'aliyun'
                 netValues.value[index].aliyun.type = item[1]
+            } else if(item[0] == 'bdiot'){
+                netValues.value[index].type = 'bdiot'
+                netValues.value[index].bdiot.type = item[1]
             }
         }
     })
