@@ -209,8 +209,8 @@
                                             <el-radio value="onenet">OneNET</el-radio>
                                             <el-radio value="aliyun">阿里云</el-radio>
                                             <el-radio value="bdiot">百度云</el-radio>
-                                            <el-radio value="txuny">腾讯云</el-radio>
-                                            <el-radio value="txyunnew">腾讯云(新)</el-radio>
+                                            <el-radio value="txiot">腾讯云</el-radio>
+                                            <el-radio value="txiotnew">腾讯云(新)</el-radio>
                                             <el-radio value="onenetnew">OneNET(新)</el-radio>
                                             <el-radio value="thingscloud">LuatCloud</el-radio>
                                         </el-radio-group>
@@ -795,6 +795,102 @@
                                         </el-form-item>
                                     </div>
                                 </div>
+                                <div v-if="netValues[ind].type == 'txiot'" style="margin-top: 10px;">
+                                    <el-form-item label="链接保活时间：">
+                                        <el-input-number v-model="formData.conf[ind][1]" :min="60" :max="1800" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 60–1800 只接受数字</span>
+                                    </el-form-item>
+                                    <el-form-item label="自动采集任务间隔：">
+                                        <el-input-number v-model="formData.conf[ind][2]" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 单位秒，MQTT接收超时时间，配合自动采集任务使用</span>
+                                    </el-form-item>
+                                    <el-form-item label="Region：">
+                                        <el-input v-model="formData.conf[ind][3]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="ProductID：">
+                                        <el-input v-model="formData.conf[ind][4]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="SecretID：">
+                                        <el-input v-model="formData.conf[ind][5]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="SecretKey：">
+                                        <el-input v-model="formData.conf[ind][6]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="订阅主题：">
+                                        <el-input v-model="formData.conf[ind][7]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="发布主题：">
+                                        <el-input v-model="formData.conf[ind][8]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT保存会话标志位：">
+                                        <el-radio-group v-model="formData.conf[ind][9]">
+                                            <el-radio :value="0">持久会话</el-radio>
+                                            <el-radio :value="1">离线自动销毁</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的QOS级别：">
+                                        <el-radio-group v-model="formData.conf[ind][10]">
+                                            <el-radio :value="0">0</el-radio>
+                                            <el-radio :value="1">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT通道捆绑的串口ID：">
+                                        <el-radio-group v-model="formData.conf[ind][11]">
+                                            <el-radio :value="1">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                            <el-radio :value="3">3</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </div>
+                                <div v-if="netValues[ind].type == 'txiotnew'" style="margin-top: 10px;">
+                                    <el-form-item label="链接保活时间：">
+                                        <el-input-number v-model="formData.conf[ind][1]" :min="60" :max="1800" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 60–1800 只接受数字</span>
+                                    </el-form-item>
+                                    <el-form-item label="自动采集任务间隔：">
+                                        <el-input-number v-model="formData.conf[ind][2]" style="width: 150px"></el-input-number>
+                                        <span class="tip">提示: 单位秒，MQTT接收超时时间，配合自动采集任务使用</span>
+                                    </el-form-item>
+                                    <el-form-item label="Region：">
+                                        <el-input v-model="formData.conf[ind][3]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="DeviceName：">
+                                        <el-input v-model="formData.conf[ind][4]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="ProductID：">
+                                        <el-input v-model="formData.conf[ind][5]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="ProductSecret：">
+                                        <el-input v-model="formData.conf[ind][6]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="订阅主题：">
+                                        <el-input v-model="formData.conf[ind][7]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="发布主题：">
+                                        <el-input v-model="formData.conf[ind][8]" style="width: 150px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT保存会话标志位：">
+                                        <el-radio-group v-model="formData.conf[ind][9]">
+                                            <el-radio :value="0">持久会话</el-radio>
+                                            <el-radio :value="1">离线自动销毁</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT的QOS级别：">
+                                        <el-radio-group v-model="formData.conf[ind][10]">
+                                            <el-radio :value="0">0</el-radio>
+                                            <el-radio :value="1">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="MQTT通道捆绑的串口ID：">
+                                        <el-radio-group v-model="formData.conf[ind][11]">
+                                            <el-radio :value="1">1</el-radio>
+                                            <el-radio :value="2">2</el-radio>
+                                            <el-radio :value="3">3</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </div>
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
@@ -1017,6 +1113,10 @@ const netTypeChange = (ind: number) => {
         }else if(netValues.value[ind].bdiot.type == 'devicetype'){
             formData.value.conf[ind] = ["bdiot","devicetype",300,1800,"gz","","","",1,0,1,"tcp"]
         }
+    } else if(netValues.value[ind].type == 'txiot'){
+        formData.value.conf[ind] = ["txiot",300,1800,"ap-guangzhou","","","","","",1,0,1]
+    } else if(netValues.value[ind].type == 'txiotnew'){
+        formData.value.conf[ind] = ["txiotnew",300,1800,"ap-guangzhou","","","","","",1,0,1]
     }
     else
     {
@@ -1124,6 +1224,10 @@ const parseFormData = () => {
             } else if(item[0] == 'bdiot'){
                 netValues.value[index].type = 'bdiot'
                 netValues.value[index].bdiot.type = item[1]
+            } else if(item[0] == 'txiot'){
+                netValues.value[index].type = 'txiot'
+            } else if(item[0] == 'txiotnew'){
+                netValues.value[index].type = 'txiotnew'
             }
         }
     })
