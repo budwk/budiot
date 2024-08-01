@@ -1,5 +1,8 @@
 <template>
   <div class="app-select">
+    <span class="el-dropdown-link" style="padding-right: 20px;">
+      <a href="https://budiot.com" target="_blank" style="color:deeppink;">官网 budiot.com</a>
+    </span>
     <el-dropdown class="app-select-dropdown" trigger="click" @command="handleSetApp">
       <span class="el-dropdown-link">
         {{ appName }}
