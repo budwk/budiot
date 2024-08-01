@@ -1245,7 +1245,45 @@
                             </el-tab-pane>
                         </el-tabs>  
                     </el-tab-pane>
-                    <el-tab-pane label="预警" name="7" style="padding: 0 20px">预警</el-tab-pane>
+                    <el-tab-pane label="预警" name="7" style="padding: 0 20px">
+                        <span>GPIO触发上报</span>
+                        <div style="padding: 10px 20px;">
+                            <el-radio-group v-model="gpioWarnEnabled">
+                                <el-radio :value="1">启用</el-radio>
+                                <el-radio :value="0">不启用</el-radio>
+                            </el-radio-group>
+                            <div v-if="gpioWarnEnabled">
+                                <div v-for="(e,i) in formData.warn?.gpio" :key="'w_g_'+i" style="padding: 5px 0;">
+                                    <span>第{{(i+1)}}组 <el-button link type="danger" icon="Delete" @click="delGpioWarn(i)"/></span>
+                                    <div style="padding: 0 30px">
+                                        <el-form-item label="GPIO：">
+                                            <el-select v-model="formData.warn.gpio[i][0]" style="width: 150px" placeholder="">
+                                                <el-option v-for="(item,ix) in 129" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item label="触发模式：" class="label-font-weight">
+                                            <el-checkbox v-model="formData.warn.gpio[i][1]" :true-value="1" :false-value="0">下降沿</el-checkbox>
+                                            <el-checkbox v-model="formData.warn.gpio[i][2]" :true-value="1" :false-value="0">上升沿</el-checkbox>
+                                        </el-form-item>
+                                        <el-form-item label="上报消息：">
+                                            <el-input type="input" v-model="formData.warn.gpio[i][3]" style="width: 280px"></el-input>
+                                        </el-form-item> 
+                                        <el-form-item label="上报通道：">
+                                            <el-select v-model="formData.warn.gpio[i][4]" style="width: 150px" placeholder="" >
+                                                <el-option v-for="(item,ix) in 7" :key="ix" :label="''+item" :value="''+item" />
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item label="上报方式：" class="label-font-weight">
+                                            <el-checkbox v-model="formData.warn.gpio[i][5]" :true-value="1" :false-value="0">互联网</el-checkbox>
+                                            <el-checkbox v-model="formData.warn.gpio[i][6]" :true-value="1" :false-value="0">短信</el-checkbox>
+                                            <el-checkbox v-model="formData.warn.gpio[i][7]" :true-value="1" :false-value="0">电话</el-checkbox>
+                                        </el-form-item> 
+                                    </div>
+                                </div>   
+                                <el-button plain type="primary" @click="addGpioWarn" style="margin-top: 10px;">添加</el-button> 
+                            </div>
+                        </div>
+                    </el-tab-pane>
                     <el-tab-pane label="任务" name="8" style="padding: 0 20px">任务</el-tab-pane>
                 </el-tabs>
             </el-form>
@@ -1326,6 +1364,7 @@ const autoTaskCommValues = ref({
 })
 const pinsEnabled = ref(0)
 const gpsEnabled = ref(0)
+const gpioWarnEnabled = ref(0)
 const tableData = ref({
     version: 0,
     enabled: false,
@@ -1479,6 +1518,16 @@ const dataChange = (val: number) => {
         formData.value.upprot[activeData.value] = ''
         formData.value.dwprot[activeData.value] = ''
     }
+}
+
+// 添加GPIO预警
+const addGpioWarn = () => {
+    formData.value.warn.gpio.push(["",0,0,"","",0,0,0])
+}
+
+// 删除GPIO预警
+const delGpioWarn = (ind: number) => {
+    formData.value.warn.gpio.splice(ind, 1)
 }
 
 // 注册信息
@@ -1674,6 +1723,12 @@ const parseFormData = () => {
     if(formData.value.gps.pio.length > 0){
         gpsEnabled.value = 1
     }
+    // 数据流转换
+    formData.value.upprot.forEach((item, index) => {
+        if (item.length > 0) {
+            dataValues.value[index] = 1
+        }
+    })
 }
 
 const save = () => {
