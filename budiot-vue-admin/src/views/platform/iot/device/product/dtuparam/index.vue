@@ -1066,7 +1066,17 @@
                         </div>
                         <span>自动采集任务</span>
                         <div style="padding: 10px 20px;">
-                            
+                            <el-tabs v-model="activeAutoTaskComm" style="width: 100%">
+                                <el-tab-pane v-for="(obj, ind) in formData.uconf" :label="'串口' + (ind + 1)" :name="ind" :key="'at_comm_' + ind">
+                                    <el-radio-group v-model="autoTaskCommValues[ind]" @change="autoTaskCommChange">
+                                        <el-radio :value="1">启用</el-radio>
+                                        <el-radio :value="0">不启用</el-radio>
+                                    </el-radio-group>
+                                    <div  v-if="autoTaskCommValues[ind] == 1" style="margin-top: 10px;">
+
+                                    </div>
+                                </el-tab-pane>
+                            </el-tabs>
                         </div>
                     </el-tab-pane>
                     <el-tab-pane label="GPIO" name="4" style="padding: 0 20px">GPIO</el-tab-pane>
@@ -1106,6 +1116,7 @@ const createRef = ref<InstanceType<typeof ElForm>>()
 const showExport = ref(false)
 const activeName = ref('0')
 const activeComm = ref(0)
+const activeAutoTaskComm = ref(0)
 const commValues = ref({
     0: 0,
     1: 0,
@@ -1134,7 +1145,11 @@ for (var i=0;i<=128;i++){
     numberArr.value.push('pio'+i)
     gpioArr.value.push('pio'+i)
 }
-
+const autoTaskCommValues = ref({
+    0: 0,
+    1: 0,
+    2: 0,
+})
 const tableData = ref({
     version: 0,
     enabled: false,
@@ -1236,6 +1251,15 @@ const commChange = (val: number) => {
         formData.value.uconf[activeComm.value] = [activeComm.value+1,"115200",8,2,0,"",0]
     } else {
         formData.value.uconf[activeComm.value] = []
+    }
+}
+
+// 预置信息 - 自动采集任务 - 串口变化
+const autoTaskCommChange = (val: number) => {
+    if (val == 1) {
+        formData.value.cmds[activeAutoTaskComm.value] = [activeAutoTaskComm.value+1]
+    } else {
+        formData.value.cmds[activeAutoTaskComm.value] = []
     }
 }
 
