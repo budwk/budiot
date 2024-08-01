@@ -2064,7 +2064,9 @@ const enabledChange = (val: boolean) => {
 }
 
 const exportTxt = () => {
-    config.value = JSON.parse(tableData.value.config)
+    if(tableData.value.config){
+        config.value = JSON.parse(tableData.value.config)
+    }
     showExport.value = true
 }
 
