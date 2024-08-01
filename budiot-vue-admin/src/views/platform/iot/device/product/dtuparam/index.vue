@@ -1227,7 +1227,24 @@
                             </div>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="数据流" name="6" style="padding: 0 20px">数据流</el-tab-pane>
+                    <el-tab-pane label="数据流" name="6" style="padding: 0 20px">
+                        <el-tabs v-model="activeData" style="width: 100%">
+                            <el-tab-pane v-for="(obj, ind) in formData.conf" :label="'通道' + (ind + 1)" :name="ind" :key="'net_' + ind">
+                                <el-radio-group v-model="dataValues[ind]" @change="dataChange">
+                                    <el-radio :value="1">启用</el-radio>
+                                    <el-radio :value="0">不启用</el-radio>
+                                </el-radio-group>
+                                <div v-if="dataValues[ind] == 1" style="margin-top: 10px;">
+                                    <el-form-item label="发送数据流模板：">
+                                        <el-input type="textarea" v-model="formData.upprot[ind]" style="width: 90%"></el-input>
+                                    </el-form-item> 
+                                    <el-form-item label="接收数据流模板：">
+                                        <el-input type="textarea" v-model="formData.dwprot[ind]" style="width: 90%"></el-input>
+                                    </el-form-item> 
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>  
+                    </el-tab-pane>
                     <el-tab-pane label="预警" name="7" style="padding: 0 20px">预警</el-tab-pane>
                     <el-tab-pane label="任务" name="8" style="padding: 0 20px">任务</el-tab-pane>
                 </el-tabs>
@@ -1263,6 +1280,7 @@ const showExport = ref(false)
 const activeName = ref('0')
 const activeComm = ref(0)
 const activeAutoTaskComm = ref(0)
+const activeData = ref(0)
 const commValues = ref({
     0: 0,
     1: 0,
@@ -1278,6 +1296,16 @@ const netValues = ref({
     4: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'},thingscloud:{type:'auto'}},
     5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'},thingscloud:{type:'auto'}},
     6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'},thingscloud:{type:'auto'}},
+})
+// 数据流
+const dataValues = ref({
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
 })
 const register = ref({
     type: 0,
@@ -1442,6 +1470,14 @@ const gpsEnabledChange = (val: number) => {
         formData.value.gps = { pio: ["pio0","pio0","pio0","pio0",0,"1"], fun: [1,"1200",0,"",0,"json","0","","",""]}
     } else {
         formData.value.gps = { pio: [], fun: [] }
+    }
+}
+
+// 数据流
+const dataChange = (val: number) => {
+    if (val == 0) {
+        formData.value.upprot[activeData.value] = ''
+        formData.value.dwprot[activeData.value] = ''
     }
 }
 
