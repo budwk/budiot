@@ -1038,7 +1038,37 @@
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
-                    <el-tab-pane label="预置信息" name="3" style="padding: 0 20px">预置信息</el-tab-pane>
+                    <el-tab-pane label="预置信息" name="3" style="padding: 0 20px">
+                       
+                        <span>远程更新参数和固件</span>
+                        <div style="padding: 10px 20px;">
+                            <el-form-item label="白名单号：">
+                                <el-input v-model="formData.preset.number" style="width: 150px"></el-input>
+                            </el-form-item>
+                            <el-form-item label="振铃延时：">
+                                <el-input v-model="formData.preset.delay" style="width: 150px"></el-input>
+                            </el-form-item>
+                            <el-form-item label="短信字段：">
+                                <el-input v-model="formData.preset.smsword" style="width: 150px"></el-input>
+                            </el-form-item>
+                        </div>
+                        <span>设置APN</span>
+                        <div style="padding: 10px 20px;">
+                            <el-form-item label="名称：">
+                                <el-input v-model="formData.apn[0]" style="width: 150px"></el-input>
+                            </el-form-item>
+                            <el-form-item label="用户名：">
+                                <el-input v-model="formData.apn[1]" style="width: 150px"></el-input>
+                            </el-form-item>
+                            <el-form-item label="密码：">
+                                <el-input v-model="formData.apn[2]" style="width: 150px"></el-input>
+                            </el-form-item>
+                        </div>
+                        <span>自动采集任务</span>
+                        <div style="padding: 10px 20px;">
+                            
+                        </div>
+                    </el-tab-pane>
                     <el-tab-pane label="GPIO" name="4" style="padding: 0 20px">GPIO</el-tab-pane>
                     <el-tab-pane label="GPS" name="5" style="padding: 0 20px">GPS</el-tab-pane>
                     <el-tab-pane label="数据流" name="6" style="padding: 0 20px">数据流</el-tab-pane>
@@ -1128,7 +1158,6 @@ const data = reactive({
         webProtect: '1',
         plate: 0,
         protectContent: [0, 0, 0, 0, 0, 0, 0],
-        register: {type:0,data:'',prefix:'',postfix:''},
         reg: 0,
         convert: 0,
         uconf: [[], [], []],
@@ -1180,7 +1209,6 @@ const resetFrom = () => {
         webProtect: '1',
         plate: 0,
         protectContent: [0, 0, 0, 0, 0, 0, 0],
-        register: {type:0,data:'',prefix:'',postfix:''},
         reg: 0,
         convert: 0,
         uconf: [[], [], []],
