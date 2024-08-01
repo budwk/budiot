@@ -23,7 +23,7 @@
                     <el-button plain type="success" @click="save" v-permission="['iot.device.product.dtuparam']">保存配置 </el-button>
                     <el-button plain type="info" @click="resetFrom" v-permission="['iot.device.product.dtuparam']">重置表单 </el-button>
                     <el-button plain type="primary" @click="exportTxt" v-permission="['iot.device.product.dtuparam']">导出配置 </el-button>
-                    <el-button plain type="primary" v-permission="['iot.device.product.dtuparam']">导入配置 </el-button>
+                    <el-button plain type="primary" @click="importTxt" v-permission="['iot.device.product.dtuparam']">导入配置 </el-button>
                 </div>
             </el-col>
         </el-row>
@@ -1398,12 +1398,31 @@
                             </div>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="任务" name="8" style="padding: 0 20px">任务</el-tab-pane>
+                    <el-tab-pane label="任务" name="8" style="padding: 0 20px">
+                        <el-radio-group v-model="taskEnabled" @change="taskEnabledChange">
+                            <el-radio :value="1">启用</el-radio>
+                            <el-radio :value="0">不启用</el-radio>
+                        </el-radio-group>
+                        <div v-if="taskEnabled">
+                                <div v-for="(e,i) in formData.task" :key="'w_g_'+i" style="padding: 5px 0;">
+                                    <span>任务{{(i+1)}} <el-button link type="danger" icon="Delete" @click="delTask(i)"/></span>
+                                    <div style="padding: 0 30px">
+                                        <el-form-item >
+                                            <el-input type="textarea" v-model="formData.task[i]" style="width: 90%"></el-input>
+                                        </el-form-item>
+                                    </div>
+                                </div>   
+                                <el-button plain type="primary" @click="addTask" style="margin-top: 10px;">添加</el-button>
+                                <div style="margin-top: 10px">
+                                    <span class="tip" >提示: 用户任务最多10个</span>
+                                </div>
+                            </div>
+                    </el-tab-pane>
                 </el-tabs>
             </el-form>
         </el-row>
 
-        <el-dialog title="导出参数" v-model="showExport" width="45%" :close-on-click-modal="false">
+        <el-dialog title="导出配置" v-model="showExport" width="45%" :close-on-click-modal="false">
             <el-form>
                 <el-form-item>
                     <el-input type="textarea" rows="10" v-model="config" />
@@ -1415,12 +1434,26 @@
                 </div>
             </template>
         </el-dialog>
+
+        <el-dialog title="导入配置" v-model="showImport" width="45%" :close-on-click-modal="false">
+            <el-form>
+                <el-form-item>
+                    <el-input ref="txtRef" type="textarea" rows="10" v-model="txt" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="showImport = false">关 闭</el-button>
+                    <el-button type="primary" @click="importSave">提 交</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
 import modal from '/@/utils/modal'
-import { ElForm, ElTable, ElUpload } from 'element-plus'
+import { ElForm, ElInput, ElTable, ElUpload } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { getDtuInfo, doDtuEnabled, doDtuSave } from '/@/api/platform/iot/product'
 
@@ -1428,7 +1461,10 @@ const route = useRoute()
 const id = route.params.id as string
 
 const createRef = ref<InstanceType<typeof ElForm>>()
+const txtRef = ref<InstanceType<typeof ElInput>>()
 const showExport = ref(false)
+const showImport = ref(false)
+const txt = ref('')
 const activeName = ref('0')
 const activeComm = ref(0)
 const activeAutoTaskComm = ref(0)
@@ -1466,10 +1502,8 @@ const register = ref({
     postfix: '',
 })
 const numberArr = ref(['','disable'])
-const gpioArr = ref([])
 for (var i=0;i<=128;i++){
     numberArr.value.push('pio'+i)
-    gpioArr.value.push('pio'+i)
 }
 const autoTaskCommValues = ref({
     0: 0,
@@ -1482,6 +1516,7 @@ const gpioWarnEnabled = ref(0)
 const adc0WarnEnabled = ref(0)
 const adc1WarnEnabled = ref(0)
 const vbattWarnEnabled = ref(0)
+const taskEnabled = ref(0)
 const tableData = ref({
     version: 0,
     enabled: false,
@@ -1527,6 +1562,7 @@ const { formData, formRules } = toRefs(data)
 
 // 重置表单
 const resetFrom = () => {
+    activeName.value = '0'
     commValues.value = {
         0: 0,
         1: 0,
@@ -1541,6 +1577,28 @@ const resetFrom = () => {
         5: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'},thingscloud:{type:'auto'}},
         6: {enabled:0,type:'',socket: {heartbeat:0,data:'0x00',prefix:'',postfix:''},onenet: {type: 'DTU',heartbeat:0,data:'',prefix:'',postfix:''},aliyun:{type:'auto'},bdiot:{type:'datatype'},thingscloud:{type:'auto'}},
     }
+    dataValues.value = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+    }
+    register.value = {
+        type: 0,
+        data: '',
+        prefix: '',
+        postfix: '',
+    }
+    pinsEnabled.value = 0
+    gpsEnabled.value = 0
+    gpioWarnEnabled.value = 0
+    adc0WarnEnabled.value = 0
+    adc1WarnEnabled.value = 0
+    vbattWarnEnabled.value = 0
+    taskEnabled.value = 0
     formData.value = {
         fota: 0,
         uartReadTime: 25,
@@ -1569,6 +1627,7 @@ const resetFrom = () => {
         dwprot: ['', '', '', '', '', '', ''],
         warn: { adc0: [], adc1: [], vbatt: [], gpio: [] },
     }
+
     createRef?.value?.resetFields()
 }
 
@@ -1674,6 +1733,31 @@ const vbattWarnEnabledChange = (val: number) => {
     }
 }
 
+// 任务启用
+const taskEnabledChange = (val: number) => {
+    if (val == 1) {
+        formData.value.task = []
+    } else {
+        // 移除task
+        delete formData.value.task
+    }
+}
+
+// 添加任务
+const addTask = () => {
+    //用户任务最多10个 
+    if(formData.value.task.length>=10){
+        modal.msgError('最多添加10个任务')
+        return
+    }
+    formData.value.task.push('')
+}
+
+// 删除任务
+const delTask = (ind: number) => {
+    formData.value.task.splice(ind, 1)
+}
+
 // 注册信息
 const registerChange = (val: number) => {
     register.value.data = ''
@@ -1771,7 +1855,8 @@ const processFormData = () => {
             }
         }
     })
-    console.log(JSON.stringify(formData.value))
+    //console.log(JSON.stringify(formData.value))
+    return JSON.stringify(formData.value)
 }
 
 // 解析表单数据
@@ -1886,24 +1971,61 @@ const parseFormData = () => {
     if(formData.value.warn.vbatt.length > 0){
         vbattWarnEnabled.value = 1
     }
+    // 任务转换
+    if(formData.value.task){
+        taskEnabled.value = 1
+    }
 }
 
 const save = () => {
-    processFormData()
-    return
-    createRef.value.validate((valid) => {
-        if (valid) {
-            parseData();
-            doDtuSave({
-                productId: id,
-                config: JSON.stringify(formData.value),
-            }).then((res) => {
-                if (res.code === 0) {
-                    modal.msgSuccess('保存成功')
-                    init()
-                }
-            })
+    doDtuSave({
+        productId: id,
+        config: processFormData(),
+    }).then((res) => {
+        if (res.code === 0) {
+            modal.msgSuccess('保存成功')
+            init()
         }
+    })
+}
+
+const importSave = () => {
+    // 校验txt 不可为空且为json格式数据
+    if (!txt.value) {
+        modal.msgError('导入内容不能为空')
+        nextTick(() => {
+            txtRef.value.focus()
+        })
+        return
+    }
+    try {
+        JSON.parse(txt.value)
+    } catch (error) {
+        modal.msgError('导入内容格式错误')
+        nextTick(() => {
+            txtRef.value.focus()
+        })
+        return
+    }
+    doDtuSave({
+        productId: id,
+        config: txt.value,
+    }).then((res) => {
+        if (res.code === 0) {
+            modal.msgSuccess('保存成功')
+            showImport.value = false
+            init()
+        }
+    })
+}
+
+const importTxt = () => {
+    txt.value = ''
+    showImport.value = true
+    nextTick(() => {
+        nextTick(() => {
+            txtRef.value.focus()
+        })
     })
 }
 
@@ -1949,18 +2071,9 @@ const exportTxt = () => {
 const init = () => {
     getDtuInfo(id).then((res) => {
         tableData.value = res.data
-        return
         if (res.data.config) {
-            // JSON.parse(res.data.config) 值赋值给formData.value
-            formData.value = JSON.parse(res.data.config) as any
-
-            console.log(formData.value)
-            // 根据uconf的数组是否为空，初始化commValues
-            formData.value.uconf.forEach((item, index) => {
-                if (item.length > 0) {
-                    commValues.value[index] = true
-                }
-            })
+            formData.value = JSON.parse(JSON.parse(res.data.config)) as any
+            parseFormData()
         }
     })
 }
