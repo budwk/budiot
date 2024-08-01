@@ -140,7 +140,7 @@
                                 </el-radio-group>
                                 <div  v-if="commValues[ind] == 1" style="margin-top: 10px;">
                                     <el-form-item label="波特率：">
-                                        <el-select v-model="formData.uconf[ind][1]" placeholder="请选择" style="width: 150px">
+                                        <el-select v-model="formData.uconf[ind][1]" placeholder="" style="width: 150px">
                                             <el-option label="300" value="300" />
                                             <el-option label="600" value="600" />
                                             <el-option label="1200" value="1200" />
@@ -1081,14 +1081,152 @@
                                             <el-input v-model="formData.cmds[ind][ci+1]" style="width: 280px"></el-input>
                                             <el-button link icon="Delete" type="danger" @click="delCmd(ind,ci)"></el-button>
                                         </el-form-item>
-                                        <el-button type="primary" @click="addCmd(ind)">添加执行指令</el-button>
+                                        <el-button plain type="primary" @click="addCmd(ind)">添加执行指令</el-button>
                                     </div>
                                 </el-tab-pane>
                             </el-tabs>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="GPIO" name="4" style="padding: 0 20px">GPIO</el-tab-pane>
-                    <el-tab-pane label="GPS" name="5" style="padding: 0 20px">GPS</el-tab-pane>
+                    <el-tab-pane label="GPIO" name="4" style="padding: 0 20px">
+                        <el-radio-group v-model="pinsEnabled" @change="pinsEnabledChange">
+                            <el-radio :value="1">启用</el-radio>
+                            <el-radio :value="0">不启用</el-radio>
+                        </el-radio-group>
+                        <div v-if="pinsEnabled" style="padding-top: 10px">
+                            <el-form-item label="NETLED：">
+                                <el-select v-model="formData.pins[0]" style="width: 150px">
+                                    <el-option v-for="(item,ix) in 128" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                </el-select>
+                                <span class="tip">提示: 网络指示灯</span>
+                            </el-form-item>
+                            <el-form-item label="NETRDY：">
+                                <el-select v-model="formData.pins[1]" style="width: 150px">
+                                    <el-option v-for="(item,ix) in 128" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                </el-select>
+                                <span class="tip">提示: 网络准备通知</span>
+                            </el-form-item>
+                            <el-form-item label="RSTCNF：">
+                                <el-select v-model="formData.pins[2]" style="width: 150px">
+                                    <el-option v-for="(item,ix) in 128" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                </el-select>
+                                <span class="tip">提示: 重置DTU参数</span>
+                            </el-form-item>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="GPS" name="5" style="padding: 0 20px">
+                        <el-radio-group v-model="gpsEnabled" @change="gpsEnabledChange">
+                            <el-radio :value="1">启用</el-radio>
+                            <el-radio :value="0">不启用</el-radio>
+                        </el-radio-group>
+                        <div v-if="gpsEnabled" style="padding-top: 10px">
+                            <span>硬件设置</span>
+                            <div style="padding: 10px 20px;">
+                                <el-form-item label="GPSLED：">
+                                    <el-select v-model="formData.gps.pio[0]" style="width: 150px">
+                                        <el-option v-for="(item,ix) in 128" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="震动检测：">
+                                    <el-select v-model="formData.gps.pio[1]" style="width: 150px">
+                                        <el-option v-for="(item,ix) in 128" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="开锁检测：">
+                                    <el-select v-model="formData.gps.pio[2]" style="width: 150px">
+                                        <el-option v-for="(item,ix) in 128" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="充电状态检测：">
+                                    <el-select v-model="formData.gps.pio[3]" style="width: 150px">
+                                        <el-option v-for="(item,ix) in 128" :key="ix" :label="'pio'+ix" :value="'pio'+ix" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="电池电压检测：">
+                                    <el-radio-group v-model="formData.gps.pio[4]">
+                                        <el-radio :value="0">ADC0</el-radio>
+                                        <el-radio :value="1">ADC1</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                                <el-form-item label="分压比（VCC/1.8V+1）：">
+                                    <el-select v-model="formData.gps.pio[5]" style="width: 150px">
+                                        <el-option v-for="(item,ix) in 50" :key="ix" :label="''+item" :value="''+item" />
+                                    </el-select>
+                                </el-form-item>
+                            </div>
+                            <span>上报设置</span>
+                            <div style="padding: 10px 20px;">
+                                <el-form-item label="串口ID：">
+                                    <el-radio-group v-model="formData.gps.fun[0]">
+                                        <el-radio :value="1">1</el-radio>
+                                        <el-radio :value="2">2</el-radio>
+                                        <el-radio :value="3">3</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                                <el-form-item label="波特率：">
+                                    <el-select v-model="formData.gps.fun[1]" style="width: 150px">
+                                        <el-option label="300" value="300" />
+                                        <el-option label="600" value="600" />
+                                        <el-option label="1200" value="1200" />
+                                        <el-option label="2400" value="2400" />
+                                        <el-option label="4800" value="4800" />
+                                        <el-option label="9600" value="9600" />
+                                        <el-option label="14400" value="14400" />
+                                        <el-option label="19200" value="19200" />
+                                        <el-option label="28800" value="28800" />
+                                        <el-option label="38400" value="38400" />
+                                        <el-option label="57600" value="57600" />
+                                        <el-option label="115200" value="115200" />
+                                        <el-option label="230400" value="230400" />
+                                        <el-option label="460800" value="460800" />
+                                        <el-option label="921600" value="921600" />
+                                    </el-select>
+                                    <span class="tip">提示: 单位bps</span>
+                                </el-form-item>
+                                <el-form-item label="工作模式：">
+                                    <el-radio-group v-model="formData.gps.fun[2]">
+                                        <el-radio :value="0">正常</el-radio>
+                                        <el-radio :value="2">低功耗</el-radio>
+                                        <el-radio :value="8">自动跟踪</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                                <el-form-item label="采集间隔：">
+                                    <el-input v-model="formData.gps.fun[3]" style="width: 150px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="采集方式：">
+                                    <el-radio-group v-model="formData.gps.fun[4]">
+                                        <el-radio :value="0">触发采集</el-radio>
+                                        <el-radio :value="1">连续采集</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                                <el-form-item label="报文格式：">
+                                    <el-radio-group v-model="formData.gps.fun[5]">
+                                        <el-radio value="json">JSON</el-radio>
+                                        <el-radio value="hex">HEX</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                                <el-form-item label="报文缓存：">
+                                    <el-select v-model="formData.gps.fun[6]" style="width: 150px">
+                                        <el-option v-for="(item,ix) in 101" :key="ix" :label="''+ix" :value="''+ix" />
+                                    </el-select>
+                                    <span class="tip">提示: 缓存后一次发送</span>
+                                </el-form-item>
+                                <el-form-item label="分隔标记：">
+                                    <el-input v-model="formData.gps.fun[7]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 不支持 逗号(,)</span>
+                                </el-form-item>
+                                <el-form-item label="状态更新：">
+                                    <el-input v-model="formData.gps.fun[8]" style="width: 150px"></el-input>
+                                    <span class="tip">提示: 单位分钟，GPS设备状态报文的上报间隔</span>
+                                </el-form-item>
+                                <el-form-item label="上报通道：">
+                                    <el-select v-model="formData.gps.fun[9]" style="width: 150px" placeholder="" >
+                                        <el-option v-for="(item,ix) in 7" :key="ix" :label="''+item" :value="''+item" />
+                                    </el-select>
+                                    <span class="tip">提示: 默认空 为自动捆绑GPS串口对应的网络通道</span>
+                                </el-form-item>
+                            </div>
+                        </div>
+                    </el-tab-pane>
                     <el-tab-pane label="数据流" name="6" style="padding: 0 20px">数据流</el-tab-pane>
                     <el-tab-pane label="预警" name="7" style="padding: 0 20px">预警</el-tab-pane>
                     <el-tab-pane label="任务" name="8" style="padding: 0 20px">任务</el-tab-pane>
@@ -1158,6 +1296,8 @@ const autoTaskCommValues = ref({
     1: 0,
     2: 0,
 })
+const pinsEnabled = ref(0)
+const gpsEnabled = ref(0)
 const tableData = ref({
     version: 0,
     enabled: false,
@@ -1285,6 +1425,24 @@ const addCmd = (ind: number) => {
 // 删除指令
 const delCmd = (ind: number, ci: number) => {
     formData.value.cmds[ind].splice(ci+1, 1)
+}
+
+// GPIO启用
+const pinsEnabledChange = (val: number) => {
+    if (val == 1) {
+        formData.value.pins = ['pio0','pio0','pio0']
+    } else {
+        formData.value.pins = []
+    }
+}
+
+// GPS启用
+const gpsEnabledChange = (val: number) => {
+    if (val == 1) {
+        formData.value.gps = { pio: ["pio0","pio0","pio0","pio0",0,"1"], fun: [1,"1200",0,"",0,"json","0","","",""]}
+    } else {
+        formData.value.gps = { pio: [], fun: [] }
+    }
 }
 
 // 注册信息
@@ -1466,6 +1624,20 @@ const parseFormData = () => {
             }
         }
     })
+    // 自动采集任务转换，根据cmds的数组是否为空，初始化autoTaskCommValues
+    formData.value.cmds.forEach((item, index) => {
+        if (item.length > 0) {
+            autoTaskCommValues.value[index] = 1
+        }
+    })
+    // GPIO转换
+    if(formData.value.pins.length > 0){
+        pinsEnabled.value = 1
+    }
+    // GPS转换
+    if(formData.value.gps.pio.length > 0){
+        gpsEnabled.value = 1
+    }
 }
 
 const save = () => {
