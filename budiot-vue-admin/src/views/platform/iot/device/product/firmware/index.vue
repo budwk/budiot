@@ -151,7 +151,7 @@
                         ref="uploadRef"
                         name="Filedata"
                         :limit="1"
-                        accept=".bin"
+                        accept=".bin,.ota"
                         :headers="upload.headers"
                         :action="upload.url"
                         :disabled="upload.isUploading"
@@ -164,7 +164,7 @@
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <template #tip>
                         <div class="el-upload__tip text-center">
-                            <span>仅允许上传 .bin 文件</span>
+                            <span>仅允许上传 .bin/.ota 文件</span>
                         </div>
                         </template>
                     </el-upload>
@@ -412,7 +412,10 @@ const handleFileSuccess = (response: any, file: any, fileList: any) => {
 }
 
 const handleDownload = (row: any) => {
-    download.download(platformInfo.AppFileDomain + row.path, { ...queryParams.value},`${row.name}_${row.version}.bin`);
+    // 获取文件后缀名
+    const index = row.path.lastIndexOf('.')
+    const suffix = row.path.substring(index)
+    download.download(platformInfo.AppFileDomain + row.path, { ...queryParams.value},`${row.name}_${row.version}${suffix}`);
 }
 
 // 新增按钮

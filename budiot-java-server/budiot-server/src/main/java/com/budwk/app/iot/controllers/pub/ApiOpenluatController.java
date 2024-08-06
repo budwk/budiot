@@ -17,6 +17,7 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.At;
@@ -64,15 +65,14 @@ public class ApiOpenluatController {
         log.debug("version - {}", version);
         log.debug("imei - {}", imei);
         log.debug("project_key - {}", device_project_key);
+        resp.setStatus(400);
         // 项目key 不匹配
         if (!Strings.sNull(project_key).equals(device_project_key)) {
-            resp.setStatus(403);
             return;
         }
         // imei 不存在
         Iot_device iotDevice = iotDeviceService.fetch(Cnd.where("imei", "=", imei));
         if (iotDevice == null) {
-            resp.setStatus(403);
             return;
         }
         List<Iot_product_firmware> listAll = new ArrayList<>();
@@ -89,18 +89,19 @@ public class ApiOpenluatController {
         // 将listAllUpgrade 和 listImeiUpgrade 合并
         listAll.addAll(listAllUpgrade);
         listAll.addAll(listImeiUpgrade);
-        if (!listAll.isEmpty()) {
+        if (listAll.size() > 0) {
             // 按version倒序排序
             listAll.sort((o1, o2) -> o2.getVersion().compareTo(o1.getVersion()));
-            // 取version最大的
-            Iot_product_firmware firmware = listAll.get(0);
-            try {
-                storageServer.download(firmware.getPath(), resp.getOutputStream());
-            } catch (IOException e) {
-                resp.setStatus(403);
+            Iot_product_firmware iotProductFirmware = listAll.get(0);
+            if (Strings.isNotBlank(iotProductFirmware.getPath())) {
+                // 下载固件
+                byte[] bytes = storageServer.download(iotProductFirmware.getPath());
+                if (bytes != null) {
+                    resp.setStatus(200);
+                    resp.setHeader("Content-Length", bytes.length + "");
+                    Streams.writeAndClose(resp.getOutputStream(), bytes);
+                }
             }
-        } else {
-            resp.setStatus(403);
         }
     }
 
@@ -122,13 +123,13 @@ public class ApiOpenluatController {
         log.debug("project_key - {}", device_project_key);
         // 项目key 不匹配
         if (!Strings.sNull(project_key).equals(device_project_key)) {
-            resp.setStatus(403);
+            resp.setStatus(400);
             return NutMap.NEW();
         }
         // imei 不存在
         Iot_device iotDevice = iotDeviceService.fetch(Cnd.where("imei", "=", imei));
         if (iotDevice == null) {
-            resp.setStatus(403);
+            resp.setStatus(400);
             return NutMap.NEW();
         }
         // 查找更新所有设备参数
