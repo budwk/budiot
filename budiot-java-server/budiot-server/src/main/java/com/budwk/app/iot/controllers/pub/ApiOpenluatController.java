@@ -1,20 +1,24 @@
 package com.budwk.app.iot.controllers.pub;
 
 import com.budwk.app.iot.models.Iot_device;
+import com.budwk.app.iot.models.Iot_product_dtu;
 import com.budwk.app.iot.models.Iot_product_firmware;
 import com.budwk.app.iot.services.IotDeviceService;
+import com.budwk.app.iot.services.IotProductDtuService;
 import com.budwk.app.iot.services.IotProductFirmwareService;
 import com.budwk.starter.common.openapi.annotation.*;
+import com.budwk.starter.common.openapi.enums.ParamIn;
 import com.budwk.starter.log.annotation.SLog;
 import com.budwk.starter.storage.StorageServer;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
-import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
@@ -40,33 +44,35 @@ public class ApiOpenluatController {
     @Inject
     private IotDeviceService iotDeviceService;
     @Inject
+    private IotProductDtuService iotProductDtuService;
+    @Inject
     private StorageServer storageServer;
 
     @At
     @Ok("void")
     @GET
-    @ApiOperation(name = "获取初始化数据")
-    @ApiImplicitParams
-    @ApiResponses(
+    @ApiOperation(name = "固件升级")
+    @ApiImplicitParams(
             value = {
-                    @ApiResponse(name = "version", description = "设备版本号"),
-                    @ApiResponse(name = "imei", description = "设备IMEI"),
-                    @ApiResponse(name = "project_key", description = "设备校验KEY")
+                    @ApiImplicitParam(name = "version", description = "固件版本号"),
+                    @ApiImplicitParam(name = "imei", description = "设备IMEI"),
+                    @ApiImplicitParam(name = "project_key", description = "设备校验KEY")
             }
     )
-    public void upgrade(@Param("version") String version, @Param("imei") String imei, @Param("project_key") String device_project_key, HttpServletRequest req, HttpServletResponse resp) {
-        log.info("version - {}", version);
-        log.info("imei - {}", imei);
-        log.info("project_key - {}", project_key);
+    @ApiResponses
+    public void upgrade(@Param("version") String version, @Param("imei") String imei, @Param("project_key") String device_project_key, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        log.debug("version - {}", version);
+        log.debug("imei - {}", imei);
+        log.debug("project_key - {}", device_project_key);
         // 项目key 不匹配
         if (!Strings.sNull(project_key).equals(device_project_key)) {
-            resp.setStatus(-5);
+            resp.setStatus(403);
             return;
         }
         // imei 不存在
         Iot_device iotDevice = iotDeviceService.fetch(Cnd.where("imei", "=", imei));
         if (iotDevice == null) {
-            resp.setStatus(-5);
+            resp.setStatus(403);
             return;
         }
         List<Iot_product_firmware> listAll = new ArrayList<>();
@@ -90,12 +96,47 @@ public class ApiOpenluatController {
             Iot_product_firmware firmware = listAll.get(0);
             try {
                 storageServer.download(firmware.getPath(), resp.getOutputStream());
-                resp.setStatus(200);
             } catch (IOException e) {
-                resp.setStatus(-5);
+                resp.setStatus(403);
             }
         } else {
-            resp.setStatus(-5);
+            resp.setStatus(403);
+        }
+    }
+
+    @At("/device/{imei}/param")
+    @Ok("json")
+    @GET
+    @ApiOperation(name = "参数升级")
+    @ApiImplicitParams(
+            value = {
+                    @ApiImplicitParam(name = "imei", description = "设备IMEI", in = ParamIn.PATH),
+                    @ApiImplicitParam(name = "param_ver", description = "参数版本号"),
+                    @ApiImplicitParam(name = "project_key", description = "设备校验KEY")
+            }
+    )
+    @ApiResponses
+    public NutMap device(String imei, @Param("param_ver") String param_ver, @Param("project_key") String device_project_key, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        log.debug("param_ver - {}", param_ver);
+        log.debug("imei - {}", imei);
+        log.debug("project_key - {}", device_project_key);
+        // 项目key 不匹配
+        if (!Strings.sNull(project_key).equals(device_project_key)) {
+            resp.setStatus(403);
+            return NutMap.NEW();
+        }
+        // imei 不存在
+        Iot_device iotDevice = iotDeviceService.fetch(Cnd.where("imei", "=", imei));
+        if (iotDevice == null) {
+            resp.setStatus(403);
+            return NutMap.NEW();
+        }
+        // 查找更新所有设备参数
+        Iot_product_dtu iotProductDtu = iotProductDtuService.fetch(Cnd.where("productId", "=", iotDevice.getProductId()).and("enabled", "=", true).and("version", ">", param_ver));
+        if (iotProductDtu != null && Strings.isNotBlank(iotProductDtu.getConfig())) {
+            return Json.fromJson(NutMap.class, iotProductDtu.getConfig());
+        } else {
+            return NutMap.NEW();
         }
     }
 }
