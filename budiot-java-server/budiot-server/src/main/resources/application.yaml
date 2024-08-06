@@ -205,4 +205,11 @@ email:
 
 job:
   # 定时任务所在的包名 多个包名用,分割
-  package: com.budwk.app.sys.commons.task
+  package:
+    - com.budwk.app.iot.commons.task
+    - com.budwk.app.sys.commons.task
+
+api:
+  openluat:
+    # 合宙设备升级校验
+    project_key: 0LkZx9Kn3tOhtW7uod48xhilVNrVsScV

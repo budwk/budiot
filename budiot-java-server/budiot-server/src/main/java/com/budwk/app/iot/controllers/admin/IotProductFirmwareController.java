@@ -120,7 +120,7 @@ public class IotProductFirmwareController {
     )
     @ApiResponses
     public Result<?> firmwareDelete(@Param("id") String id, @Param("name") String name, HttpServletRequest req) {
-        iotProductFirmwareService.delete(id);
+        iotProductFirmwareService.deleteFirmware(id);
         return Result.success();
     }
 

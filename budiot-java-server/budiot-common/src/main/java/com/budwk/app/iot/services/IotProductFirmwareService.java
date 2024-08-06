@@ -8,4 +8,7 @@ import com.budwk.starter.database.service.BaseService;
  */
 public interface IotProductFirmwareService extends BaseService<Iot_product_firmware> {
 
+    void deleteFirmware(String id);
+
+    void deleteFirmwareDeviceId(String deviceId);
 }

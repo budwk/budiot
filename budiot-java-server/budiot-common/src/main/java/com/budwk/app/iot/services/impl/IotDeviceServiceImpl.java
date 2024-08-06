@@ -17,11 +17,13 @@ import com.budwk.starter.common.exception.BaseException;
 import com.budwk.starter.database.service.BaseServiceImpl;
 import com.budwk.starter.security.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
+import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Mirror;
@@ -54,6 +56,8 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
     private MessageTransfer messageTransfer;
     @Inject
     private DeviceCacheStore deviceCacheStore;
+    @Inject
+    private IotProductFirmwareService iotProductFirmwareService;
 
     public void importData(String productId, String fileName, List<Iot_device> list, boolean over, String userId, String loginname) {
         if (list == null || list.size() == 0) {
@@ -143,12 +147,14 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         iotDeviceLogService.log("新增设备", device.getId(), SecurityUtil.getUserId(), SecurityUtil.getUserLoginname());
     }
 
+    @Aop(TransAop.READ_COMMITTED)
     public void delete(Iot_device device) {
         if (device == null) {
             throw new BaseException("设备不存在");
         }
         this.delete(device.getId());
         iotDevicePropService.clear(Cnd.where("deviceId", "=", device.getId()));
+        iotProductFirmwareService.deleteFirmwareDeviceId(device.getId());
         messageTransfer.publish(new Message<>(TopicConstant.DEVICE_EVENT,
                 NutMap.NEW()
                         .setv("event", "device-unregister")
