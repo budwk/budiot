@@ -13,12 +13,14 @@ jetty:
   staticPath: /Users/wizzer/temp
 
 openapi:
+  # demo访问路径 https://demo.budiot.com/api/openapi/ 【结尾/号不能少】
+  # 访问本机路径 http://127.0.0.1:7858/openapi/  【结尾/号不能少】
   enable: true
   scanner:
     package: com.budwk.app
   info:
     title: budiot
-    version: 8.0.1
+    version: 1.0.1
     contact:
       name: 大鲨鱼
       email: wizzer@qq.com
