@@ -68,7 +68,7 @@ public class HttpDeviceGateway implements DeviceGateway {
     @Override
     public void start() {
         // 启动一个 HTTP 服务
-        String platform = properties.getString("platform", "osd");
+        String platform = properties.getString("platform", "budiot");
         // 从配置文件里获取配置的路径
         String path = properties.getString("path", String.format("/%s/%s/*", configuration.getId(), platform));
         // 添加到处理器中去。

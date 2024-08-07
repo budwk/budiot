@@ -21,7 +21,7 @@
         <!-- 设备协议 start -->
         <dependency>
             <groupId>com.budwk.app</groupId>
-            <artifactId>budiot-access-protocol-demo</artifactId>
+            <artifactId>budiot-access-protocol-demo-tcp</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- 设备协议 end -->

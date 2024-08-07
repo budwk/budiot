@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>budiot-access-protocol-core</module>
-        <module>budiot-access-protocol-demo</module>
+        <module>budiot-access-protocol-demo-tcp</module>
     </modules>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
