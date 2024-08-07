@@ -32,6 +32,11 @@ public class DefaultDecodeResult implements DecodeResult {
      */
     private boolean isLastFrame;
 
+    /**
+     * 报文含义（读数上报、开关阀上报、异常上报等）
+     */
+    private String meaning;
+
     public DefaultDecodeResult(String deviceId, List<DeviceMessage> messages) {
         this.deviceId = deviceId;
         this.messages = messages;
@@ -42,5 +47,12 @@ public class DefaultDecodeResult implements DecodeResult {
         this.deviceId = deviceId;
         this.messages = messages;
         this.isLastFrame = isLastFrame;
+    }
+
+    public DefaultDecodeResult(String deviceId, List<DeviceMessage> messages, boolean isLastFrame, String meaning) {
+        this.deviceId = deviceId;
+        this.messages = messages;
+        this.isLastFrame = isLastFrame;
+        this.meaning = meaning;
     }
 }

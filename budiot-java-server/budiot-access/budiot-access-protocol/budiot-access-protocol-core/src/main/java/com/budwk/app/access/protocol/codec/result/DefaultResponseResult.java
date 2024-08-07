@@ -48,6 +48,11 @@ public class DefaultResponseResult implements DecodeResult {
 
     private boolean isLastFrame;
 
+    /**
+     * 报文含义（读数上报、开关阀上报、异常上报等）
+     */
+    private String meaning;
+
     public DefaultResponseResult(String commandId, DeviceResponseMessage responseMessage) {
         this.commandId = commandId;
         this.success = responseMessage.isSuccess();
@@ -55,6 +60,16 @@ public class DefaultResponseResult implements DecodeResult {
         this.deviceId = responseMessage.getDeviceId();
         this.messages = Arrays.asList(responseMessage);
         this.isLastFrame = true;
+    }
+
+    public DefaultResponseResult(String commandId, DeviceResponseMessage responseMessage,String meaning) {
+        this.commandId = commandId;
+        this.success = responseMessage.isSuccess();
+        this.commandCode = responseMessage.getCommandCode();
+        this.deviceId = responseMessage.getDeviceId();
+        this.messages = Arrays.asList(responseMessage);
+        this.isLastFrame = true;
+        this.meaning = meaning;
     }
 
     public DefaultResponseResult(String commandId, String deviceId, String commandCode, boolean success, List<DeviceMessage> messages) {
@@ -73,5 +88,15 @@ public class DefaultResponseResult implements DecodeResult {
         this.success = success;
         this.messages = messages;
         this.isLastFrame = isLastFrame;
+    }
+
+    public DefaultResponseResult(String commandId, String deviceId, String commandCode, boolean success, List<DeviceMessage> messages,boolean isLastFrame,String meaning) {
+        this.commandId = commandId;
+        this.deviceId = deviceId;
+        this.commandCode = commandCode;
+        this.success = success;
+        this.messages = messages;
+        this.isLastFrame = isLastFrame;
+        this.meaning = meaning;
     }
 }

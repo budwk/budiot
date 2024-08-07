@@ -33,6 +33,9 @@ public class MqttMessage implements EncodedMessage {
 
     private final String protocolCode;
 
+    private String meaning;
+
+
     @Override
     public String getMessageId() {
         return messageId;

@@ -19,6 +19,7 @@ public class UdpMessage implements EncodedMessage {
     private String payloadType = "hex";
     private String messageId;
     private final String protocolCode;
+    private String meaning;
 
     @Override
     public String getMessageId() {

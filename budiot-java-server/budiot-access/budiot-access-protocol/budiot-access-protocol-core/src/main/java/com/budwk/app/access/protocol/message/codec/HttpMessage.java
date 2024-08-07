@@ -23,6 +23,8 @@ public class HttpMessage implements EncodedMessage {
     private String url;
     private String path;
     private Map<String, String> query;
+    private String meaning;
+
 
     @Override
     public String getMessageId() {
