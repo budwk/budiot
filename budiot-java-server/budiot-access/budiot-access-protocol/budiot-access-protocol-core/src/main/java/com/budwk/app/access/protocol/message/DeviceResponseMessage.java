@@ -30,7 +30,7 @@ public class DeviceResponseMessage implements DeviceMessage {
     /**
      * 指令响应的属性，注意：值不要使用协议包中的自定义数据结构，需要转成通用的集合、数组、Map等
      */
-    private final Map<String, Object> properties = new LinkedHashMap<>();
+    private Map<String, Object> properties = new LinkedHashMap<>();
     /**
      * 指令响应的时间
      */
