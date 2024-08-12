@@ -16,5 +16,5 @@ features:
   details: 采用前后端分离模式开发，后端 Java 微服务支持单机或集群模式、容器化等多种部署方式
 - title: 低成本
   details: 特别适合数十万级、百万级设备的接入和管理，具有极大的灵活性可根据客户需求定制开发各种功能    
-footer: MIT Licensed | 2024-present © budiot.com | 皖ICP备15001937号-5
+footer: MIT Licensed | 2024-present © budiot.com | 皖ICP备15001937号-5 | 皖公网安备34019202002371
 ---
