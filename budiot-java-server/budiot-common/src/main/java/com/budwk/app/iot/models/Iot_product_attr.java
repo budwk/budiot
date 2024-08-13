@@ -47,6 +47,7 @@ public class Iot_product_attr extends BaseModel implements Serializable {
     @Column
     @Comment("标识")
     @ColDefine(type = ColType.VARCHAR, width = 32)
+    @Excel(name = "参数标识", cellType = Excel.ColumnType.STRING,prompt = "参数标识")
     @ApiModelProperty(name = "code", description = "参数标识(两个字符以上，并以字母开头，字母、数字、_、-组合，结尾为字母或数字)", required = true, check = true, regex = "^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$")
     private String code;
 

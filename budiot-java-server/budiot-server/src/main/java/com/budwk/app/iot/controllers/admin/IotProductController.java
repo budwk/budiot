@@ -297,11 +297,12 @@ public class IotProductController {
     )
     @ApiResponses
     @SaCheckPermission("iot.device.product.config")
-    public void attrExport(@Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
+    public void attrExport(@Param("productId") String productId, @Param("ids") String[] ids, @Param("fieldNames") String[] fieldNames, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletRequest req, HttpServletResponse response) {
         Cnd cnd = Cnd.NEW();
         if (ids != null) {
             cnd.and("id", "in", ids);
         }
+        cnd.and("productId", "=", productId);
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
