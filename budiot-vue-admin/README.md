@@ -28,6 +28,10 @@
 ### svg图标    
     * 使用方式: `<svg-icon icon-class="reload" />`
 
+### fa 图标
+    * `<i class="fa fa-save" />`
+    * `<icon name="fa fa-arrows" size="14" style="cursor: pointer; color: gray;"/>`    
+
 ## 页面名称
 
 * 组件名称严格按照文件夹名称命名,多级文件夹用-分割
