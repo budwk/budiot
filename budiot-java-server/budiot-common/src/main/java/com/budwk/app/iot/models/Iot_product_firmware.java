@@ -47,14 +47,14 @@ public class Iot_product_firmware extends BaseModel implements Serializable {
     @Column
     @Comment("是否启用")
     @ColDefine(type = ColType.BOOLEAN)
-    @Default("1")
+    @Default("true")
     @ApiModelProperty(description = "是否启用")
     private Boolean enabled;
 
     @Column
     @Comment("升级所有")
     @ColDefine(type = ColType.BOOLEAN)
-    @Default("0")
+    @Default("true")
     @ApiModelProperty(description = "是否所有设备都需要升级")
     private Boolean allUpgrade;
 

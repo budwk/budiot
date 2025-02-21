@@ -134,10 +134,10 @@ public class Iot_device extends BaseModel implements Serializable {
     private DeviceValveState valveState;
 
     @Column
-    @ColDefine(type = ColType.INT, width = 2)
+    @ColDefine(type = ColType.BOOLEAN)
     @Comment("设备状态")
     @ApiModelProperty(description = "设备状态：0-正常，1-异常")
-    @Default("0")
+    @Default("false")
     private Boolean abnormal;
 
     @Column
@@ -150,7 +150,7 @@ public class Iot_device extends BaseModel implements Serializable {
     @ColDefine(type = ColType.BOOLEAN)
     @Comment("在线状态")
     @ApiModelProperty(description = "在线状态：true-在线，false-不在线")
-    @Default("0")
+    @Default("false")
     @Excel(name = "是否在线", cellType = Excel.ColumnType.STRING, prompt = "是否在线",dict = "false=离线,true=在线",type = Excel.Type.EXPORT)
     private Boolean online;
 

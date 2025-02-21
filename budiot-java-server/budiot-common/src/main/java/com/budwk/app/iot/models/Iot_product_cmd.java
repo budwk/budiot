@@ -48,7 +48,7 @@ public class Iot_product_cmd extends BaseModel implements Serializable {
     @Column
     @Comment("是否启用")
     @ColDefine(type = ColType.BOOLEAN)
-    @Default("1")
+    @Default("true")
     @ApiModelProperty(description = "是否启用")
     private Boolean enabled;
 

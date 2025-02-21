@@ -47,14 +47,14 @@ public class Iot_product_menu extends BaseModel implements Serializable {
     @Column
     @Comment("是否显示")
     @ColDefine(type = ColType.BOOLEAN)
-    @Default("1")
+    @Default("true")
     @ApiModelProperty(description = "是否显示")
     private Boolean display;
 
     @Column
     @Comment("是否系统内置")
     @ColDefine(type = ColType.BOOLEAN)
-    @Default("0")
+    @Default("false")
     @ApiModelProperty(description = "是否系统内置")
     private Boolean sys;
 }
