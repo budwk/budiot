@@ -75,6 +75,7 @@ public class IotProductController {
                     @ApiFormParam(name = "pageOrderName", example = "createdAt", description = "排序字段"),
                     @ApiFormParam(name = "pageOrderBy", example = "descending", description = "排序方式"),
                     @ApiFormParam(name = "classifyId", example = "", description = "设备分类"),
+                    @ApiFormParam(name = "supplierId", example = "", description = "设备厂家"),
                     @ApiFormParam(name = "name", example = "", description = "产品名称")
             }
     )
@@ -82,10 +83,13 @@ public class IotProductController {
             implementation = Pagination.class
     )
     @SaCheckPermission("iot.device.product")
-    public Result<?> list(@Param("classifyId") String classifyId, @Param("name") String name, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+    public Result<?> list(@Param("classifyId") String classifyId, @Param("supplierId") String supplierId, @Param("name") String name, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (Strings.isNotBlank(classifyId)) {
             cnd.and("classifyId", "=", classifyId);
+        }
+        if (Strings.isNotBlank(supplierId)) {
+            cnd.and("supplierId", "=", supplierId);
         }
         if (Strings.isNotBlank(name)) {
             cnd.and(Cnd.likeEX("name", name));

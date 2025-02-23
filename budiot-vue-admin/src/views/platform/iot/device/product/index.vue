@@ -1,4 +1,3 @@
-
 <template>
     <div class="app-container">
         <el-row>
@@ -6,8 +5,12 @@
                 <el-form-item label="设备分类" prop="classifyId">
                     <el-cascader style="width: 100%;" clearable :options="classifyList"
                         :props="{ expandTrigger: 'hover', value: 'id', label: 'name', children: 'children', emitPath: false }"
-                        v-model="queryParams.classifyId"
-                        />
+                        v-model="queryParams.classifyId" @change="handleSearch"/>
+                </el-form-item>
+                <el-form-item label="设备厂家" prop="supplierId">
+                    <el-select style="width: 180px;" v-model="queryParams.supplierId" placeholder="请选择设备厂家" clearable @change="handleSearch">
+                        <el-option v-for="item in supplierList" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="产品名称" prop="name">
                     <el-input v-model="queryParams.name" placeholder="请输入产品名称" clearable style="width: 180px"
@@ -25,76 +28,64 @@
                     v-permission="['iot.device.product.create']">新增
                 </el-button>
             </el-col>
-            <right-toolbar :quickSearchShow="true" quickSearchPlaceholder="通过名称搜索" v-model:showSearch="showSearch" :extendSearch="true" @quickSearch="handleSearch" />
+            <right-toolbar :quickSearchShow="true" quickSearchPlaceholder="通过名称搜索" v-model:showSearch="showSearch"
+                :extendSearch="true" @quickSearch="quickSearch" />
         </el-row>
-        <el-row :gutter="20">
-            <el-col :lg="6" :xs="24" class="product-box" v-for="(product, idx) in tableData" :key="idx">
-                <el-card class="box-card" shadow="hover" @mouseover="showButton(idx)" @mouseleave="showButton(-1)"
-                    :class="{ active: showButtonIdx === idx }">
-                    <template #header>
-                        <div class="card-header">
-                            <el-row>
-                                <el-col :span="12">
-                                    <el-tag :color="findClassifyColor(product?.classifyId)" effect="dark" class="type-tag">{{findClassifyName(product?.classifyId)}}</el-tag>
-                                </el-col>
-                                <el-col :span="12" style="text-align: right" v-show="showButtonIdx == idx">
-                                    <el-tooltip content="修改" placement="top">
-                                        <el-button link type="primary" icon="EditPen" @click="handleUpdate(product)"
-                                            v-permission="['iot.device.product.update']"></el-button>
-                                    </el-tooltip>
-                                    <el-tooltip content="删除" placement="top">
-                                        <el-button link type="danger" icon="Delete" @click="handleDelete(product)"
-                                            v-permission="['iot.device.product.delete']"  style="margin-left: 5px;"></el-button>
-                                    </el-tooltip>
-                                </el-col>
-                            </el-row>
-                            <el-row @click="handleDetail(product.id)">
-                                <span class="product-title">{{ product.name }}</span>
-                            </el-row>
-                        </div>
-                    </template>
-                    <el-row @click="handleDetail(product.id)">
-                        <el-col>
-                            <el-form-item label="设备数量：" class="product-field-item">
-                                {{ product?.deviceCount }}
-                            </el-form-item>
-                        </el-col>
-                        <el-col>
-                            <el-form-item label="接入平台：" class="product-field-item">
-                                {{ product?.iotPlatform?.text }}
-                            </el-form-item>
-                        </el-col>
-                        <el-col>
-                            <el-form-item label="网络协议：" class="product-field-item">
-                                {{ product?.protocolType?.text }}
-                            </el-form-item>
-                        </el-col>
-                        <el-col>
-                            <el-form-item label="数据格式：" class="product-field-item">
-                                <span v-if="product?.dataFormat == 'json'">JSON</span>
-                                <span v-else>自定义/透传</span>
-                            </el-form-item>
-                        </el-col>
-                        <el-col>
-                            <el-form-item label="设备协议" class="product-field-item">
-                                {{ findProtocol(product?.protocolId) }}
-                            </el-form-item>
-                        </el-col>
-                        <el-col>
-                            <el-form-item label="设备类型：" class="product-field-item">
-                                {{ product?.deviceType?.text }}
-                            </el-form-item>
-                        </el-col>
+        <el-row :gutter="20" class="pDevice-body">
+            <el-col v-for="(product, idx) in tableData" :key="product.id" :xs="24" :md="12" :lg="8" :xl="6" x>
+                <div class="pDevice-block">
+                    <span class="block-tag"
+                        :style="{ background: findClassifyColor(product?.classifyId) }">{{ findClassifyName(product?.classifyId) }}</span>
+                    <span class="title-tag" :style="{ background: findClassifyColor(product?.classifyId) }" />
+                    <div class="pDevice-block-title">
 
-                    </el-row>
-                </el-card>
+                        <span type="text" @click="handleDetail(product.id)">{{ product.name }}</span>
+                        <icon name="el-icon-Edit" class="block-icon" @click="handleUpdate(product)" color="#2476e0" />
+                        <icon name="el-icon-Delete" class="block-icon-two" @click="handleDelete(product)"
+                            color="#f56c6c" />
+                        <i v-permission="['iot.device.product.update']" class="block-icon device device-icon-bianji"
+                            @click="handleUpdate(product)" />
+                        <i v-permission="['iot.device.product.delete']"
+                            class="block-icon-two device device-icon-shanchu" @click="handleDelete(product)" />
+                    </div>
+                    <div class="pDevice-block-content" @click="handleDetail(product.id)">
+                        <div class="pDevice-block-left">
+                            <div class="pDevice-block-txt">
+                                <span class="block-label">接入平台：</span>
+                                {{ product?.iotPlatform?.text || '--' }}
+                            </div>
+                            <div class="pDevice-block-txt">
+                                <span class="block-label">网络协议：</span>
+                                {{ product?.protocolType?.text || '--' }}
+                            </div>
+                            <div class="pDevice-block-txt">
+                                <span class="block-label">设备协议：</span>
+                                {{ findProtocol(product?.protocolId) || '--' }}
+                            </div>
+                            <div class="pDevice-block-txt">
+                                <span class="block-label">厂家名称：</span>
+                                {{ findSupplierName(product?.supplierId) || '--' }}
+                            </div>
+                            <div class="pDevice-block-txt">
+                                <span class="block-label">创建时间：</span>
+                                {{ formatTime(product?.createdAt) }}
+                            </div>
+                        </div>
+                        <div class="pDevice-block-right">
+                            <div class="block-num">
+                                {{ product?.deviceCount }}
+                            </div>
+                            <div class="block-tit">设备数</div>
+                        </div>
+                    </div>
+                </div>
             </el-col>
         </el-row>
         <el-row v-show="tableData.length == 0" justify="center">
             <span class="no-data">暂无数据</span>
         </el-row>
-        <pagination :total="queryParams.totalCount" v-model:page="queryParams.pageNo" v-model:limit="queryParams.pageSize"
-            @pagination="list" />
+        <pagination :total="queryParams.totalCount" v-model:page="queryParams.pageNo"
+            v-model:limit="queryParams.pageSize" @pagination="list" />
 
         <el-dialog title="新增产品" v-model="showCreate" width="45%" :close-on-click-modal="false">
             <el-form ref="createRef" :model="formData" :rules="formRules" label-width="100px">
@@ -103,37 +94,47 @@
                 </el-form-item>
                 <el-form-item label="设备分类" prop="classifyId">
                     <el-cascader style="width: 100%;" clearable :options="classifyList"
-                        :props="{ expandTrigger: 'hover', value: 'id', label: 'name', children: 'children',emitPath: false }"
-                        v-model="formData.classifyId"/>
+                        :props="{ expandTrigger: 'hover', value: 'id', label: 'name', children: 'children', emitPath: false }"
+                        v-model="formData.classifyId" />
                 </el-form-item>
                 <el-form-item label="设备类型" prop="deviceType">
                     <el-select v-model="formData.deviceType" placeholder="请选择设备类型" clearable style="width: 100%;">
-                        <el-option v-for="item in deviceType" :key="item.value" :label="item.text" :value="item.value" />
+                        <el-option v-for="item in deviceType" :key="item.value" :label="item.text"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="接入平台" prop="iotPlatform" >
-                    <el-select v-model="formData.iotPlatform" placeholder="请选择接入平台" @change="platformChange" clearable style="width: 100%;">
-                        <el-option v-for="item in iotPlatform" :key="item.value" :label="item.text" :value="item.value" />
+                <el-form-item label="设备厂家" prop="supplierId">
+                    <el-select v-model="formData.supplierId" placeholder="请选择设备厂家" clearable style="width: 100%;">
+                        <el-option v-for="item in supplierList" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="接入平台" prop="iotPlatform">
+                    <el-select v-model="formData.iotPlatform" placeholder="请选择接入平台" @change="platformChange" clearable
+                        style="width: 100%;">
+                        <el-option v-for="item in iotPlatform" :key="item.value" :label="item.text"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="网络协议" prop="protocolType">
-                    <el-select v-model="formData.protocolType" placeholder="请选择接入协议" @change="protocolChange" clearable style="width: 100%;">
-                        <el-option v-for="item in protocolType" :key="item.value" :label="item.text" :value="item.value" />
+                    <el-select v-model="formData.protocolType" placeholder="请选择接入协议" @change="protocolChange" clearable
+                        style="width: 100%;">
+                        <el-option v-for="item in protocolType" :key="item.value" :label="item.text"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
-                <el-form-item v-if="formData.protocolType == 'MQTT' || formData.protocolType == 'HTTP' && formData.iotPlatform == 'AEP' || formData.protocolType == 'MQ' && formData.iotPlatform == 'AEP'"
-                 label="协议认证" prop="propertieList"
-                    class="label-font-weight">
+                <el-form-item
+                    v-if="formData.protocolType == 'MQTT' || formData.protocolType == 'HTTP' && formData.iotPlatform == 'AEP' || formData.protocolType == 'MQ' && formData.iotPlatform == 'AEP'"
+                    label="协议认证" prop="propertieList" class="label-font-weight">
                     <template v-for="(obj, idx) in formData.propertieList" :key="idx">
-                        {{ obj.name }}: 
-                        <el-input v-if="obj.type=='string'" v-model="obj.value" :placeholder="obj.note" />
-                        <el-radio-group v-if="obj.type=='boolean'" v-model="obj.value" style="padding-left: 10px;">
+                        {{ obj.name }}:
+                        <el-input v-if="obj.type == 'string'" v-model="obj.value" :placeholder="obj.note" />
+                        <el-radio-group v-if="obj.type == 'boolean'" v-model="obj.value" style="padding-left: 10px;">
                             <el-radio value="true">是</el-radio>
                             <el-radio value="false">否</el-radio>
                         </el-radio-group>
                     </template>
                 </el-form-item>
-                <el-form-item label="计费方式" prop="payMode" v-if="formData.deviceType=='METER'">
+                <el-form-item label="计费方式" prop="payMode" v-if="formData.deviceType == 'METER'">
                     <el-radio-group v-model="formData.payMode">
                         <el-radio :value="0">无</el-radio>
                         <el-radio :value="1">表端计费</el-radio>
@@ -170,37 +171,47 @@
                 </el-form-item>
                 <el-form-item label="设备分类" prop="classifyId">
                     <el-cascader style="width: 100%;" clearable :options="classifyList"
-                        :props="{ expandTrigger: 'hover', value: 'id', label: 'name', children: 'children',emitPath: false }"
-                        v-model="formData.classifyId"/>
+                        :props="{ expandTrigger: 'hover', value: 'id', label: 'name', children: 'children', emitPath: false }"
+                        v-model="formData.classifyId" />
                 </el-form-item>
                 <el-form-item label="设备类型" prop="deviceType">
                     <el-select v-model="formData.deviceType" placeholder="请选择设备类型" clearable style="width: 100%;">
-                        <el-option v-for="item in deviceType" :key="item.value" :label="item.text" :value="item.value" />
+                        <el-option v-for="item in deviceType" :key="item.value" :label="item.text"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="接入平台" prop="iotPlatform" >
-                    <el-select v-model="formData.iotPlatform" placeholder="请选择接入平台" @change="platformChange" clearable style="width: 100%;">
-                        <el-option v-for="item in iotPlatform" :key="item.value" :label="item.text" :value="item.value" />
+                <el-form-item label="设备厂家" prop="supplierId">
+                    <el-select v-model="formData.supplierId" placeholder="请选择设备厂家" clearable style="width: 100%;">
+                        <el-option v-for="item in supplierList" :key="item.id" :label="item.name" :value="item.id" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="接入平台" prop="iotPlatform">
+                    <el-select v-model="formData.iotPlatform" placeholder="请选择接入平台" @change="platformChange" clearable
+                        style="width: 100%;">
+                        <el-option v-for="item in iotPlatform" :key="item.value" :label="item.text"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="网络协议" prop="protocolType">
-                    <el-select v-model="formData.protocolType" placeholder="请选择接入协议" @change="protocolChange" clearable style="width: 100%;">
-                        <el-option v-for="item in protocolType" :key="item.value" :label="item.text" :value="item.value" />
+                    <el-select v-model="formData.protocolType" placeholder="请选择接入协议" @change="protocolChange" clearable
+                        style="width: 100%;">
+                        <el-option v-for="item in protocolType" :key="item.value" :label="item.text"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
-                <el-form-item v-if="formData.protocolType == 'MQTT' || formData.protocolType == 'HTTP' && formData.iotPlatform == 'AEP' || formData.protocolType == 'MQ' && formData.iotPlatform == 'AEP'"
-                 label="协议认证" prop="propertieList"
-                    class="label-font-weight">
+                <el-form-item
+                    v-if="formData.protocolType == 'MQTT' || formData.protocolType == 'HTTP' && formData.iotPlatform == 'AEP' || formData.protocolType == 'MQ' && formData.iotPlatform == 'AEP'"
+                    label="协议认证" prop="propertieList" class="label-font-weight">
                     <template v-for="(obj, idx) in formData.propertieList" :key="idx">
-                        {{ obj.name }}: 
-                        <el-input v-if="obj.type=='string'" v-model="obj.value" :placeholder="obj.note" />
-                        <el-radio-group v-if="obj.type=='boolean'" v-model="obj.value" style="padding-left: 10px;">
+                        {{ obj.name }}:
+                        <el-input v-if="obj.type == 'string'" v-model="obj.value" :placeholder="obj.note" />
+                        <el-radio-group v-if="obj.type == 'boolean'" v-model="obj.value" style="padding-left: 10px;">
                             <el-radio value="true">是</el-radio>
                             <el-radio value="false">否</el-radio>
                         </el-radio-group>
                     </template>
                 </el-form-item>
-                <el-form-item label="计费方式" prop="payMode" v-if="formData.deviceType=='METER'">
+                <el-form-item label="计费方式" prop="payMode" v-if="formData.deviceType == 'METER'">
                     <el-radio-group v-model="formData.payMode">
                         <el-radio :value="0">无</el-radio>
                         <el-radio :value="1">表端计费</el-radio>
@@ -244,9 +255,9 @@ import { useRoute } from "vue-router"
 const route = useRoute()
 const router = useRouter()
 
-const auth_MQTT = [{name:'username',value:'',note:'用户名',type:'string'  },{name:'password',value:'',note:'密码',type:'string'  }]
-const auth_AEP_HTTP = [{name:'masterKey',value:'',note:'AEP产品masterKey',type:'string' },{name:'productId',value:'',note:'AEP产品productId',type:'string'  },{name:'hasProfile',value:'true',note:'是否有Profile文件',type:'boolean'  }]
-const auth_AEP_MQ = [{name:'productId',value:'',note:'AEP产品productId',type:'string'  }]
+const auth_MQTT = [{ name: 'username', value: '', note: '用户名', type: 'string' }, { name: 'password', value: '', note: '密码', type: 'string' }]
+const auth_AEP_HTTP = [{ name: 'masterKey', value: '', note: 'AEP产品masterKey', type: 'string' }, { name: 'productId', value: '', note: 'AEP产品productId', type: 'string' }, { name: 'hasProfile', value: 'true', note: '是否有Profile文件', type: 'boolean' }]
+const auth_AEP_MQ = [{ name: 'productId', value: '', note: 'AEP产品productId', type: 'string' }]
 
 const createRef = ref<InstanceType<typeof ElForm>>()
 const updateRef = ref<InstanceType<typeof ElForm>>()
@@ -262,6 +273,7 @@ const showButtonIdx = ref(-1)
 const classifyList = ref([])
 const classifyListOrigin = ref([])
 const protocolList = ref([])
+const supplierList = ref([])
 const iotPlatform = ref([])
 const protocolType = ref([])
 const deviceType = ref([])
@@ -271,6 +283,7 @@ const data = reactive({
         id: '',
         name: '',
         classifyId: '',
+        supplierId: '',
         deviceType: '',
         dataFormat: 'json',
         iotPlatform: '',
@@ -283,9 +296,10 @@ const data = reactive({
     },
     queryParams: {
         classifyId: '',
+        supplierId: '',
         name: '',
         pageNo: 1,
-        pageSize: 8,
+        pageSize: 9,
         totalCount: 0,
         pageOrderName: '',
         pageOrderBy: '',
@@ -309,6 +323,7 @@ const resetForm = (formEl: InstanceType<typeof ElForm> | undefined) => {
         id: '',
         name: '',
         classifyId: '',
+        supplierId: '',
         deviceType: '',
         dataFormat: 'json',
         iotPlatform: 'DIRECT',
@@ -340,12 +355,17 @@ const resetSearch = () => {
 
 // 查看详情
 const handleDetail = (id: string) => {
-    router.push('/platform/iot/device/product/' + id+'/detail')
+    router.push('/platform/iot/device/product/' + id + '/detail')
 }
 
 // 查找protocol协议
 const findProtocol = (val: any) => {
     return findOneValue(protocolList.value, val, 'name', 'id')
+}
+
+// 查找supplier厂家名称
+const findSupplierName = (val: any) => {
+    return findOneValue(supplierList.value, val, 'name', 'id')
 }
 
 // 查找classify分类名称
@@ -361,21 +381,21 @@ const findClassifyColor = (val: any) => {
     } else {
         let parentId = findOneValue(classifyListOrigin.value, val, 'parentId', 'id')
         return findOneValue(classifyListOrigin.value, parentId, 'color', 'id')
-    } 
+    }
 }
 
 const platformChange = (val: string) => {
-    if(formData.value.iotPlatform == 'AEP') {
-        if(formData.value.protocolType == 'MQ'){
+    if (formData.value.iotPlatform == 'AEP') {
+        if (formData.value.protocolType == 'MQ') {
             formData.value.propertieList = JSON.parse(JSON.stringify(auth_AEP_MQ))
         }
-        if(formData.value.protocolType == 'HTTP'){
+        if (formData.value.protocolType == 'HTTP') {
             formData.value.propertieList = JSON.parse(JSON.stringify(auth_AEP_HTTP))
         }
-        if(formData.value.protocolType == 'MQTT') {
+        if (formData.value.protocolType == 'MQTT') {
             formData.value.propertieList = JSON.parse(JSON.stringify(auth_MQTT))
         }
-    } else if(formData.value.protocolType == 'MQTT') {
+    } else if (formData.value.protocolType == 'MQTT') {
         formData.value.propertieList = JSON.parse(JSON.stringify(auth_MQTT))
     } else {
         formData.value.propertieList = []
@@ -402,8 +422,8 @@ const list = () => {
 // 通过每个产品的ID查询统计产品下设备数量
 const deviceCount = () => {
     let ids = tableData.value.map((item: any) => item.id)
-    if(ids && ids.length > 0) {
-        getDeviceCount({ids: ids}).then((res) => {
+    if (ids && ids.length > 0) {
+        getDeviceCount({ ids: ids }).then((res) => {
             tableData.value.forEach((item: any) => {
                 item.deviceCount = res.data[item.id] || 0
             })
@@ -417,6 +437,7 @@ const init = () => {
         classifyList.value = handleTree(res.data.classifyList) as never
         classifyListOrigin.value = res.data.classifyList
         protocolList.value = res.data.protocolList
+        supplierList.value = res.data.supplierList
         protocolType.value = res.data.protocolType
         deviceType.value = res.data.deviceType
     })
@@ -426,6 +447,7 @@ const init = () => {
 const quickSearch = (data: any) => {
     refreshTable.value = false
     queryParams.value.pageNo = 1
+    queryParams.value.name = data.keyword
     list()
     nextTick(() => {
         refreshTable.value = true
@@ -446,7 +468,7 @@ const handleUpdate = (row: any) => {
         formData.value.protocolType = res.data.protocolType.value
         formData.value.deviceType = res.data.deviceType.value
         platformChange(formData.value.iotPlatform)
-        if(formData.value.properties) {
+        if (formData.value.properties) {
             let properties = formData.value.properties
             // 将map对象properties里的值赋值到propertieList
             formData.value.propertieList.forEach((item: any) => {
@@ -505,8 +527,8 @@ const update = () => {
 }
 
 onMounted(() => {
-    list()
     init()
+    list()
 })
 </script>
 <!--定义布局-->
@@ -544,5 +566,101 @@ onMounted(() => {
     font-size: 14px;
     color: #999;
     height: 50px;
+}
+
+.pDevice {
+    &-body {
+        margin-top: 15px;
+    }
+
+    &-block {
+        margin-bottom: 20px;
+        border: 1px solid #dadbdd;
+        border-radius: 2px;
+        position: relative;
+        padding: 20px 16px;
+        min-height: 160px;
+
+        &:hover {
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.14);
+            cursor: pointer;
+
+            .block-icon,
+            .block-icon-two {
+                display: inline-block;
+            }
+        }
+
+        &-title {
+            color: #2476e0;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        &-content {
+            display: flex;
+        }
+
+        &-left {
+            flex: 3;
+        }
+
+        &-txt {
+            // line-height: 2;
+            margin-bottom: 8px;
+        }
+
+        .block-label {
+            font-weight: 400;
+        }
+
+        &-right {
+            flex: 1;
+            border-left: 1px dashed #e4e6ea;
+            padding-left: 22px;
+        }
+
+        .block-num {
+            font-size: 26px;
+        }
+
+        .title-tag {
+            width: 2px;
+            height: 14px;
+            position: absolute;
+            top: 24px;
+            left: 0;
+        }
+
+        .block-icon {
+            margin-left: 30px;
+            color: #0054d8;
+            display: none;
+            font-size: 14px;
+
+            @media (max-width: 1440px) {
+                margin-left: 10px;
+            }
+        }
+
+        .block-icon-two {
+            margin-left: 10px;
+            display: none;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .block-tag {
+            padding: 4px 12px;
+            border-radius: 0 0 0 10px;
+            position: absolute;
+            right: -1px;
+            top: -1px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 400;
+        }
+    }
 }
 </style>

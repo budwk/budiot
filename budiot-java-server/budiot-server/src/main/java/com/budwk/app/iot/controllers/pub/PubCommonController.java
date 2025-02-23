@@ -4,10 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.budwk.app.iot.enums.DeviceType;
 import com.budwk.app.iot.enums.IotPlatform;
 import com.budwk.app.iot.enums.ProtocolType;
-import com.budwk.app.iot.services.IotClassifyService;
-import com.budwk.app.iot.services.IotDeviceService;
-import com.budwk.app.iot.services.IotProductService;
-import com.budwk.app.iot.services.IotProtocolService;
+import com.budwk.app.iot.services.*;
 import com.budwk.starter.common.openapi.annotation.*;
 import com.budwk.starter.common.result.Result;
 import com.budwk.starter.log.annotation.SLog;
@@ -36,6 +33,8 @@ public class PubCommonController {
     private IotProductService iotProductService;
     @Inject
     private IotDeviceService iotDeviceService;
+    @Inject
+    private IotSupplierService iotSupplierService;
 
     @At
     @Ok("json")
@@ -54,6 +53,7 @@ public class PubCommonController {
         NutMap map = NutMap.NEW();
         map.addv("classifyList", iotClassifyService.query(Cnd.NEW()));
         map.addv("protocolList", iotProtocolService.query(Cnd.NEW()));
+        map.addv("supplierList", iotSupplierService.query(Cnd.NEW()));
         map.addv("iotPlatform", IotPlatform.values());
         map.addv("protocolType", ProtocolType.values());
         map.addv("deviceType", DeviceType.values());

@@ -4,7 +4,6 @@
 
 **[官网](https://budiot.com)** |
 **[演示地址](https://demo.budiot.com)** |
-**[捐赠清单](https://budwk.com/donation)** |
 
 </div>
 

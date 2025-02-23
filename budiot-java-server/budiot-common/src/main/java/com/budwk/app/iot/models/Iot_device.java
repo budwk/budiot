@@ -57,6 +57,12 @@ public class Iot_device extends BaseModel implements Serializable {
     private String parentId;
 
     @Column
+    @Comment("设备厂家")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    @ApiModelProperty(name = "supplierId", description = "设备厂家")
+    private String supplierId;
+
+    @Column
     @Comment("设备协议")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @ApiModelProperty(name = "protocolId", description = "设备协议")

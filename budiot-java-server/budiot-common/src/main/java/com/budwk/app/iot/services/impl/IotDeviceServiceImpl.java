@@ -79,6 +79,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
             device.setDeviceType(product.getDeviceType());
             device.setClassifyId(product.getClassifyId());
             device.setProductId(productId);
+            device.setSupplierId(product.getSupplierId());
             device.setProtocolId(product.getProtocolId());
             device.setProtocolCode(protocol.getCode());
             device.setAbnormal(false);
@@ -129,6 +130,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
         device.setDeviceType(product.getDeviceType());
         device.setClassifyId(product.getClassifyId());
         device.setProtocolId(product.getProtocolId());
+        device.setSupplierId(product.getSupplierId());
         device.setProtocolCode(protocol.getCode());
         device.setValveState(DeviceValveState.UNKNOWN);
         device.setCreatedBy(SecurityUtil.getUserId());
