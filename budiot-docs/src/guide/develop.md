@@ -4,9 +4,9 @@
 
 * OpenJDK 11
 * Redis 6.x 以上
-* MariaDB 10.x
+* MariaDB 10.x 或 PostgreSQL 13.x 以上
 * MongoDB 7.0.x 以上
-* RocketMQ 5.2.x 以上
+* RocketMQ 5.2.x 以上 或 RabbitMQ 3.8.x 以上
 
 * Node.js v18.x 以上
 

@@ -3,7 +3,7 @@
 <div align="center">
 
 **[官网](https://budiot.com)** |
-**[演示地址](https://demo.budiot.com)** |
+**[演示地址](https://demo.budiot.com)**
 
 </div>
 
@@ -33,11 +33,11 @@ BUDIOT 是一个开源的、企业级的物联网平台，它集成了设备管�
 
 ## 开发环境
 
-*   OpenJDK 11 
-*   Redis 6.x 
-*   MariaDB 10.x 
-*   MongoDB 7.0.x
-*   RocketMQ 5.2.x
+* OpenJDK 11
+* Redis 6.x 以上
+* MariaDB 10.x 或 PostgreSQL 13.x 以上
+* MongoDB 7.0.x 以上
+* RocketMQ 5.2.x 以上 或 RabbitMQ 3.8.x 以上
 
 ## 许可版本
 
