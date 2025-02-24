@@ -3,6 +3,7 @@ package com.budwk.app.access.processor;
 import com.budwk.app.access.constants.TopicConstant;
 import com.budwk.app.access.message.Message;
 import com.budwk.app.access.message.MessageTransfer;
+import com.budwk.app.access.message.impl.MessageTransferServer;
 import com.budwk.app.access.processor.core.Processor;
 import com.budwk.app.access.processor.core.ProcessorContext;
 import com.budwk.app.access.processor.protocol.ProtolcolContainer;
@@ -36,6 +37,7 @@ public class ProcessorLauncher {
     @Inject
     private PropertiesProxy conf;
     @Inject
+    private MessageTransferServer messageTransferServer;
     private MessageTransfer messageTransfer;
     @Inject
     private IotDeviceService iotDeviceService;
@@ -49,6 +51,7 @@ public class ProcessorLauncher {
     }
 
     public void init() {
+        messageTransfer = messageTransferServer.getMessageTransfer();
         // 设备协议解析
         if (conf.getBoolean("protocol.enable", false)) {
             ioc.get(ProtolcolContainer.class).init();

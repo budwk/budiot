@@ -3,6 +3,7 @@ package com.budwk.app.iot.services.impl;
 import com.budwk.app.access.constants.TopicConstant;
 import com.budwk.app.access.message.Message;
 import com.budwk.app.access.message.MessageTransfer;
+import com.budwk.app.access.message.impl.MessageTransferServer;
 import com.budwk.app.iot.caches.DeviceCacheStore;
 import com.budwk.app.iot.enums.DeviceValveState;
 import com.budwk.app.iot.models.Iot_device;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@IocBean(args = {"refer:dao"})
+@IocBean(args = {"refer:dao"},create = "init")
 public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements IotDeviceService {
     public IotDeviceServiceImpl(Dao dao) {
         super(dao);
@@ -53,11 +54,16 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<Iot_device> implements
     @Inject
     private IotDevicePropService iotDevicePropService;
     @Inject
+    private MessageTransferServer messageTransferServer;
     private MessageTransfer messageTransfer;
     @Inject
     private DeviceCacheStore deviceCacheStore;
     @Inject
     private IotProductFirmwareService iotProductFirmwareService;
+
+    public void init() {
+        messageTransfer = messageTransferServer.getMessageTransfer();
+    }
 
     public void importData(String productId, String fileName, List<Iot_device> list, boolean over, String userId, String loginname) {
         if (list == null || list.size() == 0) {

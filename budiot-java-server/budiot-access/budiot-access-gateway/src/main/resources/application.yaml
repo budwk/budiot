@@ -18,6 +18,7 @@ gateway:
       payloadType: hex # 数据类型，可选 hex 和 string 默认 hex
 
 rocketmq:
+  enable: true
   # 集群环境多个nameserver用;分割
   nameserver-address: 127.0.0.1:9876
   # 生产者组
@@ -25,6 +26,19 @@ rocketmq:
   producer-timeout: 1
   consumer-thread-max: 100
   consumer-thread-min: 5
+
+# rabbitmq 配置为可选项
+rabbitmq:
+  enable: false
+  host: 10.10.10.10
+  port: 5672
+  username: guest
+  password: guest
+  thread:
+    max: 8
+    min: 4
+  queue:
+    size: 10000
 
 message:
   transfer:

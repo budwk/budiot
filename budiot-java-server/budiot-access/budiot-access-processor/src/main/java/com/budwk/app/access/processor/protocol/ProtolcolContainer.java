@@ -4,6 +4,7 @@ import com.budwk.app.access.constants.TopicConstant;
 import com.budwk.app.access.enums.TransportType;
 import com.budwk.app.access.message.Message;
 import com.budwk.app.access.message.MessageTransfer;
+import com.budwk.app.access.message.impl.MessageTransferServer;
 import com.budwk.app.access.objects.dto.DeviceRawDataDTO;
 import com.budwk.app.access.processor.cache.RedissionCacheStore;
 import com.budwk.app.access.processor.protocol.impl.DefaultDecodeContext;
@@ -72,6 +73,7 @@ public class ProtolcolContainer {
     @Inject
     private DelayTaskHelper delayTaskHelper;
     @Inject
+    private MessageTransferServer messageTransferServer;
     private MessageTransfer messageTransfer;
     @Inject
     private DeviceRawDataStorage deviceRawDataStorage;
@@ -86,6 +88,7 @@ public class ProtolcolContainer {
     private String instanceId;
 
     public void init() {
+        messageTransfer = messageTransferServer.getMessageTransfer();
         cacheMap = redissonClient.getMapCache("protocol_container");
         deviceSessionCache = redissonClient.getMapCache("device_addr");
         sessionDevice = redissonClient.getMapCache("device_session");

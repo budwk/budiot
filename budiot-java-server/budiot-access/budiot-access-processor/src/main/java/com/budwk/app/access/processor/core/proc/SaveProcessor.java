@@ -1,6 +1,7 @@
 package com.budwk.app.access.processor.core.proc;
 
 import com.budwk.app.access.message.MessageTransfer;
+import com.budwk.app.access.message.impl.MessageTransferServer;
 import com.budwk.app.access.objects.dto.DeviceDTO;
 import com.budwk.app.access.objects.dto.DeviceDataDTO;
 import com.budwk.app.access.objects.dto.DeviceEventDataDTO;
@@ -45,10 +46,11 @@ import java.util.stream.Collectors;
 /**
  * 数据存储动作链
  */
-@IocBean
+@IocBean(create = "init")
 @Slf4j
 public class SaveProcessor implements Processor {
     @Inject
+    private MessageTransferServer messageTransferServer;
     private MessageTransfer messageTransfer;
 
     @Inject
@@ -67,6 +69,10 @@ public class SaveProcessor implements Processor {
     private final ExecutorService executorService =
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4,
                     new NamedThreadFactory("save-processor"));
+
+    public void init() {
+        messageTransfer = messageTransferServer.getMessageTransfer();
+    }
 
     @Override
     public int getOrder() {

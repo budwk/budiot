@@ -18,9 +18,16 @@
     </properties>
 
     <dependencies>
+        <!-- rocketmq -->
         <dependency>
             <groupId>com.budwk.starter</groupId>
             <artifactId>wk-starter-rocketmq</artifactId>
+        </dependency>
+        <!-- rabbitmq -->
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>${rabbitmq.version}</version>
         </dependency>
         <dependency>
             <groupId>de.ruedigermoeller</groupId>

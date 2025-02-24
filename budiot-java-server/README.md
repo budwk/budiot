@@ -20,7 +20,7 @@
 
 `nohup java -jar -Dnutz.boot.configure.yaml.dir=/data/blend/ -Xmx450m budiot.jar >/dev/null 2>&1 &`
 
-## RocketMQ 启动
+## RocketMQ 启动（或选择 RabbitMQ）
 
 * 启动服务
 `./mqnamesrv`

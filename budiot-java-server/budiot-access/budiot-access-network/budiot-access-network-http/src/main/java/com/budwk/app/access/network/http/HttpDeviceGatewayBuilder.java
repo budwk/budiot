@@ -1,6 +1,7 @@
 package com.budwk.app.access.network.http;
 
 import com.budwk.app.access.message.MessageTransfer;
+import com.budwk.app.access.message.impl.MessageTransferServer;
 import com.budwk.app.access.network.DeviceGateway;
 import com.budwk.app.access.network.DeviceGatewayBuilder;
 import com.budwk.app.access.enums.TransportType;
@@ -11,10 +12,15 @@ import org.nutz.ioc.loader.annotation.IocBean;
 /**
  * HTTP 网关构造器
  */
-@IocBean(name = "httpGatewayBuilder")
+@IocBean(name = "httpGatewayBuilder", create = "init")
 public class HttpDeviceGatewayBuilder implements DeviceGatewayBuilder {
     @Inject
+    private MessageTransferServer messageTransferServer;
     private MessageTransfer messageTransfer;
+
+    public void init() {
+        messageTransfer = messageTransferServer.getMessageTransfer();
+    }
 
     @Override
     public String getId() {
