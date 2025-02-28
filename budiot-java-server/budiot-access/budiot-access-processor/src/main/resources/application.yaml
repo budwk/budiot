@@ -25,6 +25,18 @@ rocketmq:
   consumer-thread-max: 100
   consumer-thread-min: 5
 
+#rabbitmq:
+#  enable: false
+#  host: 10.10.10.10
+#  port: 5672
+#  username: guest
+#  password: guest
+#  thread:
+#    max: 8
+#    min: 4
+#  queue:
+#    size: 10000
+
 mongodb:
   url: mongodb://127.0.0.1:27017/test
 

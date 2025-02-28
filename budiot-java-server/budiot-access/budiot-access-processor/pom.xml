@@ -21,6 +21,11 @@
         <!-- 设备协议 start -->
         <dependency>
             <groupId>com.budwk.app</groupId>
+            <artifactId>budiot-access-protocol-demo-aep</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.app</groupId>
             <artifactId>budiot-access-protocol-demo-tcp</artifactId>
             <version>${project.version}</version>
         </dependency>

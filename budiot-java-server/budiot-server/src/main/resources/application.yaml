@@ -13,6 +13,7 @@ jetty:
   staticPath: /data/files
 
 rocketmq:
+  enable: false
   # 集群环境多个nameserver用;分割
   nameserver-address: 127.0.0.1:9999
   # 生产者组
@@ -21,6 +22,17 @@ rocketmq:
   consumer-thread-max: 100
   consumer-thread-min: 5
 
+rabbitmq:
+  enable: false
+  host: 10.10.10.10
+  port: 5672
+  username: guest
+  password: guest
+  thread:
+    max: 8
+    min: 4
+  queue:
+    size: 10000
 
 openapi:
   # demo访问路径 https://demo.budiot.com/api/openapi/ 【结尾/号不能少】

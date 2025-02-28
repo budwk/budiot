@@ -16,7 +16,7 @@ processor:
   enable: true
 
 rocketmq:
-  enable: true
+  enable: false
   # 集群环境多个nameserver用;分割
   nameserver-address: 127.0.0.1:9876
   # 生产者组
@@ -24,6 +24,18 @@ rocketmq:
   producer-timeout: 1
   consumer-thread-max: 100
   consumer-thread-min: 5
+
+rabbitmq:
+  enable: true
+  host: 192.168.6.67
+  port: 5672
+  username: admin
+  password: '@#Pass123'
+  thread:
+    max: 8
+    min: 4
+  queue:
+    size: 10000
 
 mongodb:
   url: mongodb://127.0.0.1:27017/test

@@ -18,7 +18,7 @@ gateway:
       payloadType: hex # 数据类型，可选 hex 和 string 默认 hex
 
 rocketmq:
-  enable: true
+  enable: false
   # 集群环境多个nameserver用;分割
   nameserver-address: 127.0.0.1:9876
   # 生产者组
@@ -29,9 +29,9 @@ rocketmq:
 
 # rabbitmq 配置为可选项
 rabbitmq:
-  enable: false
+  enable: true
   host: 10.10.10.10
-  port: 5672
+  port: 15672
   username: guest
   password: guest
   thread:

@@ -9,17 +9,25 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>budiot-access-protocol</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>budiot-access-protocol-core</module>
-        <module>budiot-access-protocol-demo-tcp</module>
-        <module>budiot-access-protocol-demo-aep</module>
-    </modules>
+    <description>第三方工具包</description>
+    <artifactId>budiot-access-thirdparty</artifactId>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <!-- nutzboot-starter -->
+        <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutzboot-core</artifactId>
+        </dependency>
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
 </project>

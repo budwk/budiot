@@ -12,6 +12,7 @@
         <module>budiot-common</module>
         <module>budiot-access</module>
         <module>budiot-server</module>
+        <module>budiot-access/budiot-access-thirdparty</module>
     </modules>
 
     <properties>
