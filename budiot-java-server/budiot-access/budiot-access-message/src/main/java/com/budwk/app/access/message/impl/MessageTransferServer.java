@@ -26,6 +26,7 @@ public class MessageTransferServer {
             log.info("RocketMQ 已启用");
             return ioc.get(RMQMessageTransfer.class);
         }
-        throw new RuntimeException("未启用任何消息队列服务");
+        log.error("未启用任何消息队列服务");
+        return null;
     }
 }

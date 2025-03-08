@@ -1,6 +1,5 @@
 package com.budwk.app.iot.services.impl;
 
-import com.budwk.app.iot.models.Iot_classify;
 import com.budwk.app.iot.models.Iot_scene_space;
 import com.budwk.app.iot.services.IotSceneSpaceService;
 import com.budwk.starter.database.service.BaseServiceImpl;
