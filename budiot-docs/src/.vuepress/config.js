@@ -26,53 +26,110 @@ module.exports = {
    *
    * ref：https://v1.vuepress.vuejs.org/theme/default-theme-config.html
    */
+  locales: {
+    '/': {
+      lang: 'zh-CN',
+      title: 'BudIoT',
+      description: 'BudIoT 物联网设备接入平台'
+    },
+    '/en/': {
+      lang: 'en-US',
+      title: 'BudIoT',
+      description: 'BudIoT IoT Device Access Platform'
+    }
+  },
+
   themeConfig: {
     repo: '',
     editLinks: false,
     docsDir: '',
     editLinkText: '',
     lastUpdated: false,
-    nav: [
-      {
-        text: '指南',
-        link: '/guide/',
-      },
-      {
-        text: '演示',
-        link: 'https://demo.budiot.com'
-      },
-      {
-        text: '捐赠',
-        link: 'https://budwk.com/donation'
-      },
-      {
-        text: '源码',
-        items: [
-          { text: 'Gitee', link: 'https://gitee.com/budwk/budiot' },
-          { text: 'Github', link: 'https://github.com/budwk/budiot' }
-        ]
-      }
-    ],
-    sidebar: {
-      '/guide/': [
-        {
-          title: '介绍',
-          collapsable: true,
-          children: [
-            '',
-          ]
-        },
-        {
-          title: '开发指南',
-          collapsable: true,
-          children: [
-            'develop',
-            'deploy',
-            'network',
-            'device',
-          ]
+    locales: {
+      '/': {
+        selectText: '语言',
+        label: '简体中文',
+        nav: [
+          {
+            text: '指南',
+            link: '/guide/',
+          },
+          {
+            text: '演示',
+            link: 'https://demo.budiot.com'
+          },
+          {
+            text: '源码',
+            items: [
+              { text: 'Gitee', link: 'https://gitee.com/budwk/budiot' },
+              { text: 'Github', link: 'https://github.com/budwk/budiot' }
+            ]
+          }
+        ],
+        sidebar: {
+          '/guide/': [
+            {
+              title: '介绍',
+              collapsable: true,
+              children: [
+                '',
+              ]
+            },
+            {
+              title: '开发指南',
+              collapsable: true,
+              children: [
+                'develop',
+                'deploy',
+                'network',
+                'device',
+              ]
+            }
+          ],
         }
-      ],
+      },
+      '/en/': {
+        selectText: 'Languages',
+        label: 'English',
+        nav: [
+          {
+            text: 'Guide',
+            link: '/en/guide/',
+          },
+          {
+            text: 'Demo',
+            link: 'https://demo.budiot.com'
+          },
+          {
+            text: 'Source',
+            items: [
+              { text: 'Gitee', link: 'https://gitee.com/budwk/budiot' },
+              { text: 'Github', link: 'https://github.com/budwk/budiot' }
+            ]
+          }
+        ],
+        sidebar: {
+          '/en/guide/': [
+            {
+              title: 'Introduction',
+              collapsable: true,
+              children: [
+                '',
+              ]
+            },
+            {
+              title: 'Development Guide',
+              collapsable: true,
+              children: [
+                'develop',
+                'deploy',
+                'network',
+                'device',
+              ]
+            }
+          ],
+        }
+      }
     }
   },
 

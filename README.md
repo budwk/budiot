@@ -3,7 +3,8 @@
 <div align="center">
 
 **[官网](https://budiot.com)** |
-**[演示地址](https://demo.budiot.com)**
+**[演示地址](https://demo.budiot.com)** |
+**[English](./README_EN.md)**
 
 </div>
 
