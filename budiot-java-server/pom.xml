@@ -6,7 +6,7 @@
 
     <groupId>com.budwk</groupId>
     <artifactId>budiot</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>budiot-common</module>
@@ -17,7 +17,7 @@
 
     <properties>
         <nutzboot.version>2.6.0-SNAPSHOT</nutzboot.version>
-        <budwk.version>8.3.0-SNAPSHOT</budwk.version>
+        <budwk.version>8.4.0-SNAPSHOT</budwk.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>

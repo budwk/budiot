@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.budwk.app</groupId>
         <artifactId>budiot-access</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>budiot-access-processor</artifactId>
@@ -66,10 +66,6 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-redisson</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.budwk.starter</groupId>
             <artifactId>wk-starter-websocket</artifactId>
         </dependency>
@@ -80,6 +76,10 @@
         <dependency>
             <groupId>com.budwk.starter</groupId>
             <artifactId>wk-starter-log</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-redisson</artifactId>
         </dependency>
     </dependencies>
 

@@ -22,8 +22,8 @@ import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
-import org.nutz.plugins.wkcache.annotation.CacheDefaults;
-import org.nutz.plugins.wkcache.annotation.CacheResult;
+import com.budwk.starter.rediscache.annotation.CacheDefaults;
+import com.budwk.starter.rediscache.annotation.CacheResult;
 
 import java.util.ArrayList;
 import java.util.List;

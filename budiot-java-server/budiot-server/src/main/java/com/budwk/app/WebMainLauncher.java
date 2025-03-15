@@ -122,7 +122,7 @@ public class WebMainLauncher {
                 conf.setAppId(GlobalConstant.DEFAULT_COMMON_APPID);
                 conf.setType(SysConfigType.TEXT);
                 conf.setConfigKey("AppVersion");
-                conf.setConfigValue("V1.0.0");
+                conf.setConfigValue("V1.1.0");
                 conf.setNote("系统版本号");
                 conf.setOpened(true);
                 dao.insert(conf);

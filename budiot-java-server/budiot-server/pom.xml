@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.budwk</groupId>
         <artifactId>budiot</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <groupId>com.budwk.app</groupId>
@@ -98,6 +98,18 @@
             <groupId>com.budwk.starter</groupId>
             <artifactId>wk-starter-email</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-rediscache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.budwk.starter</groupId>
+            <artifactId>wk-starter-redisson</artifactId>
+        </dependency>
         <!-- nutzboot-starter -->
         <dependency>
             <groupId>org.nutz</groupId>
@@ -122,19 +134,7 @@
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-wkcache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-quartz</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-redisson</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
