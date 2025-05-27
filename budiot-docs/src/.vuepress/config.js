@@ -17,8 +17,11 @@ module.exports = {
    */
   head: [
     ['meta', { name: 'theme-color', content: '#3eaf7c' }],
+    ['meta', { name: 'mobile-web-app-capable', content: 'yes' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
-    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }]
+    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
+    ['meta', { charset: 'utf-8' }],
+    ['meta', { name: 'viewport', content: 'width=device-width,initial-scale=1' }]
   ],
 
   /**
@@ -139,5 +142,30 @@ module.exports = {
   plugins: [
     '@vuepress/plugin-back-to-top',
     '@vuepress/plugin-medium-zoom',
-  ]
+  ],
+
+  // 添加基础配置
+  base: '/',
+  dest: 'dist',
+  evergreen: true,
+
+  // 添加生产环境配置
+  configureWebpack: {
+    optimization: {
+      minimize: false
+    }
+  },
+
+  // 禁用服务端渲染
+  ssr: false,
+
+  // 添加构建配置
+  chainWebpack: config => {
+    config.optimization.minimize(false)
+  },
+
+  // 添加 SSR 相关配置
+  markdown: {
+    lineNumbers: false
+  },
 }

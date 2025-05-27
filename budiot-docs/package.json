@@ -10,7 +10,8 @@
   "repository": "/budiot-docs",
   "scripts": {
     "dev": "vuepress dev src",
-    "build": "vuepress build src"
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && vuepress build src --no-cache",
+    "clean": "rm -rf node_modules/.cache && rm -rf .vuepress/dist"
   },
   "license": "MIT",
   "devDependencies": {
