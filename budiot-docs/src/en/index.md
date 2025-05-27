@@ -16,5 +16,5 @@ features:
   details: Developed with a front-end and back-end separation model, the Java microservice backend supports single-machine, cluster, and containerized deployment options
 - title: Cost-Effective
   details: Particularly suitable for managing hundreds of thousands to millions of devices, with great flexibility for customized development of various functions
-footer: MIT Licensed | 2024-present © budiot.com | 皖ICP备15001937号-5 | 皖公网安备34019202002371
+footer: 2024-present © budiot.com | 皖ICP备15001937号-5 | 皖公网安备34019202002371 | 软著登记号 2025SR0597839
 --- 
