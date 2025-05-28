@@ -16,7 +16,7 @@
         "@vueuse/core": "~7.5.3",
         "@wangeditor/editor": "^5.1.23",
         "@wangeditor/editor-for-vue": "^5.1.12",
-        "axios": "~0.26.0",
+        "axios": ">=0.30.0",
         "big.js": "^6.2.1",
         "countup.js": "^2.0.8",
         "dayjs": "^1.11.10",
