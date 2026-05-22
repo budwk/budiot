@@ -1,0 +1,81 @@
+server:
+  port: 9905
+
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: et922
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+      config:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        file-extension: yaml
+  rabbitmq:
+    host: 10.10.10.3
+    port: 15672
+    username: admin
+    password: admin
+  config:
+    import:
+      - optional:nacos:application-common.yml
+      - optional:nacos:${spring.application.name}.yaml?refreshEnabled=true
+
+wk:
+  dao:
+    interceptor:
+      log:
+        enabled: true
+      time:
+        enabled: true
+  database:
+    enabled: true
+    snowflake: true
+    table:
+      create: true
+      migration: true
+      add: true
+      delete: false
+      check: false
+      package:
+        - com.budwk.sp
+  device:
+    message:
+      enabled: true
+      provider: REDIS
+      topic-prefix: wk.device
+      send-timeout: 3000
+    network:
+      tcp:
+        idle-timeout-seconds: 300
+jdbc:
+  url: jdbc:postgresql://localhost:5432/budiot?user=postgres&password=U/dH5RqdqvEXkmqoLjT4zSOIMnKaLLpST6yvETwTHtbWuWnKLRJtja6Mv60OerKDJ58aNXLIvfLUbrgdye2nfw==
+  driver-class-name: org.postgresql.Driver
+  initial-size: 5
+  max-active: 20
+  min-idle: 5
+  max-wait: 60000
+  pool-prepared-statements: true
+  filters: config,stat,wall
+  connection-properties: "config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI5l6A1HKfQsuqtiFTVTt3eXm8eP8LIiHbEixpaZYnhfBOVRC4wJJGRHmMZgFnltdmaJ+nasfZy79AbOmNjdoi0CAwEAAQ=="
+
+logging:
+  level:
+    com.budwk.sp: DEBUG
+    org.nutz.dao: DEBUG

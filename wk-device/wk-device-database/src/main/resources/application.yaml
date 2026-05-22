@@ -1,0 +1,83 @@
+spring:
+  main:
+    allow-circular-references: true
+    web-application-type: none
+  profiles:
+    active: @spring.profile@
+  application:
+    name: wk-device-database
+
+wk:
+  dao:
+    interceptor:
+      log:
+        enabled: false
+      time:
+        enabled: false
+  database:
+    enabled: true
+    snowflake: true
+    table:
+      create: true
+      migration: true
+      add: true
+      delete: false
+      check: false
+      package:
+        - com.budwk.sp
+  device:
+    message:
+      enabled: true
+      provider: REDIS
+      topic-prefix: wk.device
+      send-timeout: 3000
+    database-ext:
+      # 原始报文主题，供 wk-device-database 订阅设备上行原始报文
+      raw-topic: wk.device.uplink.raw
+      # 解析完成后的原始归档主题，供 wk-device-database 写入最终 raw 记录（含 parsedJson）
+      raw-archive-topic: wk.device.uplink.raw.archive
+      # 标准化上行数据主题，供 wk-device-database 订阅解析后的属性/时序数据
+      normalized-topic: wk.device.uplink.normalized
+      # 事件主题，供 wk-device-database 订阅事件/告警数据
+      event-topic: wk.device.event
+      # 下行指令主题，供 wk-device-database 记录下行指令与指令历史
+      downlink-topic: wk.device.downlink.command
+      # 归档分仓配置：
+      # DEFAULT  使用默认关系库（当前主数据源，如 PostgreSQL / MySQL）
+      # MONGODB  使用 MongoDB 文档存储
+      # TDENGINE 使用 TDengine 时序库存储
+      # raw     原始通信报文，可选 DEFAULT / MONGODB / TDENGINE
+      # data    解析后的属性/时序数据，可选 DEFAULT / MONGODB / TDENGINE
+      # event   事件/告警数据，可选 DEFAULT / MONGODB / TDENGINE
+      # command 指令历史，可选 DEFAULT / MONGODB；若配置 TDENGINE 会自动回落到 DEFAULT
+      storage:
+        raw: DEFAULT
+        data: DEFAULT
+        event: DEFAULT
+        command: DEFAULT
+      # 原始报文保留天数
+      message-retention-days: 15
+      # 解析数据保留天数
+      data-retention-days: 30
+      # 事件数据保留天数
+      event-retention-days: 150
+      # 指令历史保留天数
+      command-retention-days: 180
+      # 是否启用 MongoDB 归档能力；关闭时即使 storage 配成 MONGODB 也会自动回落到 DEFAULT
+      mongo-enabled: false
+      # MongoDB 连接串；未配置时可复用 spring.data.mongodb.uri
+      # mongo-uri: mongodb://127.0.0.1:27017/budiot_device
+      # MongoDB 集合名前缀，最终集合名形如 device_raw_xxx / device_data_xxx
+      mongo-collection-prefix: device
+      # 是否启用 TDengine 归档能力；关闭时即使 storage 配成 TDENGINE 也会自动回落到 DEFAULT
+      tdengine-enabled: false
+      # TDengine JDBC 连接地址
+      # tdengine-url: jdbc:TAOS://127.0.0.1:6030/test
+      # TDengine 批量写入条数阈值
+      tdengine-batch-size: 200
+      # TDengine 定时刷写间隔（秒）
+      tdengine-flush-seconds: 5
+
+logging:
+  file:
+    name: ${user.home}/logs/${spring.application.name}.log

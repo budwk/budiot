@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.budwk.sp</groupId>
+        <artifactId>wk-device</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>wk-device-network</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>wk-device-network-core</module>
+        <module>wk-device-network-mqtt-server</module>
+        <module>wk-device-network-mqtt-client</module>
+        <module>wk-device-network-tcp</module>
+        <module>wk-device-network-udp</module>
+        <module>wk-device-network-http</module>
+        <module>wk-device-network-modbus-tcp</module>
+    </modules>
+</project>

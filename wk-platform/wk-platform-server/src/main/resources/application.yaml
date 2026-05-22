@@ -1,0 +1,95 @@
+
+wk:
+  # Dao层配置
+  dao:
+    tenant:
+      enabled: true
+      ignore-tables:
+        - sys_menu
+        - sys_app
+        - sys_area
+        - sys_dict
+        - sys_key
+        - sys_user_pwd
+        - sys_user_security
+        - sys_tenant
+        - sys_tenant_package
+        - sys_tenant_package_menu
+    interceptor:
+      log:
+        enabled: false
+      time:
+        enabled: false
+    sqls:
+      path: sqls/
+    druid-web:
+      enabled: false
+      username: admin
+      password: admin
+  # 数据库层配置
+  database:
+    enabled: true
+    snowflake: true #是否启用雪花算法,启用则需配置 redis
+    table:
+      create: true #是否自动建表 默认false
+      migration: true #是否自动变更 默认false
+      add: true # 是否添加列 默认false
+      delete: false # 是否删除列 默认false
+      check: false # 是否检查索引 默认false
+      package: # 相关实体所在包
+        - com.budwk
+  # Web层配置
+  web:
+    exception:
+      exposeMessage: false
+    log:
+      enabled: true
+      slowThreshold: 1000 # 慢响应打印
+
+    xss:
+      enabled: true
+      exclude-urls:
+        - /platform/sys/** # 匹配 notice 下的所有路径
+        - /platform/editor/upload      # 富文本编辑器的上传接口通常需要保留 HTML
+
+spring:
+  main:
+    allow-circular-references: true
+  profiles:
+    active: @spring.profile@
+  application:
+    name: wk-platform
+  threads:
+    virtual:
+      enabled: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+      max-request-size: 500MB
+
+# Sa-Token 配置
+sa-token:
+  token-name: Authorization
+  timeout: 86400
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: random-64
+  is-log: true
+  is-read-header: true
+  is-read-cookie: false
+  is-print: false
+
+server:
+  port: 0
+
+logging:
+  file:
+    name: ${user.home}/logs/${spring.application.name}.log
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

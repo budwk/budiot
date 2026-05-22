@@ -1,0 +1,187 @@
+server:
+  port: 9901
+
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: et922
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000  # 默认过期时间（10分钟）
+      cache-null-values: false # 是否缓存空值
+      # 为缓存键添加前缀
+      use-key-prefix: true
+      key-prefix: "wk:cache:"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+        metadata:
+          version: v1.0
+          framework: spring-boot-4
+      config:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        file-extension: yaml
+  #--- 新增关键配置 ---
+  config:
+    import:
+      - optional:nacos:application-common.yml
+      - optional:nacos:${spring.application.name}.yaml?refreshEnabled=true
+
+# Dubbo 配置
+dubbo:
+  application:
+    name: ${spring.application.name}
+    qos-enable: false
+    register-mode: interface
+  registry:
+    address: nacos://10.10.10.3:8848
+    parameters:
+      namespace: dev
+      group: DEFAULT_GROUP
+    username: nacos
+    password: nacos
+  protocol:
+    name: dubbo
+    port: -1
+    threads: 200
+  scan:
+    base-packages: com.budwk.sp
+  consumer:
+    check: false
+    timeout: 3000
+    retries: 0
+  provider:
+    timeout: 3000
+    retries: 0
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs        # 自定义 JSON 格式文档的路径
+    enabled: true
+  scalar:
+    enabled: true           # 显式开启 Scalar
+    path: /scalar   # 自定义访问路径，默认为 /scalar
+  group-configs:              # 如果有多个版本的 API，可以分组
+    - group: 'sys'
+      paths-to-match: /sys/**
+    - group: 'auth'
+      paths-to-match: /auth/**
+    - group: 'oauth'
+      paths-to-match: /oauth/**
+
+
+
+wk:
+  # Dao层配置
+  dao:
+    # 打印SQL语句和执行时间
+    interceptor:
+      log:
+        enabled: true
+      time:
+        enabled: true
+    sqls:
+      path: sqls/
+    # Druid 监控密码配置
+    druid-web:
+      enabled: true
+      username: admin
+      password: admin
+  # 数据库自动建表配置
+  database:
+    enabled: true
+    snowflake: true
+    table:
+      create: true #是否自动建表 默认false
+      migration: true #是否自动变更 默认false
+      add: true # 是否添加列 默认false
+      delete: false # 是否删除列 默认false
+      check: false # 是否检查索引 默认false
+      package: # 相关实体所在包
+        - com.budwk.sp
+  # @SLog 注解记录操作日志/登陆日志
+  log:
+    enabled: true
+    max-params-length: 4000
+    max-result-length: 2000
+    sensitive-fields:
+      - password
+      - token
+      - accessToken
+      - smscode
+      - captchaCode
+      - rsaKey
+  oauth:
+    qq:
+      enabled: true
+      client-id: xxx
+      client-secret: xxx
+      redirect-uri:
+    alipay:
+      alipay-public-key:
+      enabled: true
+      client-id: xxx
+      client-secret: xxx
+      redirect-uri:
+    wechat:
+      enabled: true
+      client-id: xxx
+      client-secret: xxx
+      redirect-uri:
+  # Xxl-job 分布式定时任务
+  job:
+    enabled: true
+    admin-addresses: http://127.0.0.1:8080/xxl-job-admin
+    access-token: default_token
+    timeout: 3
+    executor:
+      appname: budwk-platform-job
+      address:
+      ip:
+      port: 9998
+      log-path: logs/xxl-job/jobhandler
+      log-retention-days: 30
+      excluded-package:
+  web:
+    exception:
+      # 前端打印异常生sql
+      exposeMessage: true
+
+jdbc:
+  url: jdbc:postgresql://localhost:5432/budiot?user=postgres&password=U/dH5RqdqvEXkmqoLjT4zSOIMnKaLLpST6yvETwTHtbWuWnKLRJtja6Mv60OerKDJ58aNXLIvfLUbrgdye2nfw==
+  driver-class-name: org.postgresql.Driver
+  # Druid 常用连接池配置
+  initial-size: 5
+  max-active: 20
+  min-idle: 5
+  max-wait: 60000
+  pool-prepared-statements: true
+  filters: config,stat,wall
+  connection-properties: "config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI5l6A1HKfQsuqtiFTVTt3eXm8eP8LIiHbEixpaZYnhfBOVRC4wJJGRHmMZgFnltdmaJ+nasfZy79AbOmNjdoi0CAwEAAQ=="
+
+logging:
+  level:
+    # 业务日志保持 DEBUG
+    com.budwk.sp: debug
+    org.nutz.dao: debug
+    # Dubbo 日志
+    com.alibaba.dubbo: warn
+    # Dubbo 日志
+    com.alibaba.nacos: warn

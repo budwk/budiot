@@ -1,0 +1,53 @@
+wk:
+  dao:
+    tenant:
+      enabled: false
+      ignore-tables: []
+    interceptor:
+      log:
+        enabled: false
+      time:
+        enabled: false
+    sqls:
+      path: sqls/
+    druid-web:
+      enabled: false
+      username: admin
+      password: admin
+  database:
+    enabled: true
+    snowflake: true
+    table:
+      create: true
+      migration: true
+      add: true
+      delete: false
+      check: false
+      package:
+        - com.budwk.sp
+  device:
+    message:
+      enabled: true
+      provider: REDIS
+      topic-prefix: wk.device
+      send-timeout: 3000
+    rule:
+      normalized-topic: wk.device.uplink.normalized
+      event-topic: wk.device.event
+      webhook-timeout-ms: 3000
+
+spring:
+  main:
+    allow-circular-references: true
+    web-application-type: none
+  profiles:
+    active: @spring.profile@
+  application:
+    name: wk-device-rule
+
+server:
+  port: 0
+
+logging:
+  file:
+    name: ${user.home}/logs/${spring.application.name}.log

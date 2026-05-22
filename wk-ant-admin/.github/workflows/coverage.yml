@@ -1,0 +1,21 @@
+name: coverage CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Use Node.js 20
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+      - run: echo ${{github.ref}}
+      - uses: utooland/setup-utoo@v1
+      - run: ut
+      - run: ut test:coverage
+      - uses: codecov/codecov-action@v5

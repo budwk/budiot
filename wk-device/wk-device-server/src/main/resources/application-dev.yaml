@@ -1,0 +1,155 @@
+server:
+  port: 9904
+
+spring:
+  rabbitmq:
+    host: 10.10.10.3
+    port: 15672
+    username: admin
+    password: admin
+  data:
+    # 若使用 MongoDB 归档查询，可保留这里或改用 wk.device.database-ext.mongo-uri
+    #mongodb:
+    #  uri: mongodb://127.0.0.1:27017/budiot_device
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: et922
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+      cache-null-values: false
+      use-key-prefix: true
+      key-prefix: "wk:devicecache:"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+      config:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        group: DEFAULT_GROUP
+        file-extension: yaml
+  config:
+    import:
+      - optional:nacos:application-common.yml
+      - optional:nacos:${spring.application.name}.yaml?refreshEnabled=true
+
+dubbo:
+  application:
+    name: ${spring.application.name}
+    qos-enable: false
+    register-mode: interface
+  registry:
+    address: nacos://10.10.10.3:8848
+    parameters:
+      namespace: dev
+      group: DEFAULT_GROUP
+    username: nacos
+    password: nacos
+  protocol:
+    name: dubbo
+    port: -1
+  scan:
+    base-packages: com.budwk.sp
+  consumer:
+    check: false
+    timeout: 3000
+    retries: 0
+  provider:
+    timeout: 3000
+    retries: 0
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  scalar:
+    enabled: true
+    path: /scalar
+  group-configs:
+    - group: 'iot'
+      paths-to-match: /iot/**
+
+wk:
+  dao:
+    interceptor:
+      log:
+        enabled: true
+      time:
+        enabled: true
+    sqls:
+      path: sqls/
+    druid-web:
+      enabled: true
+      username: admin
+      password: admin
+  database:
+    enabled: true
+    snowflake: true
+    table:
+      create: true
+      migration: true
+      add: true
+      delete: false
+      check: false
+      package:
+        - com.budwk.sp
+  device:
+    database-ext:
+      # server 侧查询与 database 侧写入必须保持一致：
+      # DEFAULT  使用默认关系库（当前主数据源，如 PostgreSQL / MySQL）
+      # MONGODB  使用 MongoDB 文档存储
+      # TDENGINE 使用 TDengine 时序库存储
+      # raw     原始通信报文，可选 DEFAULT / MONGODB / TDENGINE
+      # data    解析后的属性/时序数据，可选 DEFAULT / MONGODB / TDENGINE
+      # event   事件/告警数据，可选 DEFAULT / MONGODB / TDENGINE
+      # command 指令历史，可选 DEFAULT / MONGODB；若配置 TDENGINE 会自动回落到 DEFAULT
+      storage:
+        raw: DEFAULT
+        data: DEFAULT
+        event: DEFAULT
+        command: DEFAULT
+      # 关闭时即使 storage 配置为 MONGODB 也会自动回落到 DEFAULT
+      mongo-enabled: false
+      # mongo-uri 未配置时，可复用 spring.data.mongodb.uri
+      # mongo-uri: mongodb://127.0.0.1:27017/budiot_device
+      # MongoDB 集合名前缀，需与 wk-device-database 保持一致
+      mongo-collection-prefix: device
+      # 关闭时即使 storage 配置为 TDENGINE 也会自动回落到 DEFAULT
+      tdengine-enabled: false
+      # TDengine JDBC 连接地址，需与 wk-device-database 保持一致
+      # tdengine-url: jdbc:TAOS://127.0.0.1:6030/test
+      # TDengine JDBC 驱动类
+      tdengine-driver-class-name: com.taosdata.jdbc.TSDBDriver
+      # TDengine 用户名
+      tdengine-username: root
+      # TDengine 密码
+      tdengine-password: taosdata
+jdbc:
+  url: jdbc:postgresql://localhost:5432/budiot?user=postgres&password=U/dH5RqdqvEXkmqoLjT4zSOIMnKaLLpST6yvETwTHtbWuWnKLRJtja6Mv60OerKDJ58aNXLIvfLUbrgdye2nfw==
+  driver-class-name: org.postgresql.Driver
+  initial-size: 5
+  max-active: 20
+  min-idle: 5
+  max-wait: 60000
+  pool-prepared-statements: true
+  filters: config,stat,wall
+  connection-properties: "config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI5l6A1HKfQsuqtiFTVTt3eXm8eP8LIiHbEixpaZYnhfBOVRC4wJJGRHmMZgFnltdmaJ+nasfZy79AbOmNjdoi0CAwEAAQ=="
+
+logging:
+  level:
+    com.budwk.sp: DEBUG
+    org.nutz.dao: DEBUG

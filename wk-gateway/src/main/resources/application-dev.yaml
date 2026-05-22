@@ -1,0 +1,151 @@
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: et922
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+  config:
+    import:
+      - optional:nacos:application-common.yml
+      - optional:nacos:${spring.application.name}.yaml?refreshEnabled=true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        username: nacos
+        password: nacos
+      config:
+        server-addr: 10.10.10.3:8848
+        namespace: dev
+        username: nacos
+        password: nacos
+    gateway:
+      # 手动定义精确路由（推荐，生产环境更安全）
+      server:
+        webflux:
+          routes:
+            - id: wk-file
+              uri: lb://wk-file
+              predicates:
+                - Path=/platform/file/**, /platform/pub/file/**
+              filters:
+                - StripPrefix=1
+
+            - id: wk-platform
+              uri: lb://wk-platform
+              predicates:
+                - Path=/platform/sys/**, /platform/auth/**, /platform/oauth/**, /platform/pub/user/**, /platform/pub/area/**, /platform/home/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    # 使用哪个 KeyResolver (对应 Bean 的名字)
+                    key-resolver: "#{@ipKeyResolver}"
+                    # 令牌桶填充速率 (每秒允许多少个请求)
+                    redis-rate-limiter.replenishRate: 10
+                    # 令牌桶总容量 (突发流量允许的最大请求数)
+                    redis-rate-limiter.burstCapacity: 20
+                    # 每次请求消耗几个令牌 (默认 1)
+                    redis-rate-limiter.requestedTokens: 1
+
+            - id: wk-message
+              uri: lb://wk-message
+              predicates:
+                - Path=/platform/msg/**
+              filters:
+                - StripPrefix=1
+
+            - id: wk-device
+              uri: lb://wk-device
+              predicates:
+                - Path=/platform/iot/**
+              filters:
+                - StripPrefix=1
+
+            - id: wk-video
+              uri: lb://wk-video
+              predicates:
+                - Path=/platform/video/**
+              filters:
+                - StripPrefix=1
+
+            - id: wk-video-hook
+              uri: lb://wk-video
+              predicates:
+                - Path=/video/media/hook/** , /video/task/callback/**
+
+            # 修正：id 必须与上方的 - id 对齐
+            - id: ws-platform
+              # 修正：uri 必须比 id 缩进 2 个空格
+              uri: lb:ws://wk-platform
+              predicates:
+                - Path=/platform/ws/**
+              filters:
+                - StripPrefix=1
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+
+
+wk:
+  gateway:
+    # 忽略登陆检查
+    ignore-urls:
+      - /platform/auth/**
+      - /platform/oauth/**
+      - /platform/pub/**
+      - /platform/msg/pub/**
+      - /platform/ws/**
+      - /video/media/hook/**
+      - /video/task/callback/**
+      - /favicon.ico
+      - /actuator/**
+    cors:
+      enabled: true
+    log:
+      enabled: true
+    trace:
+      enabled: true
+    # Actuator 访问密码
+    actuator:
+      username: admin
+      password: admin
+
+
+# Actuator 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+    gateway:
+      access: read_only
+
+sa-token:
+  token-name: Authorization
+  timeout: 86400
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: random-64
+  is-log: true
+  is-read-header: true
+  is-read-cookie: false
+  is-print: false
+
+logging:
+  level:
+    com.budwk.sp: DEBUG
+    com.alibaba: WARN

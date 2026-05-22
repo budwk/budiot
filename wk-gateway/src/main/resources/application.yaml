@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: wk-gateway
+  profiles:
+    active: @spring.profile@
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 30000
+        response-timeout: 30s
+
+server:
+  port: 9900
+  http2:
+    enabled: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: INFO
