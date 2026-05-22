@@ -29,6 +29,12 @@ BudIot 是一个基于 **Spring Boot 4 + Spring Cloud 2025** 的微服务物联�
 | 时序数据库 | TDengine                       | - |
 | 前端 | React 19 + Ant Design 6 | - |
 
+## 后台截图
+
+<img src="1.png" alt="登录界面"/>
+<img src="2.png" alt="控制中心"/>
+<img src="3.png" alt="设备中心"/>
+
 ## 仓库结构
 
 ```text
